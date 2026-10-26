@@ -1,0 +1,20 @@
+[project]
+name = "wowforever"
+version = "0.1.0"
+description = "Unofficial WoW Forever news and patch tracker"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["flask>=3.1"]
+
+[project.scripts]
+wowforever = "wowforever.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
