@@ -1,0 +1,10 @@
+<article class="entry">
+  <p class="meta">
+    {% if post.kind == "patch" %}Patch{% else %}News{% endif %}
+    · <time datetime="{{ post.published.isoformat() }}">{{ post.published | short_date }}</time>
+    {% if post.edited_at %}<span class="edited">Updated {{ post.edited_at | month_day }}</span>{% endif %}
+  </p>
+  <h2>{{ post.title }}</h2>
+  {% if post.summary %}<p class="summary">{{ post.summary }}</p>{% endif %}
+  <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">Read on Blizzard.com →</a>
+</article>
