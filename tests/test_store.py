@@ -1,5 +1,6 @@
 from datetime import UTC, date, datetime, timedelta
 
+from wowforever.forum import ForumPost
 from wowforever.posts import Post
 from wowforever.store import Store
 
@@ -76,3 +77,65 @@ def test_persists_to_file(tmp_path):
     path = tmp_path / "db.sqlite3"
     Store(path).upsert([make_post(id=7)])
     assert [p.id for p in Store(path).list_posts()] == [7]
+
+
+def make_forum_post(**overrides):
+    data = dict(
+        id=1,
+        topic_id=10,
+        number=1,
+        cooked="",
+        posted=datetime(2026, 10, 16, tzinfo=UTC),
+        url="https://us.forums.blizzard.com/en/wow/t/10/1",
+    )
+    data.update(overrides)
+    return ForumPost(**data)
+
+
+def test_class_updates_newest_first_with_gaps():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(id=1, posted=datetime(2026, 9, 24, tzinfo=UTC)), "beta",
+                      {"Mage": "<ul><li>A</li></ul>"})
+    store.save_update(make_forum_post(id=2, posted=datetime(2026, 10, 16, tzinfo=UTC)), "beta",
+                      {"Druid": "<ul><li>B</li></ul>"})
+    updates = store.class_updates("Mage")
+    assert [u.posted.day for u in updates] == [16, 24]
+    assert updates[0].html is None and updates[1].html == "<ul><li>A</li></ul>"
+    assert updates[1].kind == "beta"
+    assert updates[1].url == "https://us.forums.blizzard.com/en/wow/t/10/1"
+
+
+def test_save_update_replaces_sections():
+    store = Store(":memory:")
+    post = make_forum_post()
+    store.save_update(post, "beta", {"Mage": "old", "Rogue": "r"})
+    store.save_update(post, "beta", {"Mage": "new"})
+    assert store.class_updates("Mage")[0].html == "new"
+    assert store.class_updates("Rogue")[0].html is None
+    assert len(store.class_updates("Mage")) == 1
+
+
+def test_note_topics():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(id=1, topic_id=10), "beta", {"Mage": "a"})
+    store.save_update(make_forum_post(id=2, topic_id=10), "beta", {"Mage": "b"})
+    store.save_update(make_forum_post(id=3, topic_id=11), "hotfix", {"Mage": "c"})
+    assert store.note_topics() == {10: "beta", 11: "hotfix"}
+
+
+def test_existing_database_gains_new_tables(tmp_path):
+    import sqlite3
+    path = tmp_path / "old.sqlite3"
+    conn = sqlite3.connect(path)
+    conn.executescript(
+        "CREATE TABLE posts (id INTEGER PRIMARY KEY, title TEXT NOT NULL, url TEXT NOT NULL,"
+        " summary TEXT NOT NULL, kind TEXT NOT NULL, version TEXT, published TEXT NOT NULL,"
+        " updated TEXT NOT NULL, edited_at TEXT);"
+        "INSERT INTO posts VALUES (1, 'Old', 'u', 's', 'news', NULL,"
+        " '2026-10-01T00:00:00+00:00', '2026-10-01T00:00:00+00:00', NULL);"
+    )
+    conn.commit()
+    conn.close()
+    store = Store(path)
+    assert [p.title for p in store.list_posts()] == ["Old"]
+    assert store.class_updates("Mage") == []

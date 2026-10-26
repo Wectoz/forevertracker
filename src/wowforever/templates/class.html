@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="class-title" style="color: {{ color }}">
+  <img src="{{ url_for('static', filename='classes/' ~ slug ~ '.jpg') }}" alt="" width="36" height="36">{{ cls }} patch notes
+</h1>
+{% for update in updates %}
+<article class="entry class-update{% if not update.html %} class-dim{% endif %}">
+  <p class="meta">{{ labels[update.kind] }} · {{ update.posted | month_day }}</p>
+  {% if update.html %}
+  <div class="changes">{{ update.html | safe }}</div>
+  <a class="source" href="{{ update.url }}" target="_blank" rel="noopener">Full notes on the Blizzard forums →</a>
+  {% else %}
+  <p class="summary">No {{ cls }} changes in this update.</p>
+  {% endif %}
+</article>
+{% else %}
+<p class="empty">No {{ cls }} patch notes gathered yet. They will appear here as soon as Blizzard posts them.</p>
+{% endfor %}
+{% endblock %}

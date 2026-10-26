@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 
+from wowforever.forum import ForumPost
 from wowforever.posts import Post
 
 _SCHEMA = """
@@ -22,6 +23,20 @@ CREATE TABLE IF NOT EXISTS posts (
     edited_at TEXT
 );
 CREATE INDEX IF NOT EXISTS posts_published ON posts (published);
+CREATE TABLE IF NOT EXISTS updates (
+    post_id INTEGER PRIMARY KEY,
+    topic_id INTEGER NOT NULL,
+    kind TEXT NOT NULL,
+    url TEXT NOT NULL,
+    posted TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS updates_posted ON updates (posted);
+CREATE TABLE IF NOT EXISTS class_changes (
+    post_id INTEGER NOT NULL,
+    class TEXT NOT NULL,
+    html TEXT NOT NULL,
+    PRIMARY KEY (post_id, class)
+);
 """
 _COLUMNS = "id, title, url, summary, kind, version, published, updated, edited_at"
 
@@ -29,6 +44,16 @@ _COLUMNS = "id, title, url, summary, kind, version, published, updated, edited_a
 @dataclass(frozen=True)
 class StoredPost(Post):
     edited_at: datetime | None
+
+
+@dataclass(frozen=True)
+class ClassUpdate:
+    """One forum update as seen from one class; html is None when it has no changes for that class."""
+
+    kind: str
+    posted: datetime
+    url: str
+    html: str | None
 
 
 def _row_to_post(row: sqlite3.Row) -> StoredPost:
@@ -110,3 +135,40 @@ class Store:
 
     def unversioned_patch_posts(self) -> list[StoredPost]:
         return self._select("WHERE kind = 'patch' AND version IS NULL")
+
+    def save_update(self, post: ForumPost, kind: str, sections: dict[str, str]) -> None:
+        with self._lock, self._conn:
+            self._conn.execute(
+                "INSERT INTO updates (post_id, topic_id, kind, url, posted) VALUES (?, ?, ?, ?, ?)"
+                " ON CONFLICT (post_id) DO UPDATE SET topic_id = excluded.topic_id, kind = excluded.kind,"
+                " url = excluded.url, posted = excluded.posted",
+                (post.id, post.topic_id, kind, post.url, post.posted.isoformat()),
+            )
+            self._conn.execute("DELETE FROM class_changes WHERE post_id = ?", (post.id,))
+            self._conn.executemany(
+                "INSERT INTO class_changes (post_id, class, html) VALUES (?, ?, ?)",
+                [(post.id, cls, html) for cls, html in sections.items()],
+            )
+
+    def class_updates(self, cls: str) -> list[ClassUpdate]:
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT u.kind, u.posted, u.url, c.html FROM updates u"
+                " LEFT JOIN class_changes c ON c.post_id = u.post_id AND c.class = ?"
+                " ORDER BY u.posted DESC, u.post_id DESC",
+                (cls,),
+            ).fetchall()
+        return [ClassUpdate(r["kind"], datetime.fromisoformat(r["posted"]), r["url"], r["html"]) for r in rows]
+
+    def note_topics(self) -> dict[int, str]:
+        with self._lock:
+            rows = self._conn.execute("SELECT DISTINCT topic_id, kind FROM updates").fetchall()
+        return {r["topic_id"]: r["kind"] for r in rows}
+
+    def prune_topic(self, topic_id: int, keep: set[int]) -> None:
+        """Remove a topic's stored updates whose post is not in `keep`."""
+        with self._lock, self._conn:
+            stale = [r[0] for r in self._conn.execute(
+                "SELECT post_id FROM updates WHERE topic_id = ?", (topic_id,)) if r[0] not in keep]
+            self._conn.executemany("DELETE FROM class_changes WHERE post_id = ?", [(i,) for i in stale])
+            self._conn.executemany("DELETE FROM updates WHERE post_id = ?", [(i,) for i in stale])

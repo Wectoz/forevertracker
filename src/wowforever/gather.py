@@ -7,6 +7,8 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 
 from wowforever.blizzard import FetchError, ParseError, fetch_listing, parse_listing
+from wowforever.classnotes import split_classes
+from wowforever.forum import CATEGORY_ID, FetchJson, fetch_json, note_topics, thread_posts
 from wowforever.posts import to_post
 from wowforever.store import Store
 
@@ -56,7 +58,38 @@ def backfill(store: Store, fetch: Fetch | None = None, cutoff: datetime = BACKFI
     return total_added, total_edited
 
 
-def start_hourly(store: Store, interval: float = 3600, fetch: Fetch | None = None) -> threading.Thread:
+def gather_class_notes(store: Store, fetch: FetchJson | None = None) -> int:
+    """Read every WoW Forever notes thread and store each post's per-class sections."""
+    fetch = fetch or fetch_json
+    # Threads already stored keep being refreshed after they drop off the category's first page.
+    topics = store.note_topics()
+    topics.update({t.id: t.kind for t in note_topics(fetch(f"/c/{CATEGORY_ID}.json"))})
+    saved = 0
+    for topic_id, kind in topics.items():
+        try:
+            posts = thread_posts(topic_id, fetch)
+        except (FetchError, ParseError) as err:
+            # One missing or broken thread must not stop the others from being gathered.
+            logger.warning("Could not read notes thread %d: %s", topic_id, err)
+            continue
+        kept = set()
+        for post in posts:
+            sections = split_classes(post.cooked)
+            if not sections:
+                logger.warning("No class sections found in %s; skipped", post.url)
+                continue
+            store.save_update(post, kind, sections)
+            kept.add(post.id)
+        # Drop posts Blizzard deleted or emptied of class notes, unless nothing parsed at all:
+        # that looks like a markup change, and the stored history is better than none.
+        if kept:
+            store.prune_topic(topic_id, kept)
+        saved += len(kept)
+    return saved
+
+
+def start_hourly(store: Store, interval: float = 3600, fetch: Fetch | None = None,
+                 fetch_forum: FetchJson | None = None) -> threading.Thread:
     def run():
         while True:
             try:
@@ -67,6 +100,13 @@ def start_hourly(store: Store, interval: float = 3600, fetch: Fetch | None = Non
             except Exception:
                 # Keep the hourly check alive; stored posts are untouched by a failed run.
                 logger.exception("Gathering failed unexpectedly")
+            try:
+                saved = gather_class_notes(store, fetch_forum or fetch_json)
+                logger.info("Gathered: saved %d class patch-note updates", saved)
+            except (FetchError, ParseError) as err:
+                logger.warning("Gathering class notes failed: %s", err)
+            except Exception:
+                logger.exception("Gathering class notes failed unexpectedly")
             time.sleep(interval)
 
     thread = threading.Thread(target=run, name="hourly-gather", daemon=True)

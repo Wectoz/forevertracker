@@ -1,13 +1,15 @@
-"""Flask website: news feed, news, patches."""
+"""Flask website: news feed, news, patches, class patch notes."""
 
 from datetime import UTC, date, datetime
 
 from flask import Flask, abort, render_template, request, url_for
 
+from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, launch_banner, time_left
 from wowforever.store import Store
 
 PAGE_SIZE = 20
+UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix"}
 
 
 def _short_date(value: date | datetime) -> str:
@@ -26,7 +28,8 @@ def create_app(store: Store) -> Flask:
     @app.context_processor
     def banner():
         now = datetime.now(UTC)
-        return {"banner": launch_banner(now), "left": time_left(now), "launch_iso": LAUNCH.isoformat()}
+        return {"banner": launch_banner(now), "left": time_left(now), "launch_iso": LAUNCH.isoformat(),
+                "classes": [(name, slug(name), CLASS_COLORS[name]) for name in CLASSES]}
 
     def page_url(endpoint: str, page: int) -> str:
         # Path-based pages ("/page/2/") so the site also works as plain static files.
@@ -88,6 +91,19 @@ def create_app(store: Store) -> Flask:
             "patch.html", version=version, posts=posts,
             page_title=f"WoW Forever Patch {version} · WoW Forever Tracker",
             description=f"What changed in World of Warcraft: Forever patch {version}.",
+        )
+
+    @app.get("/classes/<name>")
+    def class_page(name: str):
+        cls = class_for_slug(name)
+        if cls is None or name != slug(cls):
+            abort(404)
+        return render_template(
+            "class.html", cls=cls, slug=name, color=CLASS_COLORS[cls], updates=store.class_updates(cls),
+            labels=UPDATE_LABELS,
+            page_title=f"{cls} Patch Notes · WoW Forever Tracker",
+            description=f"Every World of Warcraft: Forever change for the {cls} class, "
+                        "from beta builds, patches and hotfixes.",
         )
 
     return app
