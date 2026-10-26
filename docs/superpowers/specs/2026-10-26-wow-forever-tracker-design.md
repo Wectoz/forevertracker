@@ -93,7 +93,7 @@ source.
 - **Polite fetching:** one listing request per hour (plus article pages only for new posts),
   a clear User-Agent, and timeouts.
 - **Countdown banner:** "Launches Nov 4 · N days to go"; on or after launch (Nov 4, 2026,
-  3:00 p.m. PDT) it reads "Live since Nov 4".
+  3:00 p.m. PST) it reads "Live since Nov 4".
 - **Look:** near-black stone background (`#16130f`), bronze accents (`#8c5a2b`,
   `#b5773a`, `#d9a35b`), parchment-coloured text (`#e8dcc4`), Cinzel for headings and
   Inter for body text (Google Fonts). Entries are cards with a bronze left edge; type icons
