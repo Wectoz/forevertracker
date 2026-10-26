@@ -57,3 +57,15 @@ def test_unsafe_markup_is_stripped():
     assert 'href="javascript' not in out
     assert '<a href="https://example.com/x">ok</a>' in out
     assert "bad" in out
+
+
+def test_paragraph_heading_followed_by_list():
+    html = ("<p><strong>Items</strong></p><ul><li><strong>Mage</strong><ul><li>not a class change</li></ul></li></ul>"
+            "<p><strong>Classes</strong></p>\n<ul>\n<li><strong>Mage</strong>\n<ul><li>A</li></ul>\n</li>\n</ul>")
+    assert split_classes(html) == {"Mage": "<ul><li>A</li></ul>"}
+
+
+def test_every_real_build_post_has_class_sections():
+    built = [n for n, p in enumerate(posts(), 1) if p["cooked"]]
+    assert [n for n in built if split_classes(posts()[n - 1]["cooked"])] == [1, 4, 5, 6]
+    assert "Rogue" not in split_classes(posts()[4]["cooked"])

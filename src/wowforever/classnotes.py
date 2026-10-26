@@ -13,6 +13,7 @@ _BY_KEY = {name.casefold(): name for name in CLASSES}
 
 _ALLOWED = {"ul", "ol", "li", "strong", "b", "em", "i", "p", "br", "a"}
 _DROPPED = {"script", "style"}  # removed together with their content
+_BLOCK_HEADINGS = {"p", "h1", "h2", "h3", "h4", "h5", "h6"}
 _VOID = {"br", "img", "hr", "input", "meta", "link", "wbr", "source"}
 
 
@@ -69,8 +70,21 @@ def _heading(li: _Node) -> str | None:
 
 def _walk(node: _Node):
     for child in node.elements():
-        yield child
+        yield child, node
         yield from _walk(child)
+
+
+def _classes_list(root: _Node) -> _Node | None:
+    """The <ul> holding the class headings. Blizzard writes the "Classes" heading two ways:
+    <li><strong>Classes</strong><ul>…</ul></li>, or <p><strong>Classes</strong></p> followed by <ul>…</ul>."""
+    for node, parent in _walk(root):
+        if node.tag == "li" and _heading(node) == "classes":
+            return next((c for c in node.elements() if c.tag == "ul"), None)
+        if node.tag in _BLOCK_HEADINGS and node.text().strip().casefold() == "classes":
+            siblings = parent.elements()
+            following = siblings[siblings.index(node) + 1:]
+            return following[0] if following and following[0].tag == "ul" else None
+    return None
 
 
 def _render(node: _Node | str) -> str:
@@ -95,15 +109,13 @@ def split_classes(cooked: str) -> dict[str, str]:
     builder = _TreeBuilder()
     builder.feed(cooked or "")
     builder.close()
-    for li in _walk(builder.root):
-        if li.tag != "li" or _heading(li) != "classes":
-            continue
-        sections = {}
-        for ul in (c for c in li.elements() if c.tag == "ul"):
-            for class_li in (c for c in ul.elements() if c.tag == "li"):
-                name = _BY_KEY.get(_heading(class_li) or "")
-                body = next((c for c in class_li.elements() if c.tag == "ul"), None)
-                if name and body is not None:
-                    sections[name] = _render(body)
-        return sections
-    return {}
+    classes = _classes_list(builder.root)
+    if classes is None:
+        return {}
+    sections = {}
+    for class_li in (c for c in classes.elements() if c.tag == "li"):
+        name = _BY_KEY.get(_heading(class_li) or "")
+        body = next((c for c in class_li.elements() if c.tag == "ul"), None)
+        if name and body is not None:
+            sections[name] = _render(body)
+    return sections
