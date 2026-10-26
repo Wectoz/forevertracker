@@ -140,3 +140,10 @@ def test_malformed_blog_is_skipped_not_fatal(caplog):
     caplog.set_level(logging.WARNING)
     assert fetch_latest(store, fetch=lambda n: page) == (1, 0)
     assert "Skipping malformed" in caplog.text
+
+
+def test_cli_build_writes_site(tmp_path, capsys):
+    out = tmp_path / "site"
+    assert cli.main(["--db", str(tmp_path / "d.sqlite3"), "build", "--out", str(out), "--base-path", "/wow-forever-news"]) == 0
+    assert (out / "index.html").is_file()
+    assert "Built" in capsys.readouterr().out
