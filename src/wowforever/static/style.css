@@ -46,7 +46,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   padding: 16px 16px 14px;
   text-align: center;
   border-radius: 4px;
-  background: linear-gradient(180deg, #b5813f 0%, var(--bronze) 45%, #6b431f 100%);
+  background: linear-gradient(180deg, #b5813f 0%, #ad7a3b 45%, #6b431f 100%);
   border: 1px solid #e0a95e;
   box-shadow: inset 0 1px 0 #f3c886, inset 0 -2px 0 #4a2e14, 0 3px 0 #0007;
 }
@@ -57,7 +57,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   font-size: .85rem;
   letter-spacing: .18em;
   text-transform: uppercase;
-  color: #2a1a0c;
+  color: #1a0f05;  /* at least 5:1 on the plate's upper half */
   text-shadow: 0 1px 0 #e0a95e;
 }
 .digits { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
