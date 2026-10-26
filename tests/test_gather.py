@@ -296,3 +296,14 @@ def test_thread_that_no_longer_parses_keeps_its_history():
         post["cooked"] = post["cooked"].replace("Classes", "Klassen")
     assert gather_class_notes(store, forum_fetch({**FORUM, "/t/2360696.json": thread})) == 0
     assert len(store.class_updates("Mage")) == 4
+
+
+def test_cli_fetch_still_gathers_class_notes_when_news_fails(monkeypatch, tmp_path, capsys):
+    def failing(n):
+        raise FetchError("news offline")
+
+    monkeypatch.setattr(gather, "fetch_listing", failing)
+    assert cli.main(["--db", str(tmp_path / "d.sqlite3"), "fetch"]) == 1
+    out, err = capsys.readouterr()
+    assert "Could not gather from Blizzard" in err
+    assert "Saved 4 class patch-note updates." in out

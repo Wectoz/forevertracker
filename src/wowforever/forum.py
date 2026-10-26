@@ -1,5 +1,6 @@
 """Read Blizzard's WoW Forever notes threads (beta notes, patch notes, hotfixes) from the forums."""
 
+import http.client
 import json
 import re
 import urllib.error
@@ -41,7 +42,7 @@ def fetch_json(path: str) -> dict:
     try:
         with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
             return json.loads(response.read().decode("utf-8"))
-    except (urllib.error.URLError, TimeoutError, OSError, UnicodeDecodeError, ValueError) as err:
+    except (urllib.error.URLError, http.client.HTTPException, TimeoutError, OSError, UnicodeDecodeError, ValueError) as err:
         raise FetchError(f"{url}: {err}") from err
 
 

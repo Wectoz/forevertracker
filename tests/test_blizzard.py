@@ -45,3 +45,13 @@ def test_fetch_listing_wraps_errors(monkeypatch):
     monkeypatch.setattr(urllib.request, "urlopen", boom)
     with pytest.raises(FetchError):
         fetch_listing(1)
+
+
+def test_fetch_listing_wraps_broken_responses(monkeypatch):
+    import http.client
+
+    def broken(*args, **kwargs):
+        raise http.client.IncompleteRead(b"partial")
+    monkeypatch.setattr(urllib.request, "urlopen", broken)
+    with pytest.raises(FetchError):
+        fetch_listing(1)

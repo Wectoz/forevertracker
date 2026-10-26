@@ -85,7 +85,7 @@ def make_forum_post(**overrides):
         topic_id=10,
         number=1,
         cooked="",
-        posted=datetime(2026, 10, 16, tzinfo=UTC),
+        posted=datetime(2026, 10, 16, 18, tzinfo=UTC),
         url="https://us.forums.blizzard.com/en/wow/t/10/1",
     )
     data.update(overrides)

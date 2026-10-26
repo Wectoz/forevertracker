@@ -1,6 +1,7 @@
 """Flask website: news feed, news, patches, class patch notes."""
 
 from datetime import UTC, date, datetime
+from zoneinfo import ZoneInfo
 
 from flask import Flask, abort, render_template, request, url_for
 
@@ -12,11 +13,21 @@ PAGE_SIZE = 20
 UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix"}
 
 
+# Blizzard dates its posts in Pacific time; showing UTC would put late-evening posts a day ahead.
+PACIFIC = ZoneInfo("America/Los_Angeles")
+
+
+def _local(value: date | datetime) -> date | datetime:
+    return value.astimezone(PACIFIC) if isinstance(value, datetime) and value.tzinfo else value
+
+
 def _short_date(value: date | datetime) -> str:
+    value = _local(value)
     return f"{value:%b} {value.day}, {value.year}"
 
 
 def _month_day(value: date | datetime) -> str:
+    value = _local(value)
     return f"{value:%b} {value.day}"
 
 
@@ -99,7 +110,7 @@ def create_app(store: Store) -> Flask:
         if cls is None or name != slug(cls):
             abort(404)
         return render_template(
-            "class.html", cls=cls, slug=name, color=CLASS_COLORS[cls], updates=store.class_updates(cls),
+            "class.html", cls=cls, slug=name, current_class=name, color=CLASS_COLORS[cls], updates=store.class_updates(cls),
             labels=UPDATE_LABELS,
             page_title=f"{cls} Patch Notes · WoW Forever Tracker",
             description=f"Every World of Warcraft: Forever change for the {cls} class, "
