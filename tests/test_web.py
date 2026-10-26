@@ -86,3 +86,15 @@ def test_edited_label():
     store.upsert([edited])
     store.upsert([make_post(id=1, title="[Updated 10/22] New", updated=datetime(2026, 10, 22, tzinfo=UTC))])
     assert "Updated Oct 22" in create_app(store).test_client().get("/").text
+
+
+def test_home_shows_countdown_plate():
+    html = client_for().get("/").text
+    assert 'class="plate"' in html
+    assert "Launches Nov 4" in html or "Live since Nov 4" in html or "Launches today" in html
+
+
+def test_patches_page_with_news_but_no_patches():
+    html = client_for(make_post(id=1, title="Some News")).get("/patches").text
+    assert EMPTY not in html
+    assert "No WoW Forever patch notes or hotfixes from Blizzard yet" in html

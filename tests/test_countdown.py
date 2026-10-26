@@ -23,3 +23,10 @@ def test_live_after_launch():
     assert launch_banner(at(2026, 11, 4, 22, 30)) == "Launches today · Nov 4, 3:00 p.m. PST"
     assert launch_banner(at(2026, 11, 4, 23)) == "Live since Nov 4"
     assert launch_banner(at(2026, 12, 1)) == "Live since Nov 4"
+
+
+def test_time_left_splits_days_hours_minutes():
+    from wowforever.countdown import time_left
+    assert time_left(at(2026, 10, 26, 12)) == (9, 11, 0)
+    assert time_left(at(2026, 11, 4, 22, 30)) == (0, 0, 30)
+    assert time_left(at(2026, 11, 4, 23)) is None

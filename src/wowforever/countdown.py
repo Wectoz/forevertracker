@@ -12,3 +12,11 @@ def launch_banner(now: datetime) -> str:
     if days <= 0:
         return "Launches today · Nov 4, 3:00 p.m. PST"
     return f"Launches Nov 4 · {days} day{'s' if days != 1 else ''} to go"
+
+
+def time_left(now: datetime) -> tuple[int, int, int] | None:
+    """(days, hours, minutes) until launch, or None once it has launched."""
+    if now >= LAUNCH:
+        return None
+    minutes = int((LAUNCH - now).total_seconds() // 60)
+    return minutes // 1440, minutes % 1440 // 60, minutes % 60
