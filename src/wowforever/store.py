@@ -164,3 +164,11 @@ class Store:
         with self._lock:
             rows = self._conn.execute("SELECT DISTINCT topic_id, kind FROM updates").fetchall()
         return {r["topic_id"]: r["kind"] for r in rows}
+
+    def prune_topic(self, topic_id: int, keep: set[int]) -> None:
+        """Remove a topic's stored updates whose post is not in `keep`."""
+        with self._lock, self._conn:
+            stale = [r[0] for r in self._conn.execute(
+                "SELECT post_id FROM updates WHERE topic_id = ?", (topic_id,)) if r[0] not in keep]
+            self._conn.executemany("DELETE FROM class_changes WHERE post_id = ?", [(i,) for i in stale])
+            self._conn.executemany("DELETE FROM updates WHERE post_id = ?", [(i,) for i in stale])

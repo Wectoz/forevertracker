@@ -13,6 +13,7 @@ _BY_KEY = {name.casefold(): name for name in CLASSES}
 
 _ALLOWED = {"ul", "ol", "li", "strong", "b", "em", "i", "p", "br", "a"}
 _DROPPED = {"script", "style"}  # removed together with their content
+_QUOTES = {"aside", "blockquote"}
 _BLOCK_HEADINGS = {"p", "h1", "h2", "h3", "h4", "h5", "h6"}
 _VOID = {"br", "img", "hr", "input", "meta", "link", "wbr", "source"}
 
@@ -70,6 +71,8 @@ def _heading(li: _Node) -> str | None:
 
 def _walk(node: _Node):
     for child in node.elements():
+        if child.tag in _QUOTES:
+            continue  # a reply quoting the notes is not a new set of notes
         yield child, node
         yield from _walk(child)
 

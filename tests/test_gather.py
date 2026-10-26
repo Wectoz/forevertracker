@@ -228,3 +228,71 @@ def test_hourly_gathers_class_notes():
     while len(store.class_updates("Mage")) < 4 and time.monotonic() < deadline:
         time.sleep(0.01)
     assert len(store.class_updates("Mage")) == 4
+
+
+def thread_copy(topic_id, id_offset):
+    """The real beta thread re-numbered as another topic, with its own post ids."""
+    thread = json.loads(json.dumps(FORUM["/t/2360696.json"]))
+    thread["id"] = topic_id
+    thread["post_stream"]["stream"] = [i + id_offset for i in thread["post_stream"]["stream"]]
+    for post in thread["post_stream"]["posts"]:
+        post["id"] += id_offset
+    return thread
+
+
+def test_failing_thread_does_not_block_other_threads(caplog):
+    store = Store(":memory:")
+    gather_class_notes(store, forum_fetch())
+    category = json.loads(json.dumps(FORUM["/c/349.json"]))
+    new_topic = dict(next(t for t in category["topic_list"]["topics"] if t["id"] == 2360696),
+                     id=999, title="WoW Forever Patch 1.0 Notes")
+    category["topic_list"]["topics"].append(new_topic)
+    pages = {"/c/349.json": category, "/t/999.json": thread_copy(999, 10_000_000)}
+
+    def fetch(path):
+        if path == "/t/2360696.json":
+            raise FetchError("HTTP 404")
+        return json.loads(json.dumps(pages[path]))
+
+    caplog.set_level(logging.WARNING)
+    assert gather_class_notes(store, fetch) == 4
+    assert {u.kind for u in store.class_updates("Mage")} == {"beta", "patch"}
+    assert "2360696" in caplog.text
+
+
+def test_category_failure_still_raises():
+    def down(path):
+        raise FetchError("forum offline")
+
+    with pytest.raises(FetchError):
+        gather_class_notes(Store(":memory:"), down)
+
+
+def test_post_edited_to_drop_its_class_notes_is_removed():
+    store = Store(":memory:")
+    gather_class_notes(store, forum_fetch())
+    thread = json.loads(json.dumps(FORUM["/t/2360696.json"]))
+    thread["post_stream"]["posts"][0]["cooked"] = "<p>Notes moved to a new thread.</p>"
+    assert gather_class_notes(store, forum_fetch({**FORUM, "/t/2360696.json": thread})) == 3
+    assert len(store.class_updates("Mage")) == 3
+
+
+def test_deleted_post_is_removed():
+    store = Store(":memory:")
+    gather_class_notes(store, forum_fetch())
+    thread = json.loads(json.dumps(FORUM["/t/2360696.json"]))
+    gone = thread["post_stream"]["posts"].pop(0)
+    thread["post_stream"]["stream"].remove(gone["id"])
+    gather_class_notes(store, forum_fetch({**FORUM, "/t/2360696.json": thread}))
+    assert len(store.class_updates("Mage")) == 3
+
+
+def test_thread_that_no_longer_parses_keeps_its_history():
+    # A Blizzard markup change must not wipe what was gathered before.
+    store = Store(":memory:")
+    gather_class_notes(store, forum_fetch())
+    thread = json.loads(json.dumps(FORUM["/t/2360696.json"]))
+    for post in thread["post_stream"]["posts"]:
+        post["cooked"] = post["cooked"].replace("Classes", "Klassen")
+    assert gather_class_notes(store, forum_fetch({**FORUM, "/t/2360696.json": thread})) == 0
+    assert len(store.class_updates("Mage")) == 4

@@ -66,13 +66,25 @@ def gather_class_notes(store: Store, fetch: FetchJson | None = None) -> int:
     topics.update({t.id: t.kind for t in note_topics(fetch(f"/c/{CATEGORY_ID}.json"))})
     saved = 0
     for topic_id, kind in topics.items():
-        for post in thread_posts(topic_id, fetch):
+        try:
+            posts = thread_posts(topic_id, fetch)
+        except (FetchError, ParseError) as err:
+            # One missing or broken thread must not stop the others from being gathered.
+            logger.warning("Could not read notes thread %d: %s", topic_id, err)
+            continue
+        kept = set()
+        for post in posts:
             sections = split_classes(post.cooked)
             if not sections:
                 logger.warning("No class sections found in %s; skipped", post.url)
                 continue
             store.save_update(post, kind, sections)
-            saved += 1
+            kept.add(post.id)
+        # Drop posts Blizzard deleted or emptied of class notes, unless nothing parsed at all:
+        # that looks like a markup change, and the stored history is better than none.
+        if kept:
+            store.prune_topic(topic_id, kept)
+        saved += len(kept)
     return saved
 
 

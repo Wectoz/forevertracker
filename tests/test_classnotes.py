@@ -69,3 +69,10 @@ def test_every_real_build_post_has_class_sections():
     built = [n for n, p in enumerate(posts(), 1) if p["cooked"]]
     assert [n for n in built if split_classes(posts()[n - 1]["cooked"])] == [1, 4, 5, 6]
     assert "Rogue" not in split_classes(posts()[4]["cooked"])
+
+
+def test_quoted_notes_in_a_reply_are_ignored():
+    html = ('<aside class="quote"><blockquote><p><strong>Classes</strong></p>'
+            '<ul><li><strong>Mage</strong><ul><li>Frostbolt buffed.</li></ul></li></ul></blockquote></aside>'
+            "<p>We're looking into the Frostbolt change.</p>")
+    assert split_classes(html) == {}
