@@ -25,6 +25,9 @@ def main(argv: list[str] | None = None) -> int:
     commands.add_parser("backfill", help="gather every WoW Forever post since the announcement")
     serve = commands.add_parser("serve", help="run the website and gather new posts hourly")
     serve.add_argument("--port", type=int, default=5000)
+    build = commands.add_parser("build", help="write the site as static files")
+    build.add_argument("--out", default="_site", help="output folder (default: _site)")
+    build.add_argument("--base-path", default="", help='URL prefix the site is served under, e.g. "/wow-forever-news"')
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -35,6 +38,13 @@ def main(argv: list[str] | None = None) -> int:
 
         gather.start_hourly(store)
         create_app(store).run(host="127.0.0.1", port=args.port, use_reloader=False)
+        return 0
+
+    if args.command == "build":
+        from wowforever.build import build_site
+
+        pages = build_site(store, Path(args.out), base_path=args.base_path)
+        print(f"Built {pages} pages into {args.out}.")
         return 0
 
     try:
