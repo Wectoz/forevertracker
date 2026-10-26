@@ -98,3 +98,19 @@ def test_bare_word_forever_is_not_wow_forever():
 def test_wow_forever_name_variants_match():
     for title in ("WoW: Forever Podcast", "WoW Forever Weekly", "World of Warcraft: Forever Raids"):
         assert to_post(blog(title=title)) is not None
+
+
+def test_thumbnail_comes_from_the_article_header_image():
+    post = to_post(blog(title="WoW Forever news", thumbnail={"url": "//bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/x.png"}))
+    assert post.thumbnail == "https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/x.png"
+
+
+def test_thumbnail_falls_back_to_image_and_may_be_missing():
+    assert to_post(blog(title="WoW Forever news", image={"url": "https://cdn.example/y.png"})).thumbnail == "https://cdn.example/y.png"
+    assert to_post(blog(title="WoW Forever news")).thumbnail is None
+    assert to_post(blog(title="WoW Forever news", thumbnail=None)).thumbnail is None
+
+
+def test_unsafe_thumbnail_urls_are_dropped():
+    assert to_post(blog(title="WoW Forever news", thumbnail={"url": "javascript:alert(1)"})).thumbnail is None
+    assert to_post(blog(title="WoW Forever news", thumbnail={"url": 'https://x/a.png" onerror="x'})).thumbnail is None

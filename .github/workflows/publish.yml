@@ -32,12 +32,13 @@ jobs:
         run: uv run pytest -q
 
       # The gathered posts live in a cache between runs; if it is ever evicted, backfill rebuilds it.
+      # Bump the "v2" prefix to force one full backfill (v2: posts gained thumbnails).
       - name: Restore gathered posts
         uses: actions/cache/restore@v4
         with:
           path: instance
-          key: posts-${{ github.run_id }}
-          restore-keys: posts-
+          key: posts-v2-${{ github.run_id }}
+          restore-keys: posts-v2-
 
       - name: Gather from Blizzard
         # A Blizzard outage must not stop publishing: the site is rebuilt from what is already stored.
@@ -54,7 +55,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: instance
-          key: posts-${{ github.run_id }}
+          key: posts-v2-${{ github.run_id }}
 
       - id: pages
         uses: actions/configure-pages@v5

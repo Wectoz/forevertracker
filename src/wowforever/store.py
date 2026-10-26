@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS posts (
     version TEXT,
     published TEXT NOT NULL,
     updated TEXT NOT NULL,
-    edited_at TEXT
+    edited_at TEXT,
+    thumbnail TEXT
 );
 CREATE INDEX IF NOT EXISTS posts_published ON posts (published);
 CREATE TABLE IF NOT EXISTS updates (
@@ -40,13 +41,16 @@ CREATE TABLE IF NOT EXISTS class_changes (
     PRIMARY KEY (post_id, class)
 );
 """
-_COLUMNS = "id, title, url, summary, kind, version, published, updated, edited_at"
-# Columns added to `updates` after it first shipped; older databases get them on open.
-_UPDATES_ADDED = {"title": "TEXT NOT NULL DEFAULT ''", "summary": "TEXT NOT NULL DEFAULT ''"}
+_COLUMNS = "id, title, url, summary, kind, version, published, updated, edited_at, thumbnail"
+# Columns added after the tables first shipped; older databases get them on open.
+_ADDED_COLUMNS = {
+    "posts": {"thumbnail": "TEXT"},
+    "updates": {"title": "TEXT NOT NULL DEFAULT ''", "summary": "TEXT NOT NULL DEFAULT ''"},
+}
 # The feed: news-site posts plus every forum notes post (shown as patch posts without a version).
 _FEED = (
     f"(SELECT {_COLUMNS} FROM posts UNION ALL"
-    " SELECT post_id, title, url, summary, 'patch', NULL, posted, posted, NULL FROM updates)"
+    " SELECT post_id, title, url, summary, 'patch', NULL, posted, posted, NULL, NULL FROM updates)"
 )
 
 
@@ -80,6 +84,7 @@ def _row_to_post(row: sqlite3.Row) -> StoredPost:
         published=datetime.fromisoformat(row["published"]),
         updated=datetime.fromisoformat(row["updated"]),
         edited_at=datetime.fromisoformat(row["edited_at"]) if row["edited_at"] else None,
+        thumbnail=row["thumbnail"],
     )
 
 
@@ -90,26 +95,31 @@ class Store:
         self._lock = threading.Lock()
         with self._lock, self._conn:
             self._conn.executescript(_SCHEMA)
-            have = {row["name"] for row in self._conn.execute("PRAGMA table_info(updates)")}
-            for column, decl in _UPDATES_ADDED.items():
-                if column not in have:
-                    self._conn.execute(f"ALTER TABLE updates ADD COLUMN {column} {decl}")
+            for table, columns in _ADDED_COLUMNS.items():
+                have = {row["name"] for row in self._conn.execute(f"PRAGMA table_info({table})")}
+                for column, decl in columns.items():
+                    if column not in have:
+                        self._conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {decl}")
 
     def upsert(self, posts: Iterable[Post]) -> tuple[int, int]:
         added = edited = 0
         with self._lock, self._conn:
             for post in posts:
                 row = self._conn.execute(
-                    "SELECT title, summary FROM posts WHERE id = ?", (post.id,)
+                    "SELECT title, summary, thumbnail FROM posts WHERE id = ?", (post.id,)
                 ).fetchone()
                 if row is None:
                     self._conn.execute(
-                        f"INSERT INTO posts ({_COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL)",
+                        f"INSERT INTO posts ({_COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?)",
                         (post.id, post.title, post.url, post.summary, post.kind, post.version,
-                         post.published.isoformat(), post.updated.isoformat()),
+                         post.published.isoformat(), post.updated.isoformat(), post.thumbnail),
                     )
                     added += 1
-                elif (row["title"], row["summary"]) != (post.title, post.summary):
+                    continue
+                if row["thumbnail"] != post.thumbnail:
+                    # A new header image is not an edit worth flagging to readers.
+                    self._conn.execute("UPDATE posts SET thumbnail = ? WHERE id = ?", (post.thumbnail, post.id))
+                if (row["title"], row["summary"]) != (post.title, post.summary):
                     self._conn.execute(
                         "UPDATE posts SET title = ?, summary = ?, kind = ?, version = ?, updated = ?,"
                         " edited_at = ? WHERE id = ?",

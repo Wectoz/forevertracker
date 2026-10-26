@@ -12,6 +12,8 @@ _PATCH_TITLE_RE = re.compile(r"(?i)\b(patch notes|hotfixes)\b")
 # WoW Forever patches are 1.60 and up; Classic Era (1.15.x) and retail (12.x) are not.
 _VERSION_RE = re.compile(r"(?<![\d.])1\.(\d{2,})(?:\.\d+)?(?![\d.]*\d)")
 _TAG_RE = re.compile(r"<[^>]+>")
+# Thumbnails are only kept as plain https URLs, since they go straight into an <img src>.
+_SAFE_URL_RE = re.compile(r"https://[^\s\"'<>]+")
 # The game's name, not the bare word "forever" (e.g. "remain in combat forever").
 _FOREVER_RE = re.compile(r"(?i)\b(?:wow|warcraft):?\s+forever\b")
 
@@ -26,6 +28,7 @@ class Post:
     version: str | None
     published: datetime
     updated: datetime
+    thumbnail: str | None  # the article's header image
 
 
 def make_summary(text: str, limit: int = 300) -> str:
@@ -57,6 +60,18 @@ def _version(blog: dict) -> str | None:
     return None
 
 
+def _thumbnail(blog: dict) -> str | None:
+    for key in ("thumbnail", "image"):
+        image = blog.get(key)
+        url = image.get("url") if isinstance(image, dict) else None
+        if not isinstance(url, str):
+            continue
+        url = "https:" + url if url.startswith("//") else url
+        if _SAFE_URL_RE.fullmatch(url):
+            return url
+    return None
+
+
 def to_post(blog: dict) -> Post | None:
     if not _is_forever(blog):
         return None
@@ -70,4 +85,5 @@ def to_post(blog: dict) -> Post | None:
         version=_version(blog) if is_patch else None,
         published=datetime.fromisoformat(blog["published"]),
         updated=datetime.fromisoformat(blog.get("updated") or blog["published"]),
+        thumbnail=_thumbnail(blog),
     )

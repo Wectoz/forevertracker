@@ -1,10 +1,21 @@
-<article class="entry">
-  <p class="meta">
-    {% if post.kind == "patch" %}Patch{% else %}News{% endif %}
-    · <time datetime="{{ post.published.isoformat() }}">{{ post.published | short_date }}</time>
-    {% if post.edited_at %}<span class="edited">Updated {{ post.edited_at | month_day }}</span>{% endif %}
-  </p>
-  <h2>{{ post.title }}</h2>
-  {% if post.summary %}<p class="summary">{{ post.summary }}</p>{% endif %}
-  <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">{% if post.on_forums %}Read on the Blizzard forums →{% else %}Read on Blizzard.com →{% endif %}</a>
+<article class="entry{% if post.on_forums %} blue-post{% endif %}">
+  {% if post.on_forums %}
+  <div class="thumb blue-tile" aria-hidden="true">
+    <svg viewBox="0 0 48 48"><path d="M12 9h22a5 5 0 0 1 5 5v22a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4V13" fill="#e8f1ff" stroke="#0f2340" stroke-width="2"/><path d="M8 13a4 4 0 0 1 8 0v4H8z" fill="#c9dcf7" stroke="#0f2340" stroke-width="2"/><path d="M18 19h15M18 25h15M18 31h10" stroke="#2c5591" stroke-width="2.5" stroke-linecap="round"/></svg>
+    <span>Patch notes</span>
+  </div>
+  {% elif post.thumbnail %}
+  <img class="thumb" src="{{ post.thumbnail }}?imwidth=360" alt="" width="180" height="101" loading="lazy">
+  {% endif %}
+  <div class="entry-body">
+    <p class="meta">
+      {% if post.kind == "patch" %}Patch{% else %}News{% endif %}
+      · <time datetime="{{ post.published.isoformat() }}">{{ post.published | short_date }}</time>
+      {% if post.edited_at %}<span class="edited">Updated {{ post.edited_at | month_day }}</span>{% endif %}
+      {% if post.on_forums %}<span class="blue-tag">Blue post</span>{% endif %}
+    </p>
+    <h2>{{ post.title }}</h2>
+    {% if post.summary %}<p class="summary">{{ post.summary }}</p>{% endif %}
+    <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">{% if post.on_forums %}Read on the Blizzard forums →{% else %}Read on Blizzard.com →{% endif %}</a>
+  </div>
 </article>
