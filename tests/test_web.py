@@ -163,3 +163,14 @@ def test_class_menu_marks_the_current_class():
     html = client_for().get("/classes/mage").text
     assert 'href="/classes/mage" aria-current="page"' in html
     assert 'href="/classes/druid" aria-current' not in html
+
+
+def test_home_links_forum_posts_to_the_forums():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(), "beta", {"Mage": "m"},
+                      title="WoW Forever Beta Development Notes – Oct 16", summary="Today, we updated the Beta.")
+    html = create_app(store).test_client().get("/").text
+    assert "WoW Forever Beta Development Notes – Oct 16" in html
+    assert "Read on the Blizzard forums →" in html
+    assert 'href="https://us.forums.blizzard.com/en/wow/t/10/1"' in html
+    assert "Today, we updated the Beta." in create_app(store).test_client().get("/patches").text

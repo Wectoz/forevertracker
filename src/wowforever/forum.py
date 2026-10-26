@@ -10,11 +10,16 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from wowforever.blizzard import TIMEOUT, USER_AGENT, FetchError, ParseError
+from wowforever.countdown import PACIFIC
+from wowforever.posts import make_summary
 
 FORUM_URL = "https://us.forums.blizzard.com/en/wow"
 CATEGORY_ID = 349  # WoW Forever
 _NOTES_TITLE_RE = re.compile(r"(?i)\b(notes|hotfix(es)?)\b")
 _BATCH = 20
+# "WoW Forever Beta Development Notes – Updated October 15" → "WoW Forever Beta Development Notes"
+_TITLE_DATE_RE = re.compile(r"\s*[–—-]\s*(?:updated\s+)?[a-z]+\.?\s+\d{1,2}(?:,?\s+\d{4})?\s*$", re.I)
+_FIRST_PARAGRAPH_RE = re.compile(r"<p>(.*?)</p>", re.S)
 
 FetchJson = Callable[[str], dict]
 
@@ -34,6 +39,7 @@ class ForumPost:
     cooked: str
     posted: datetime
     url: str
+    thread_title: str
 
 
 def fetch_json(path: str) -> dict:
@@ -69,9 +75,23 @@ def note_topics(category: dict) -> list[NoteTopic]:
     return topics
 
 
+def feed_title(post: ForumPost) -> str:
+    """The thread's name without its date, plus this post's date: one title per build or hotfix post."""
+    day = post.posted.astimezone(PACIFIC)
+    return f"{_TITLE_DATE_RE.sub('', post.thread_title)} – {day:%b} {day.day}"
+
+
+def feed_summary(cooked: str) -> str:
+    """The post's opening paragraph, e.g. "Today, we updated the WoW Forever Beta with a new build…"."""
+    first = _FIRST_PARAGRAPH_RE.search(cooked)
+    return make_summary(first.group(1) if first else cooked)
+
+
 def thread_posts(topic_id: int, fetch: FetchJson) -> list[ForumPost]:
     try:
-        stream = fetch(f"/t/{topic_id}.json")["post_stream"]
+        thread = fetch(f"/t/{topic_id}.json")
+        title = thread.get("title") or ""
+        stream = thread["post_stream"]
         raw = list(stream["posts"])
         have = {p["id"] for p in raw}
         missing = [i for i in stream["stream"] if i not in have]
@@ -82,11 +102,11 @@ def thread_posts(topic_id: int, fetch: FetchJson) -> list[ForumPost]:
             ForumPost(
                 id=int(p["id"]), topic_id=topic_id, number=int(p["post_number"]), cooked=p["cooked"],
                 posted=datetime.fromisoformat(p["created_at"]),
-                url=f"{FORUM_URL}/t/{topic_id}/{p['post_number']}",
+                url=f"{FORUM_URL}/t/{topic_id}/{p['post_number']}", thread_title=title,
             )
             for p in raw
             if p.get("staff") and (p.get("cooked") or "").strip()
         ]
-    except (KeyError, TypeError, ValueError) as err:
+    except (KeyError, TypeError, ValueError, AttributeError) as err:
         raise ParseError(f"unexpected forum thread {topic_id}: {err!r}") from err
     return sorted(posts, key=lambda p: p.number)

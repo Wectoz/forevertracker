@@ -87,6 +87,7 @@ def make_forum_post(**overrides):
         cooked="",
         posted=datetime(2026, 10, 16, 18, tzinfo=UTC),
         url="https://us.forums.blizzard.com/en/wow/t/10/1",
+        thread_title="WoW Forever Beta Development Notes",
     )
     data.update(overrides)
     return ForumPost(**data)
@@ -139,3 +140,53 @@ def test_existing_database_gains_new_tables(tmp_path):
     store = Store(path)
     assert [p.title for p in store.list_posts()] == ["Old"]
     assert store.class_updates("Mage") == []
+
+
+def test_forum_updates_appear_in_the_feed_as_patch_posts():
+    store = Store(":memory:")
+    store.upsert([make_post(id=5, title="Some news")])
+    store.save_update(make_forum_post(id=7), "beta", {"Mage": "m"},
+                      title="WoW Forever Beta Development Notes – Oct 16", summary="Today, we updated the Beta.")
+    feed = store.list_posts()  # newest first: the news post is Oct 20, the forum post Oct 16
+    assert [p.title for p in feed] == ["Some news", "WoW Forever Beta Development Notes – Oct 16"]
+    entry = feed[1]
+    assert entry.kind == "patch" and entry.version is None and entry.on_forums
+    assert entry.url == "https://us.forums.blizzard.com/en/wow/t/10/1"
+    assert entry.summary == "Today, we updated the Beta."
+    assert not feed[0].on_forums
+    assert store.count_posts() == 2 and store.count_posts("patch") == 1
+    assert [p.title for p in store.list_posts("news")] == ["Some news"]
+    assert [p.id for p in store.unversioned_patch_posts()] == [7]
+
+
+def test_update_without_class_sections_is_in_feed_but_not_on_class_pages():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(), "hotfix", {}, title="Hotfixes", summary="s")
+    assert store.class_updates("Mage") == []
+    assert len(store.list_posts()) == 1
+
+
+def test_sections_none_leaves_class_rows_alone():
+    store = Store(":memory:")
+    post = make_forum_post()
+    store.save_update(post, "beta", {"Mage": "kept"}, title="T", summary="S")
+    store.save_update(post, "beta", None, title="T2", summary="S2")
+    assert store.class_updates("Mage")[0].html == "kept"
+    assert store.list_posts()[0].title == "T2"
+
+
+def test_older_updates_table_gains_title_and_summary(tmp_path):
+    import sqlite3
+    path = tmp_path / "old.sqlite3"
+    conn = sqlite3.connect(path)
+    conn.executescript(
+        "CREATE TABLE updates (post_id INTEGER PRIMARY KEY, topic_id INTEGER NOT NULL, kind TEXT NOT NULL,"
+        " url TEXT NOT NULL, posted TEXT NOT NULL);"
+        "INSERT INTO updates VALUES (1, 10, 'beta', 'u', '2026-10-01T18:00:00+00:00');"
+    )
+    conn.commit()
+    conn.close()
+    store = Store(path)
+    assert len(store.list_posts()) == 1
+    store.save_update(make_forum_post(id=1), "beta", {"Mage": "m"}, title="New", summary="S")
+    assert store.list_posts()[0].title == "New"

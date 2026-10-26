@@ -1,23 +1,19 @@
 """Flask website: news feed, news, patches, class patch notes."""
 
 from datetime import UTC, date, datetime
-from zoneinfo import ZoneInfo
 
 from flask import Flask, abort, render_template, request, url_for
 
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
-from wowforever.countdown import LAUNCH, launch_banner, time_left
+from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
 from wowforever.store import Store
 
 PAGE_SIZE = 20
 UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix"}
 
 
-# Blizzard dates its posts in Pacific time; showing UTC would put late-evening posts a day ahead.
-PACIFIC = ZoneInfo("America/Los_Angeles")
-
-
 def _local(value: date | datetime) -> date | datetime:
+    # Showing UTC would put Blizzard's late-evening posts a day ahead.
     return value.astimezone(PACIFIC) if isinstance(value, datetime) and value.tzinfo else value
 
 

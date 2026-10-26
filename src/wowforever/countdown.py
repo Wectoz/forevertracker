@@ -1,6 +1,10 @@
 """Launch countdown banner text."""
 
 from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
+
+# Blizzard dates its posts in Pacific time.
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
 LAUNCH = datetime(2026, 11, 4, 23, 0, tzinfo=UTC)  # Nov 4, 3:00 p.m. PST (DST ends Nov 1)
 

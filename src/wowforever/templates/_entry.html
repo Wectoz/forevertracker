@@ -6,5 +6,5 @@
   </p>
   <h2>{{ post.title }}</h2>
   {% if post.summary %}<p class="summary">{{ post.summary }}</p>{% endif %}
-  <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">Read on Blizzard.com →</a>
+  <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">{% if post.on_forums %}Read on the Blizzard forums →{% else %}Read on Blizzard.com →{% endif %}</a>
 </article>
