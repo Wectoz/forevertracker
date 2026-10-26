@@ -20,9 +20,19 @@ Fetch = Callable[[int], str]
 
 def _gather_page(store: Store, fetch: Fetch, page: int) -> tuple[int, int, bool, datetime | None]:
     listing = parse_listing(fetch(page))
-    posts = [p for p in map(to_post, listing.blogs) if p]
+    posts = []
+    oldest = None
+    for blog in listing.blogs:
+        try:
+            published = datetime.fromisoformat(blog["published"])
+            post = to_post(blog)
+        except (KeyError, ValueError, TypeError) as err:
+            logger.warning("Skipping malformed Blizzard post %r: %r", blog.get("id"), err)
+            continue
+        oldest = published if oldest is None else min(oldest, published)
+        if post:
+            posts.append(post)
     added, edited = store.upsert(posts)
-    oldest = min((datetime.fromisoformat(b["published"]) for b in listing.blogs), default=None)
     return added, edited, listing.has_next, oldest
 
 

@@ -12,6 +12,8 @@ _PATCH_TITLE_RE = re.compile(r"(?i)\b(patch notes|hotfixes)\b")
 # WoW Forever patches are 1.60 and up; Classic Era (1.15.x) and retail (12.x) are not.
 _VERSION_RE = re.compile(r"(?<![\d.])1\.(\d{2,})(?:\.\d+)?(?![\d.]*\d)")
 _TAG_RE = re.compile(r"<[^>]+>")
+# The game's name, not the bare word "forever" (e.g. "remain in combat forever").
+_FOREVER_RE = re.compile(r"(?i)\b(?:wow|warcraft):?\s+forever\b")
 
 
 @dataclass(frozen=True)
@@ -39,7 +41,7 @@ def _is_forever(blog: dict) -> bool:
     if isinstance(keywords, str):
         keywords = [keywords]
     text = " ".join([blog.get("title") or "", blog.get("description") or "", *map(str, keywords)])
-    return "forever" in text.lower()
+    return bool(_FOREVER_RE.search(text))
 
 
 def _is_patch(blog: dict) -> bool:

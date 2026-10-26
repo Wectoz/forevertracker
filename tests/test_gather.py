@@ -130,3 +130,13 @@ def test_hourly_survives_unexpected_errors(caplog):
     while store.count_posts() == 0 and time.monotonic() < deadline:
         time.sleep(0.01)
     assert store.count_posts() > 0
+
+
+def test_malformed_blog_is_skipped_not_fatal(caplog):
+    good = '{"id":5,"title":"WoW: Forever news","url":"/news/5/x","description":"","published":"2026-10-20T00:00:00Z"}'
+    bad = '{"id":6,"title":"WoW: Forever promo","url":"/news/6/y"}'
+    page = '<script id="model">model = {"blogList":{"blogs":[' + bad + "," + good + ']},"paginationLinks":{"next":null}}</script>'
+    store = Store(":memory:")
+    caplog.set_level(logging.WARNING)
+    assert fetch_latest(store, fetch=lambda n: page) == (1, 0)
+    assert "Skipping malformed" in caplog.text

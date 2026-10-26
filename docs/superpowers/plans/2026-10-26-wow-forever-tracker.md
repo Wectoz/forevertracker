@@ -19,7 +19,7 @@
 - Fetching: User-Agent `WoWForeverTracker/0.1 (unofficial fan site)`, 15 s timeout, page 1 once per hour while serving.
 - A failed fetch or parse never deletes or changes stored posts; it logs a warning and the site keeps serving.
 - Empty state copy: `No WoW Forever posts gathered yet. Run "uv run wowforever fetch" to gather them.`
-- Launch moment: `2026-11-04T22:00:00Z` (Nov 4, 3:00 p.m. PDT).
+- Launch moment: `2026-11-04T23:00:00Z` (Nov 4, 3:00 p.m. PST).
 - Theme "Bronze & Stone": background `#16130f`, text `#e8dcc4`, bronze `#8c5a2b` / `#b5773a` / `#d9a35b`, Cinzel headings, Inter body (Google Fonts). Works at 360 px width.
 - DB file: `instance/wowforever.sqlite3` (gitignored).
 
@@ -197,14 +197,14 @@ Each page is upserted only after it parsed successfully. In `backfill`, a page t
 **Interfaces:**
 - Consumes: `Store` and its methods (Task 3); `start_hourly` (Task 4).
 - Produces:
-  - `launch_banner(now: datetime) -> str`; `LAUNCH = datetime(2026, 11, 4, 22, 0, tzinfo=UTC)`
+  - `launch_banner(now: datetime) -> str`; `LAUNCH = datetime(2026, 11, 4, 23, 0, tzinfo=UTC)`
   - `create_app(store: Store) -> Flask`
   - `serve`: `wowforever serve [--port 5000]` → opens Store, `start_hourly(store)`, `app.run(host="127.0.0.1", port=port, use_reloader=False)`.
 
 Countdown copy (pinned), counting whole days by UTC calendar date difference between `now` and `LAUNCH`:
 - before launch, ≥ 2 days: `Launches Nov 4 · N days to go`
 - 1 day: `Launches Nov 4 · 1 day to go`
-- same date, before 22:00 UTC: `Launches today · Nov 4, 3:00 p.m. PDT`
+- same date, before 23:00 UTC: `Launches today · Nov 4, 3:00 p.m. PST`
 - at/after `LAUNCH`: `Live since Nov 4`
 
 Routes:
@@ -217,7 +217,7 @@ Routes:
 - `base.html`: header `WOW FOREVER TRACKER` with nav (Home, News, Patches), footer copy, Google Fonts link for Cinzel 600/800 + Inter 400/600, `<meta name="viewport" content="width=device-width, initial-scale=1">`, `<title>` per page (e.g. `WoW Forever Patches · WoW Forever Tracker`), `<meta name="description">`.
 - `style.css`: Bronze & Stone per Global Constraints and the approved mockup (dark stone gradient nav with 2 px `#8c5a2b` bottom border; banner bronze gradient `#5a3a1c → #8c5a2b` with `#ffe2a8` text; cards `#211b15` with `1px #4a3725` border and `3px #b5773a` left edge; links `#d9a35b`; visible focus outline). Single column, max-width ~760 px, 16 px side padding.
 
-- [ ] **Step 1: Write failing countdown tests** for each copy line: `now=2026-10-26 12:00Z` → `"Launches Nov 4 · 9 days to go"`; `2026-11-03 12:00Z` → `"… 1 day to go"`; `2026-11-04 10:00Z` → `"Launches today · Nov 4, 3:00 p.m. PDT"`; `2026-11-04 22:00Z` and `2026-12-01` → `"Live since Nov 4"`.
+- [ ] **Step 1: Write failing countdown tests** for each copy line: `now=2026-10-26 12:00Z` → `"Launches Nov 4 · 9 days to go"`; `2026-11-03 12:00Z` → `"… 1 day to go"`; `2026-11-04 10:00Z` → `"Launches today · Nov 4, 3:00 p.m. PST"`; `2026-11-04 22:00Z` and `2026-12-01` → `"Live since Nov 4"`.
 - [ ] **Step 2: Write failing web tests** with `create_app(store).test_client()` and a `Store(":memory:")` filled via `make_post`:
   - `test_empty_store_shows_empty_message` for `/`, `/news`, `/patches` (200, contains `No WoW Forever posts gathered yet`).
   - `test_home_lists_posts_with_link_and_footer`: contains a post title, `Read on Blizzard.com`, its full Blizzard URL, and `Unofficial fan site. Not affiliated with Blizzard Entertainment.`
