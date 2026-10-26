@@ -35,7 +35,9 @@ def create_app(store: Store) -> Flask:
     @app.context_processor
     def banner():
         now = datetime.now(UTC)
+        root = request.url_root.rstrip("/")
         return {"banner": launch_banner(now), "left": time_left(now), "launch_iso": LAUNCH.isoformat(),
+                "page_url": root + request.path, "site_root": root,
                 "classes": [(name, slug(name), CLASS_COLORS[name]) for name in CLASSES]}
 
     def page_url(endpoint: str, page: int) -> str:
@@ -49,6 +51,7 @@ def create_app(store: Store) -> Flask:
         posts = store.list_posts(kind, limit=PAGE_SIZE, offset=(page - 1) * PAGE_SIZE)
         return render_template(
             "feed.html", posts=posts, heading=heading, page_title=title, description=description,
+            show_class_cta=endpoint == "home" and page == 1,
             newer_url=page_url(endpoint, page - 1) if page > 1 else None,
             older_url=page_url(endpoint, page + 1) if page * PAGE_SIZE < total else None,
         )
@@ -56,7 +59,7 @@ def create_app(store: Store) -> Flask:
     @app.errorhandler(404)
     def not_found(error):
         return render_template("not_found.html", page_title="Page not found · WoW Forever Tracker",
-                               description="This page does not exist."), 404
+                               description="This page does not exist.", noindex=True), 404
 
     @app.get("/")
     def home():

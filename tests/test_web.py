@@ -174,3 +174,24 @@ def test_home_links_forum_posts_to_the_forums():
     assert "Read on the Blizzard forums →" in html
     assert 'href="https://us.forums.blizzard.com/en/wow/t/10/1"' in html
     assert "Today, we updated the Beta." in create_app(store).test_client().get("/patches").text
+
+
+def test_pages_have_preview_tags_and_favicon():
+    html = client_for().get("/news").text
+    assert '<meta property="og:title" content="WoW Forever News · WoW Forever Tracker">' in html
+    assert '<meta property="og:description" content="World of Warcraft: Forever announcements and news' in html
+    assert '<meta property="og:image" content="http://localhost/static/social.png">' in html
+    assert '<meta property="og:url" content="http://localhost/news">' in html
+    assert '<link rel="canonical" href="http://localhost/news">' in html
+    assert '<meta name="twitter:card" content="summary_large_image">' in html
+    assert 'rel="icon" href="/static/favicon.svg"' in html
+    assert 'rel="apple-touch-icon" href="/static/apple-touch-icon.png"' in html
+
+
+def test_not_found_page_is_not_indexed():
+    assert '<meta name="robots" content="noindex">' in client_for().get("/nope").text
+
+
+def test_home_has_class_call_to_action():
+    assert "Patch notes for your class →" in client_for().get("/").text
+    assert "Patch notes for your class →" not in client_for().get("/news").text

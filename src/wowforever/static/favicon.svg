@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bronze" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0a95e"/>
+      <stop offset=".5" stop-color="#b5813f"/>
+      <stop offset="1" stop-color="#6b431f"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="10" fill="#16130f"/>
+  <rect x="5" y="5" width="54" height="54" rx="8" fill="url(#bronze)"/>
+  <text x="32" y="43" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700"
+        font-size="29" letter-spacing="-1" fill="#1d150e">WF</text>
+</svg>

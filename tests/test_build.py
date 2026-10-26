@@ -41,3 +41,37 @@ def test_build_writes_class_pages_and_icons(tmp_path):
     assert (tmp_path / "classes/mage/index.html").is_file()
     assert (tmp_path / "static/classes/mage.jpg").is_file()
     assert 'href="/wow-forever-news/classes/mage"' in (tmp_path / "index.html").read_text()
+
+
+SITE = "https://wectoz.github.io/wow-forever-news"
+
+
+def test_build_with_site_url_writes_sitemap_and_absolute_preview_urls(tmp_path):
+    build_site(filled_store(), tmp_path, site_url=SITE)
+    sitemap = (tmp_path / "sitemap.xml").read_text()
+    assert f"<loc>{SITE}/</loc>" in sitemap
+    assert f"<loc>{SITE}/classes/mage</loc>" in sitemap
+    assert f"<loc>{SITE}/patches/1.60.1</loc>" in sitemap
+    assert "this-page-does-not-exist" not in sitemap
+    home = (tmp_path / "index.html").read_text()
+    assert f'<meta property="og:image" content="{SITE}/static/social.png">' in home
+    assert f'<link rel="canonical" href="{SITE}/">' in home
+    assert 'href="/wow-forever-news/news"' in home
+    for name in ("favicon.svg", "favicon-32.png", "apple-touch-icon.png", "social.png"):
+        assert (tmp_path / "static" / name).is_file(), name
+
+
+def test_build_fails_on_a_broken_internal_link(tmp_path, monkeypatch):
+    import pytest
+
+    from wowforever import build
+    from wowforever.web import create_app
+
+    def app_with_broken_link(store):
+        app = create_app(store)
+        app.view_functions["home"] = lambda: '<a href="/missing-page">gone</a>'
+        return app
+
+    monkeypatch.setattr(build, "create_app", app_with_broken_link)
+    with pytest.raises(RuntimeError, match="/missing-page"):
+        build_site(Store(":memory:"), tmp_path)

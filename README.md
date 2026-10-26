@@ -37,4 +37,4 @@ uv run wowforever serve       # run the site at http://127.0.0.1:5000 (checks fo
 
 `uv run wowforever fetch` gathers the newest posts right away. Run the tests with `uv run pytest`.
 
-The live site is published to GitHub Pages by `.github/workflows/publish.yml`, every hour and on every push to `master`. To build the static site locally: `uv run wowforever build --out _site --base-path /wow-forever-news`.
+The live site is published to GitHub Pages by `.github/workflows/publish.yml`, every hour and on every push to `master`. To build the static site locally: `uv run wowforever build --out _site --site-url https://wectoz.github.io/wow-forever-news` (this also writes `sitemap.xml`). The build fails if any page links to a page that doesn't exist.
