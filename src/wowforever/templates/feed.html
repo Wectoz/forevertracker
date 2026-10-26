@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+{% if show_class_cta %}
+<p class="cta"><a href="#classes" data-open-classes>Patch notes for your class →</a></p>
+{% endif %}
 <h1>{{ heading }}</h1>
 {% for post in posts %}{% include "_entry.html" %}{% else %}{% include "_empty.html" %}{% endfor %}
 {% if newer_url or older_url %}

@@ -332,3 +332,10 @@ def test_general_only_post_is_in_feed_but_not_on_class_pages():
     gather_class_notes(store, forum_fetch({**FORUM, "/t/2360696.json": thread}))
     assert len(store.list_posts(kind="patch")) == 4
     assert len(store.class_updates("Mage")) == 3
+
+
+def test_cli_build_with_site_url_writes_sitemap(tmp_path, capsys):
+    out = tmp_path / "site"
+    assert cli.main(["--db", str(tmp_path / "d.sqlite3"), "build", "--out", str(out),
+                     "--site-url", "https://wectoz.github.io/wow-forever-news"]) == 0
+    assert "https://wectoz.github.io/wow-forever-news/news" in (out / "sitemap.xml").read_text()

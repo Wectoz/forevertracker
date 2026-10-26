@@ -56,10 +56,11 @@ jobs:
           path: instance
           key: posts-${{ github.run_id }}
 
-      - name: Build site
-        run: uv run wowforever build --out _site --base-path "/${{ github.event.repository.name }}"
+      - id: pages
+        uses: actions/configure-pages@v5
 
-      - uses: actions/configure-pages@v5
+      - name: Build site
+        run: uv run wowforever build --out _site --site-url "${{ steps.pages.outputs.base_url }}"
 
       - uses: actions/upload-pages-artifact@v3
         with:

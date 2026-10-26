@@ -10,7 +10,8 @@ from wowforever.forum import FORUM_URL
 CLASSES = ("Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior")
 CLASS_COLORS = {
     "Druid": "#FF7C0A", "Hunter": "#AAD372", "Mage": "#3FC7EB", "Paladin": "#F48CBA", "Priest": "#FFFFFF",
-    "Rogue": "#FFF468", "Shaman": "#0070DD", "Warlock": "#8788EE", "Warrior": "#C69B6D",
+    # Shaman is lighter than the official #0070DD, which is too dark to read on the stone background.
+    "Rogue": "#FFF468", "Shaman": "#3A96F2", "Warlock": "#8788EE", "Warrior": "#C69B6D",
 }
 _BY_KEY = {name.casefold(): name for name in CLASSES}
 

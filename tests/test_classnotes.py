@@ -92,3 +92,17 @@ def test_links_open_safely_and_relative_links_point_at_the_forums():
     assert '<a href="https://example.com/x" target="_blank" rel="noopener nofollow">abs</a>' in out
     assert '<a href="https://us.forums.blizzard.com/en/wow/t/123" target="_blank" rel="noopener nofollow">rel</a>' in out
     assert "anchor" in out and "#p-1" not in out
+
+
+def _luminance(hex_color):
+    channels = [int(hex_color[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    channels = [c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
+    return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2]
+
+
+def test_class_colors_are_readable_on_the_dark_backgrounds():
+    # WCAG AA for normal text: 4.5:1. Backgrounds: page, menu, card, and the menu's hover/current row.
+    for background in ("#16130f", "#211b15", "#1f1913", "#2c231a"):
+        for name, color in CLASS_COLORS.items():
+            light, dark = sorted([_luminance(color), _luminance(background)], reverse=True)
+            assert (light + 0.05) / (dark + 0.05) >= 4.5, (name, background)

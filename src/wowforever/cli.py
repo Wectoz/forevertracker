@@ -28,6 +28,8 @@ def main(argv: list[str] | None = None) -> int:
     build = commands.add_parser("build", help="write the site as static files")
     build.add_argument("--out", default="_site", help="output folder (default: _site)")
     build.add_argument("--base-path", default="", help='URL prefix the site is served under, e.g. "/wow-forever-news"')
+    build.add_argument("--site-url", help='full site address, e.g. "https://wectoz.github.io/wow-forever-news";'
+                                          " sets the base path and adds absolute preview URLs and a sitemap")
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -43,7 +45,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "build":
         from wowforever.build import build_site
 
-        pages = build_site(store, Path(args.out), base_path=args.base_path)
+        pages = build_site(store, Path(args.out), base_path=args.base_path, site_url=args.site_url)
         print(f"Built {pages} pages into {args.out}.")
         return 0
 
