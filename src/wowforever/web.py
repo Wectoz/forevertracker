@@ -4,7 +4,7 @@ from datetime import UTC, date, datetime
 
 from flask import Flask, abort, render_template, request
 
-from wowforever.countdown import launch_banner
+from wowforever.countdown import LAUNCH, launch_banner, time_left
 from wowforever.store import Store
 
 PAGE_SIZE = 20
@@ -25,7 +25,8 @@ def create_app(store: Store) -> Flask:
 
     @app.context_processor
     def banner():
-        return {"banner": launch_banner(datetime.now(UTC))}
+        now = datetime.now(UTC)
+        return {"banner": launch_banner(now), "left": time_left(now), "launch_iso": LAUNCH.isoformat()}
 
     def feed(kind: str | None, endpoint: str, heading: str, title: str, description: str):
         raw = request.args.get("page", "1")
@@ -55,6 +56,7 @@ def create_app(store: Store) -> Flask:
     def patches():
         return render_template(
             "patches.html", patches=store.list_patches(), hotfixes=store.unversioned_patch_posts(),
+            has_posts=store.count_posts() > 0,
             page_title="WoW Forever Patches · WoW Forever Tracker",
             description="Every World of Warcraft: Forever patch, hotfix and update note.",
         )

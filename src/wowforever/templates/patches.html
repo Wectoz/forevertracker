@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>WoW Forever patches</h1>
-{% if not patches and not hotfixes %}
+{% if not has_posts %}
   {% include "_empty.html" %}
+{% elif not patches and not hotfixes %}
+  <p class="note">No WoW Forever patch notes or hotfixes from Blizzard yet. They will appear here as soon as Blizzard posts them.</p>
 {% else %}
   {% if patches %}
   <ul class="patch-list">

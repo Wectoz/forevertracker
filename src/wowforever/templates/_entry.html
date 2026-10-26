@@ -1,6 +1,6 @@
 <article class="entry">
   <p class="meta">
-    {% if post.kind == "patch" %}<span aria-hidden="true">🛠</span> Patch{% else %}<span aria-hidden="true">📰</span> News{% endif %}
+    {% if post.kind == "patch" %}Patch{% else %}News{% endif %}
     · <time datetime="{{ post.published.isoformat() }}">{{ post.published | short_date }}</time>
     {% if post.edited_at %}<span class="edited">Updated {{ post.edited_at | month_day }}</span>{% endif %}
   </p>
