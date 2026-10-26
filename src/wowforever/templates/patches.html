@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>WoW Forever patches</h1>
+{% if not patches and not hotfixes %}
+  {% include "_empty.html" %}
+{% else %}
+  {% if patches %}
+  <ul class="patch-list">
+    {% for version, released, count in patches %}
+    <li><a href="{{ url_for('patch', version=version) }}">Patch {{ version }}</a>
+      <span class="meta">{{ released | short_date }} · {{ count }} post{{ "s" if count != 1 }}</span></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="note">No numbered WoW Forever patches published by Blizzard yet.</p>
+  {% endif %}
+  <h2 class="section-title">Hotfixes &amp; update notes</h2>
+  {% for post in hotfixes %}{% include "_entry.html" %}{% else %}<p class="note">None yet.</p>{% endfor %}
+{% endif %}
+{% endblock %}

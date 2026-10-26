@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ heading }}</h1>
+{% for post in posts %}{% include "_entry.html" %}{% else %}{% include "_empty.html" %}{% endfor %}
+{% if page > 1 or has_older %}
+<nav class="pager" aria-label="Pages">
+  {% if page > 1 %}<a href="{{ url_for(endpoint, page=page - 1) }}">← Newer posts</a>{% endif %}
+  {% if has_older %}<a class="older" href="{{ url_for(endpoint, page=page + 1) }}">Older posts →</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}
