@@ -15,8 +15,16 @@
     units.days.textContent = pad(Math.floor(minutes / 1440));
     units.hours.textContent = pad(Math.floor((minutes % 1440) / 60));
     units.minutes.textContent = pad(minutes % 60);
-    if (minutes === 0) location.reload();
+    if (minutes === 0) {
+      // Launched: the static page may be up to an hour old, so switch the plate here.
+      plate.querySelector(".plate-label").textContent = "Live since Nov 4";
+      plate.querySelector(".digits").remove();
+      plate.setAttribute("aria-label", "Live since Nov 4");
+      return false;
+    }
+    return true;
   };
-  tick();
-  setInterval(tick, 15000);
+  if (tick()) {
+    const timer = setInterval(() => tick() || clearInterval(timer), 15000);
+  }
 })();

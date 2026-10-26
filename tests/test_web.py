@@ -67,9 +67,13 @@ def test_pagination():
     first = client.get("/").text
     assert first.count('class="entry"') == 20
     assert "Older posts" in first
-    assert client.get("/?page=2").text.count('class="entry"') == 5
-    assert client.get("/?page=3").status_code == 404
-    assert client.get("/?page=abc").status_code == 404
+    assert 'href="/page/2/"' in first
+    second = client.get("/page/2/").text
+    assert second.count('class="entry"') == 5
+    assert 'href="/"' in second and "Newer posts" in second
+    assert client.get("/page/3/").status_code == 404
+    assert client.get("/page/1/").status_code == 404
+    assert client.get("/page/abc/").status_code == 404
 
 
 def test_html_in_title_is_escaped():

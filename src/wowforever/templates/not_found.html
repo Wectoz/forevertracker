@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Page not found</h1>
+<p class="note">That page doesn’t exist. Try the <a href="{{ url_for('home') }}">latest news</a> or the <a href="{{ url_for('patches') }}">patch list</a>.</p>
+{% endblock %}
