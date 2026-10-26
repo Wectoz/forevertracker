@@ -1,5 +1,6 @@
 """Fetch Blizzard's WoW news listing and read the post data embedded in it."""
 
+import http.client
 import json
 import re
 import urllib.error
@@ -48,5 +49,5 @@ def fetch_listing(page: int) -> str:
     try:
         with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
             return response.read().decode("utf-8")
-    except (urllib.error.URLError, TimeoutError, OSError, UnicodeDecodeError) as err:
+    except (urllib.error.URLError, http.client.HTTPException, TimeoutError, OSError, UnicodeDecodeError) as err:
         raise FetchError(f"{url}: {err}") from err

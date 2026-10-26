@@ -22,7 +22,7 @@
           <summary>Classes ▾</summary>
           <ul>
             {% for name, class_slug, class_color in classes %}
-            <li><a href="{{ url_for('class_page', name=class_slug) }}" style="color: {{ class_color }}">
+            <li><a href="{{ url_for('class_page', name=class_slug) }}"{% if class_slug == current_class %} aria-current="page"{% endif %} style="color: {{ class_color }}">
               <img src="{{ url_for('static', filename='classes/' ~ class_slug ~ '.jpg') }}" alt="" width="20" height="20">{{ name }}</a></li>
             {% endfor %}
           </ul>

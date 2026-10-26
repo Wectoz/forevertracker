@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
 
-from wowforever.forum import ForumPost
+from wowforever.forum import FORUM_URL, ForumPost
 from wowforever.posts import Post
 
 _SCHEMA = """
@@ -28,7 +28,9 @@ CREATE TABLE IF NOT EXISTS updates (
     topic_id INTEGER NOT NULL,
     kind TEXT NOT NULL,
     url TEXT NOT NULL,
-    posted TEXT NOT NULL
+    posted TEXT NOT NULL,
+    title TEXT NOT NULL DEFAULT '',
+    summary TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS updates_posted ON updates (posted);
 CREATE TABLE IF NOT EXISTS class_changes (
@@ -39,11 +41,22 @@ CREATE TABLE IF NOT EXISTS class_changes (
 );
 """
 _COLUMNS = "id, title, url, summary, kind, version, published, updated, edited_at"
+# Columns added to `updates` after it first shipped; older databases get them on open.
+_UPDATES_ADDED = {"title": "TEXT NOT NULL DEFAULT ''", "summary": "TEXT NOT NULL DEFAULT ''"}
+# The feed: news-site posts plus every forum notes post (shown as patch posts without a version).
+_FEED = (
+    f"(SELECT {_COLUMNS} FROM posts UNION ALL"
+    " SELECT post_id, title, url, summary, 'patch', NULL, posted, posted, NULL FROM updates)"
+)
 
 
 @dataclass(frozen=True)
 class StoredPost(Post):
     edited_at: datetime | None
+
+    @property
+    def on_forums(self) -> bool:
+        return self.url.startswith(FORUM_URL)
 
 
 @dataclass(frozen=True)
@@ -77,6 +90,10 @@ class Store:
         self._lock = threading.Lock()
         with self._lock, self._conn:
             self._conn.executescript(_SCHEMA)
+            have = {row["name"] for row in self._conn.execute("PRAGMA table_info(updates)")}
+            for column, decl in _UPDATES_ADDED.items():
+                if column not in have:
+                    self._conn.execute(f"ALTER TABLE updates ADD COLUMN {column} {decl}")
 
     def upsert(self, posts: Iterable[Post]) -> tuple[int, int]:
         added = edited = 0
@@ -104,7 +121,7 @@ class Store:
 
     def _select(self, where: str = "", params: tuple = (), order: str = "published DESC",
                 limit: int = -1, offset: int = 0) -> list[StoredPost]:
-        sql = f"SELECT {_COLUMNS} FROM posts {where} ORDER BY {order}, id LIMIT ? OFFSET ?"
+        sql = f"SELECT {_COLUMNS} FROM {_FEED} {where} ORDER BY {order}, id LIMIT ? OFFSET ?"
         with self._lock:
             rows = self._conn.execute(sql, (*params, limit, offset)).fetchall()
         return [_row_to_post(r) for r in rows]
@@ -115,7 +132,7 @@ class Store:
         return self._select("WHERE kind = ?", (kind,), limit=limit, offset=offset)
 
     def count_posts(self, kind: str | None = None) -> int:
-        sql, params = "SELECT COUNT(*) FROM posts", ()
+        sql, params = f"SELECT COUNT(*) FROM {_FEED}", ()
         if kind is not None:
             sql, params = sql + " WHERE kind = ?", (kind,)
         with self._lock:
@@ -136,14 +153,18 @@ class Store:
     def unversioned_patch_posts(self) -> list[StoredPost]:
         return self._select("WHERE kind = 'patch' AND version IS NULL")
 
-    def save_update(self, post: ForumPost, kind: str, sections: dict[str, str]) -> None:
+    def save_update(self, post: ForumPost, kind: str, sections: dict[str, str] | None,
+                    title: str = "", summary: str = "") -> None:
+        """Store a forum notes post. `sections` replaces its class sections; None leaves them as they are."""
         with self._lock, self._conn:
             self._conn.execute(
-                "INSERT INTO updates (post_id, topic_id, kind, url, posted) VALUES (?, ?, ?, ?, ?)"
+                "INSERT INTO updates (post_id, topic_id, kind, url, posted, title, summary) VALUES (?, ?, ?, ?, ?, ?, ?)"
                 " ON CONFLICT (post_id) DO UPDATE SET topic_id = excluded.topic_id, kind = excluded.kind,"
-                " url = excluded.url, posted = excluded.posted",
-                (post.id, post.topic_id, kind, post.url, post.posted.isoformat()),
+                " url = excluded.url, posted = excluded.posted, title = excluded.title, summary = excluded.summary",
+                (post.id, post.topic_id, kind, post.url, post.posted.isoformat(), title, summary),
             )
+            if sections is None:
+                return
             self._conn.execute("DELETE FROM class_changes WHERE post_id = ?", (post.id,))
             self._conn.executemany(
                 "INSERT INTO class_changes (post_id, class, html) VALUES (?, ?, ?)",
@@ -155,6 +176,8 @@ class Store:
             rows = self._conn.execute(
                 "SELECT u.kind, u.posted, u.url, c.html FROM updates u"
                 " LEFT JOIN class_changes c ON c.post_id = u.post_id AND c.class = ?"
+                # Only updates with class notes at all; a general-only post is not "no changes" news.
+                " WHERE EXISTS (SELECT 1 FROM class_changes x WHERE x.post_id = u.post_id)"
                 " ORDER BY u.posted DESC, u.post_id DESC",
                 (cls,),
             ).fetchall()

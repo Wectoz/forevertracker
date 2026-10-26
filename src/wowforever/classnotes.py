@@ -1,8 +1,11 @@
 """Cut the per-class sections out of Blizzard's forum patch notes, keeping only safe HTML."""
 
 import html
+from urllib.parse import urljoin
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
+
+from wowforever.forum import FORUM_URL
 
 CLASSES = ("Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior")
 CLASS_COLORS = {
@@ -26,7 +29,7 @@ def class_for_slug(value: str) -> str | None:
     return _BY_KEY.get(value.casefold())
 
 
-@dataclass
+@dataclass(eq=False)  # nodes are compared by identity: two identical headings are still two headings
 class _Node:
     tag: str
     attrs: dict[str, str]
@@ -82,11 +85,15 @@ def _classes_list(root: _Node) -> _Node | None:
     <li><strong>Classes</strong><ul>…</ul></li>, or <p><strong>Classes</strong></p> followed by <ul>…</ul>."""
     for node, parent in _walk(root):
         if node.tag == "li" and _heading(node) == "classes":
-            return next((c for c in node.elements() if c.tag == "ul"), None)
-        if node.tag in _BLOCK_HEADINGS and node.text().strip().casefold() == "classes":
+            found = next((c for c in node.elements() if c.tag == "ul"), None)
+        elif node.tag in _BLOCK_HEADINGS and node.text().strip().casefold() == "classes":
             siblings = parent.elements()
             following = siblings[siblings.index(node) + 1:]
-            return following[0] if following and following[0].tag == "ul" else None
+            found = following[0] if following and following[0].tag == "ul" else None
+        else:
+            continue
+        if found is not None:
+            return found
     return None
 
 
@@ -101,10 +108,12 @@ def _render(node: _Node | str) -> str:
     if node.tag == "br":
         return "<br>"
     if node.tag == "a":
-        href = node.attrs.get("href", "")
+        href = node.attrs.get("href", "").strip()
+        if href.startswith("/") and not href.startswith("//"):
+            href = urljoin(FORUM_URL, href)  # root-relative forum link
         if not href.startswith(("http://", "https://")):
-            return inner
-        return f'<a href="{html.escape(href)}">{inner}</a>'
+            return inner  # in-page anchors and anything else stay plain text
+        return f'<a href="{html.escape(href)}" target="_blank" rel="noopener nofollow">{inner}</a>'
     return f"<{node.tag}>{inner}</{node.tag}>"
 
 

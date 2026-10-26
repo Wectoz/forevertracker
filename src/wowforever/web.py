@@ -5,18 +5,25 @@ from datetime import UTC, date, datetime
 from flask import Flask, abort, render_template, request, url_for
 
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
-from wowforever.countdown import LAUNCH, launch_banner, time_left
+from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
 from wowforever.store import Store
 
 PAGE_SIZE = 20
 UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix"}
 
 
+def _local(value: date | datetime) -> date | datetime:
+    # Showing UTC would put Blizzard's late-evening posts a day ahead.
+    return value.astimezone(PACIFIC) if isinstance(value, datetime) and value.tzinfo else value
+
+
 def _short_date(value: date | datetime) -> str:
+    value = _local(value)
     return f"{value:%b} {value.day}, {value.year}"
 
 
 def _month_day(value: date | datetime) -> str:
+    value = _local(value)
     return f"{value:%b} {value.day}"
 
 
@@ -99,7 +106,7 @@ def create_app(store: Store) -> Flask:
         if cls is None or name != slug(cls):
             abort(404)
         return render_template(
-            "class.html", cls=cls, slug=name, color=CLASS_COLORS[cls], updates=store.class_updates(cls),
+            "class.html", cls=cls, slug=name, current_class=name, color=CLASS_COLORS[cls], updates=store.class_updates(cls),
             labels=UPDATE_LABELS,
             page_title=f"{cls} Patch Notes · WoW Forever Tracker",
             description=f"Every World of Warcraft: Forever change for the {cls} class, "

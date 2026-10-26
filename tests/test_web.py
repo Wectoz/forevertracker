@@ -88,7 +88,7 @@ def test_edited_label():
     assert "Updated" not in client.get("/").text
     store = Store(":memory:")
     store.upsert([edited])
-    store.upsert([make_post(id=1, title="[Updated 10/22] New", updated=datetime(2026, 10, 22, tzinfo=UTC))])
+    store.upsert([make_post(id=1, title="[Updated 10/22] New", updated=datetime(2026, 10, 22, 18, tzinfo=UTC))])
     assert "Updated Oct 22" in create_app(store).test_client().get("/").text
 
 
@@ -149,3 +149,28 @@ def test_class_page_with_no_updates_is_200_with_message():
 
 def test_unknown_class_is_404():
     assert client_for().get("/classes/deathknight").status_code == 404
+
+
+def test_dates_are_shown_in_pacific_time_like_blizzard():
+    # 00:15 UTC on Oct 16 is still Oct 15 in California, which is how Blizzard dates its posts.
+    late = datetime(2026, 10, 16, 0, 15, tzinfo=UTC)
+    html = class_client((make_forum_post(posted=late), "beta", {"Mage": "<ul><li>x</li></ul>"})).get("/classes/mage").text
+    assert "Beta build · Oct 15" in html
+    assert "Oct 15, 2026" in client_for(make_post(published=late, updated=late)).get("/").text
+
+
+def test_class_menu_marks_the_current_class():
+    html = client_for().get("/classes/mage").text
+    assert 'href="/classes/mage" aria-current="page"' in html
+    assert 'href="/classes/druid" aria-current' not in html
+
+
+def test_home_links_forum_posts_to_the_forums():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(), "beta", {"Mage": "m"},
+                      title="WoW Forever Beta Development Notes – Oct 16", summary="Today, we updated the Beta.")
+    html = create_app(store).test_client().get("/").text
+    assert "WoW Forever Beta Development Notes – Oct 16" in html
+    assert "Read on the Blizzard forums →" in html
+    assert 'href="https://us.forums.blizzard.com/en/wow/t/10/1"' in html
+    assert "Today, we updated the Beta." in create_app(store).test_client().get("/patches").text

@@ -55,7 +55,7 @@ def test_unsafe_markup_is_stripped():
     out = split_classes(html)["Rogue"]
     assert "script" not in out and "alert" not in out and "onclick" not in out and "style" not in out
     assert 'href="javascript' not in out
-    assert '<a href="https://example.com/x">ok</a>' in out
+    assert '<a href="https://example.com/x" target="_blank" rel="noopener nofollow">ok</a>' in out
     assert "bad" in out
 
 
@@ -76,3 +76,19 @@ def test_quoted_notes_in_a_reply_are_ignored():
             '<ul><li><strong>Mage</strong><ul><li>Frostbolt buffed.</li></ul></li></ul></blockquote></aside>'
             "<p>We're looking into the Frostbolt change.</p>")
     assert split_classes(html) == {}
+
+
+def test_later_classes_heading_is_found_when_the_first_has_no_list():
+    html = ("<p><strong>Classes</strong></p><p>Class changes are below.</p>"
+            "<p><strong>Classes</strong></p><ul><li><strong>Mage</strong><ul><li>A</li></ul></li></ul>")
+    assert split_classes(html) == {"Mage": "<ul><li>A</li></ul>"}
+
+
+def test_links_open_safely_and_relative_links_point_at_the_forums():
+    html = ('<ul><li><strong>Classes</strong><ul><li><strong>Mage</strong><ul><li>'
+            '<a href="https://example.com/x">abs</a> <a href="/en/wow/t/123">rel</a> <a href="#p-1">anchor</a>'
+            '</li></ul></li></ul></li></ul>')
+    out = split_classes(html)["Mage"]
+    assert '<a href="https://example.com/x" target="_blank" rel="noopener nofollow">abs</a>' in out
+    assert '<a href="https://us.forums.blizzard.com/en/wow/t/123" target="_blank" rel="noopener nofollow">rel</a>' in out
+    assert "anchor" in out and "#p-1" not in out

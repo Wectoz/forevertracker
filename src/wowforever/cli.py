@@ -47,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Built {pages} pages into {args.out}.")
         return 0
 
+    status = 0
     try:
         if args.command == "fetch":
             added, edited = gather.fetch_latest(store, gather.fetch_listing)
@@ -54,8 +55,9 @@ def main(argv: list[str] | None = None) -> int:
             added, edited = gather.backfill(store, gather.fetch_listing)
     except (FetchError, ParseError) as err:
         print(f"Could not gather from Blizzard: {err}", file=sys.stderr)
-        return 1
-    print(f"Added {added}, updated {edited} WoW Forever posts.")
+        status = 1  # the forum is a separate site, so still gather from it below
+    else:
+        print(f"Added {added}, updated {edited} WoW Forever posts.")
     try:
         saved = gather.gather_class_notes(store, gather.fetch_json)
     except (FetchError, ParseError) as err:
@@ -63,4 +65,4 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Could not gather class notes from the forums: {err}", file=sys.stderr)
     else:
         print(f"Saved {saved} class patch-note updates.")
-    return 0
+    return status

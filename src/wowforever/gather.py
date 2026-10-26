@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 
 from wowforever.blizzard import FetchError, ParseError, fetch_listing, parse_listing
 from wowforever.classnotes import split_classes
-from wowforever.forum import CATEGORY_ID, FetchJson, fetch_json, note_topics, thread_posts
+from wowforever.forum import CATEGORY_ID, FetchJson, feed_summary, feed_title, fetch_json, note_topics, thread_posts
 from wowforever.posts import to_post
 from wowforever.store import Store
 
@@ -59,7 +59,8 @@ def backfill(store: Store, fetch: Fetch | None = None, cutoff: datetime = BACKFI
 
 
 def gather_class_notes(store: Store, fetch: FetchJson | None = None) -> int:
-    """Read every WoW Forever notes thread and store each post's per-class sections."""
+    """Read every WoW Forever notes thread: each post goes into the feed, its class sections onto the
+    class pages. Returns how many posts had class sections."""
     fetch = fetch or fetch_json
     # Threads already stored keep being refreshed after they drop off the category's first page.
     topics = store.note_topics()
@@ -72,19 +73,21 @@ def gather_class_notes(store: Store, fetch: FetchJson | None = None) -> int:
             # One missing or broken thread must not stop the others from being gathered.
             logger.warning("Could not read notes thread %d: %s", topic_id, err)
             continue
-        kept = set()
+        parsed = {post.id: split_classes(post.cooked) for post in posts}
+        # If no post in the thread parses, Blizzard probably changed its markup: keep the stored
+        # class notes rather than wipe them, and only refresh the feed entries.
+        any_parsed = any(parsed.values())
+        if posts and not any_parsed:
+            logger.warning("No class sections in any post of notes thread %d; kept stored class notes", topic_id)
         for post in posts:
-            sections = split_classes(post.cooked)
-            if not sections:
-                logger.warning("No class sections found in %s; skipped", post.url)
-                continue
-            store.save_update(post, kind, sections)
-            kept.add(post.id)
-        # Drop posts Blizzard deleted or emptied of class notes, unless nothing parsed at all:
-        # that looks like a markup change, and the stored history is better than none.
-        if kept:
-            store.prune_topic(topic_id, kept)
-        saved += len(kept)
+            sections = parsed[post.id]
+            if any_parsed and not sections:
+                logger.info("No class sections in %s; shown in the feed only", post.url)
+            store.save_update(post, kind, sections if any_parsed else None,
+                              title=feed_title(post), summary=feed_summary(post.cooked))
+            saved += bool(sections)
+        if posts:
+            store.prune_topic(topic_id, {post.id for post in posts})  # posts Blizzard deleted
     return saved
 
 

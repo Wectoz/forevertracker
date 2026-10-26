@@ -186,7 +186,7 @@ def test_post_without_classes_section_is_not_saved(caplog):
     thread = json.loads(json.dumps(FORUM["/t/2360696.json"]))
     post = thread["post_stream"]["posts"][3]
     post["cooked"] = post["cooked"].replace("<strong>Classes</strong>", "<strong>Other</strong>")
-    caplog.set_level(logging.WARNING)
+    caplog.set_level(logging.INFO)
     store = Store(":memory:")
     assert gather_class_notes(store, forum_fetch({**FORUM, "/t/2360696.json": thread})) == 3
     assert "https://us.forums.blizzard.com/en/wow/t/2360696/4" in caplog.text
@@ -296,3 +296,39 @@ def test_thread_that_no_longer_parses_keeps_its_history():
         post["cooked"] = post["cooked"].replace("Classes", "Klassen")
     assert gather_class_notes(store, forum_fetch({**FORUM, "/t/2360696.json": thread})) == 0
     assert len(store.class_updates("Mage")) == 4
+
+
+def test_cli_fetch_still_gathers_class_notes_when_news_fails(monkeypatch, tmp_path, capsys):
+    def failing(n):
+        raise FetchError("news offline")
+
+    monkeypatch.setattr(gather, "fetch_listing", failing)
+    assert cli.main(["--db", str(tmp_path / "d.sqlite3"), "fetch"]) == 1
+    out, err = capsys.readouterr()
+    assert "Could not gather from Blizzard" in err
+    assert "Saved 4 class patch-note updates." in out
+
+
+def test_every_notes_post_becomes_a_feed_entry():
+    store = Store(":memory:")
+    gather_class_notes(store, forum_fetch())
+    feed = store.list_posts(kind="patch")
+    assert [p.title for p in feed] == [
+        "WoW Forever Beta Development Notes – Oct 15",
+        "WoW Forever Beta Development Notes – Oct 8",
+        "WoW Forever Beta Development Notes – Oct 1",
+        "WoW Forever Beta Development Notes – Sep 24",
+    ]
+    assert feed[-1].summary.startswith("Today, we updated the WoW Forever Beta with a new build")
+    assert "Change Log" not in feed[-1].summary
+    assert feed[-1].url == "https://us.forums.blizzard.com/en/wow/t/2360696/1"
+
+
+def test_general_only_post_is_in_feed_but_not_on_class_pages():
+    thread = json.loads(json.dumps(FORUM["/t/2360696.json"]))
+    post = thread["post_stream"]["posts"][3]
+    post["cooked"] = post["cooked"].replace("<strong>Classes</strong>", "<strong>Other</strong>")
+    store = Store(":memory:")
+    gather_class_notes(store, forum_fetch({**FORUM, "/t/2360696.json": thread}))
+    assert len(store.list_posts(kind="patch")) == 4
+    assert len(store.class_updates("Mage")) == 3

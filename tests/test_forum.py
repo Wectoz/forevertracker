@@ -82,3 +82,13 @@ def test_fetch_json_wraps_network_errors(monkeypatch):
     monkeypatch.setattr(urllib.request, "urlopen", boom)
     with pytest.raises(FetchError):
         fetch_json("/c/349.json")
+
+
+def test_fetch_json_wraps_broken_responses(monkeypatch):
+    import http.client
+
+    def broken(*args, **kwargs):
+        raise http.client.IncompleteRead(b"partial")
+    monkeypatch.setattr(urllib.request, "urlopen", broken)
+    with pytest.raises(FetchError):
+        fetch_json("/c/349.json")
