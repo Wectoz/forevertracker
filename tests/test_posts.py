@@ -84,3 +84,17 @@ def test_fixture_pages_yield_only_forever_posts():
     for post in posts:
         assert "forever" in (post.title + post.summary).lower()
     assert not any("Midnight's 12.1.5" in p.title for p in posts)
+
+
+def test_bare_word_forever_is_not_wow_forever():
+    retail_hotfix = blog(
+        title="Hotfixes: November 6, 2026",
+        description="Fixed an issue where players could remain in combat forever.",
+        tags=["hotfixes"],
+    )
+    assert to_post(retail_hotfix) is None
+
+
+def test_wow_forever_name_variants_match():
+    for title in ("WoW: Forever Podcast", "WoW Forever Weekly", "World of Warcraft: Forever Raids"):
+        assert to_post(blog(title=title)) is not None
