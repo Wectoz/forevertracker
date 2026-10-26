@@ -23,10 +23,19 @@ def main(argv: list[str] | None = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("fetch", help="gather the newest WoW Forever posts")
     commands.add_parser("backfill", help="gather every WoW Forever post since the announcement")
+    serve = commands.add_parser("serve", help="run the website and gather new posts hourly")
+    serve.add_argument("--port", type=int, default=5000)
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     store = _open_store(args.db)
+
+    if args.command == "serve":
+        from wowforever.web import create_app
+
+        gather.start_hourly(store)
+        create_app(store).run(host="127.0.0.1", port=args.port, use_reloader=False)
+        return 0
 
     try:
         if args.command == "fetch":

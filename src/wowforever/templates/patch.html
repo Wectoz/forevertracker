@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="{{ url_for('patches') }}">← All patches</a></p>
+<h1>Patch {{ version }}</h1>
+<p class="meta">Released {{ posts[0].published | short_date }}</p>
+{% for post in posts %}{% include "_entry.html" %}{% endfor %}
+{% endblock %}
