@@ -92,6 +92,32 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .source { font-weight: 600; font-size: .9rem; text-decoration: none; }
 .source:hover { text-decoration: underline; }
 
+/* Thumbnails: the article's header image, or a blue tile for forum (blue) posts. */
+.entry:has(> .thumb) { display: flex; gap: 16px; align-items: flex-start; }
+.entry-body { flex: 1; min-width: 0; }
+.thumb { flex: none; width: 180px; height: 101px; margin-top: 4px; border: 1px solid var(--stone-edge); border-radius: 3px; object-fit: cover; background: #2a1e13; }
+.blue-tile {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  background: linear-gradient(180deg, #3d6fb0 0%, #2c5591 45%, #1b355c 100%); border-color: #3d6fb0; color: #e8f1ff;
+  font-family: Cinzel, Georgia, serif; font-weight: 800; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+}
+.blue-tile svg { width: 56px; height: 56px; filter: drop-shadow(0 2px 0 #0006); }
+
+/* Blue posts: Blizzard staff posts on the forums. */
+.entry.blue-post { background: #171c26; border-color: #2b3e5c; box-shadow: inset 0 1px 0 #1f2a3b; }
+.entry.blue-post::before { background: linear-gradient(90deg, #1f3d6b, #5fa8ff, #1f3d6b); }
+.entry.blue-post:hover { border-color: #3d6fb0; }
+.entry.blue-post .source { color: #7fb8ff; }
+.blue-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #2b4f86; color: #e8f1ff; font-weight: 700; }
+
+@media (max-width: 480px) {
+  .entry:has(> .thumb) { gap: 10px; padding: 12px; }
+  .thumb { width: 110px; height: 62px; }
+  .blue-tile svg { width: 44px; height: 44px; }
+  .blue-tile span, .entry:has(> .thumb) .summary { display: none; }
+  .entry:has(> .thumb) h2 { font-size: 1rem; }
+}
+
 .empty, .note { padding: 16px; background: var(--stone-raised); border: 1px dashed var(--stone-edge); border-radius: 6px; }
 .section-title { font-size: 1.2rem; margin: 2rem 0 .5rem; }
 

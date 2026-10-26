@@ -15,6 +15,7 @@ def make_post(**overrides):
         version=None,
         published=datetime(2026, 10, 20, 12, tzinfo=UTC),
         updated=datetime(2026, 10, 20, 12, tzinfo=UTC),
+        thumbnail=None,
     )
     data.update(overrides)
     return Post(**data)
@@ -190,3 +191,37 @@ def test_older_updates_table_gains_title_and_summary(tmp_path):
     assert len(store.list_posts()) == 1
     store.save_update(make_forum_post(id=1), "beta", {"Mage": "m"}, title="New", summary="S")
     assert store.list_posts()[0].title == "New"
+
+
+def test_thumbnail_is_stored_and_kept_up_to_date_without_marking_an_edit():
+    store = Store(":memory:")
+    store.upsert([make_post(thumbnail="https://cdn.example/a.png")])
+    assert store.list_posts()[0].thumbnail == "https://cdn.example/a.png"
+    assert store.upsert([make_post(thumbnail="https://cdn.example/b.png")]) == (0, 0)
+    post = store.list_posts()[0]
+    assert post.thumbnail == "https://cdn.example/b.png" and post.edited_at is None
+
+
+def test_forum_updates_have_no_thumbnail():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(), "beta", {"Mage": "m"}, title="T", summary="S")
+    assert store.list_posts()[0].thumbnail is None
+
+
+def test_older_posts_table_gains_thumbnail(tmp_path):
+    import sqlite3
+    path = tmp_path / "old.sqlite3"
+    conn = sqlite3.connect(path)
+    conn.executescript(
+        "CREATE TABLE posts (id INTEGER PRIMARY KEY, title TEXT NOT NULL, url TEXT NOT NULL,"
+        " summary TEXT NOT NULL, kind TEXT NOT NULL, version TEXT, published TEXT NOT NULL,"
+        " updated TEXT NOT NULL, edited_at TEXT);"
+        "INSERT INTO posts VALUES (1, 'Old', 'u', 's', 'news', NULL,"
+        " '2026-10-01T00:00:00+00:00', '2026-10-01T00:00:00+00:00', NULL);"
+    )
+    conn.commit()
+    conn.close()
+    store = Store(path)
+    assert store.list_posts()[0].thumbnail is None
+    store.upsert([make_post(id=1, title="Old", summary="s", thumbnail="https://cdn.example/a.png")])
+    assert store.list_posts()[0].thumbnail == "https://cdn.example/a.png"

@@ -195,3 +195,23 @@ def test_not_found_page_is_not_indexed():
 def test_home_has_class_call_to_action():
     assert "Patch notes for your class →" in client_for().get("/").text
     assert "Patch notes for your class →" not in client_for().get("/news").text
+
+
+def test_news_card_shows_small_lazy_thumbnail():
+    html = client_for(make_post(thumbnail="https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/x.png")).get("/").text
+    assert ('<img class="thumb" src="https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/x.png?imwidth=360"'
+            ' alt="" width="180" height="101" loading="lazy">') in html
+
+
+def test_news_card_without_thumbnail_has_no_image():
+    html = client_for(make_post()).get("/news").text
+    assert 'class="thumb"' not in html and "Blue post" not in html
+
+
+def test_blue_post_card_is_tinted_with_tag_and_tile():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(), "beta", {"Mage": "m"}, title="Notes", summary="S")
+    html = create_app(store).test_client().get("/").text
+    assert 'class="entry blue-post"' in html
+    assert '<span class="blue-tag">Blue post</span>' in html
+    assert 'class="thumb blue-tile"' in html
