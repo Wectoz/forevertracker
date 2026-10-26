@@ -56,4 +56,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Could not gather from Blizzard: {err}", file=sys.stderr)
         return 1
     print(f"Added {added}, updated {edited} WoW Forever posts.")
+    try:
+        saved = gather.gather_class_notes(store, gather.fetch_json)
+    except (FetchError, ParseError) as err:
+        # The news is already gathered; a forum outage must not fail the run.
+        print(f"Could not gather class notes from the forums: {err}", file=sys.stderr)
+    else:
+        print(f"Saved {saved} class patch-note updates.")
     return 0
