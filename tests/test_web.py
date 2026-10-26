@@ -5,7 +5,7 @@ import pytest
 from wowforever.store import Store
 from wowforever.web import create_app
 
-from .test_store import make_post
+from .test_store import make_forum_post, make_post
 
 EMPTY = "No WoW Forever posts gathered yet"
 FOOTER = "Unofficial fan site. Not affiliated with Blizzard Entertainment."
@@ -102,3 +102,50 @@ def test_patches_page_with_news_but_no_patches():
     html = client_for(make_post(id=1, title="Some News")).get("/patches").text
     assert EMPTY not in html
     assert "No WoW Forever patch notes or hotfixes from Blizzard yet" in html
+
+
+def class_client(*updates):
+    store = Store(":memory:")
+    for post, kind, sections in updates:
+        store.save_update(post, kind, sections)
+    return create_app(store).test_client()
+
+
+def test_every_page_has_classes_menu_with_icons():
+    html = client_for().get("/news").text
+    assert "Classes" in html
+    for slug in ("druid", "mage", "warrior"):
+        assert f'href="/classes/{slug}"' in html
+        assert f"static/classes/{slug}.jpg" in html
+
+
+def test_class_page_shows_only_that_class():
+    html = class_client(
+        (make_forum_post(id=1, url="https://us.forums.blizzard.com/en/wow/t/10/1"), "beta",
+         {"Mage": "<ul><li>Hot Streak longer</li></ul>", "Druid": "<ul><li>Wrath up</li></ul>"}),
+    ).get("/classes/mage").text
+    assert "Mage patch notes" in html
+    assert "<li>Hot Streak longer</li>" in html and "Wrath up" not in html
+    assert "Beta build · Oct 16" in html
+    assert 'href="https://us.forums.blizzard.com/en/wow/t/10/1"' in html
+    assert "Full notes on the Blizzard forums →" in html
+    assert FOOTER in html
+
+
+def test_update_without_class_changes_shows_dimmed_card():
+    html = class_client((make_forum_post(), "beta", {"Druid": "<ul><li>Wrath up</li></ul>"})).get("/classes/mage").text
+    assert "No Mage changes in this update." in html
+
+
+def test_hotfix_label():
+    html = class_client((make_forum_post(), "hotfix", {"Mage": "<ul><li>x</li></ul>"})).get("/classes/mage").text
+    assert "Hotfix · Oct 16" in html
+
+
+def test_class_page_with_no_updates_is_200_with_message():
+    response = client_for().get("/classes/rogue")
+    assert response.status_code == 200 and "No Rogue patch notes gathered yet" in response.text
+
+
+def test_unknown_class_is_404():
+    assert client_for().get("/classes/deathknight").status_code == 404

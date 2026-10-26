@@ -11,6 +11,7 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Home**: the latest WoW Forever news and patch notes together.
 - **News**: every WoW Forever announcement Blizzard has published so far.
 - **Patches**: patch notes grouped by version number, plus hotfixes.
+- **Classes**: pick your class from the menu to see only its changes from every beta build, patch and hotfix.
 
 Each post shows its date, a short summary when Blizzard gives one, and a link to the full article on Blizzard.com. The launch countdown sits at the top of every page.
 

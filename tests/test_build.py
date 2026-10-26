@@ -34,3 +34,10 @@ def test_build_links_use_base_path(tmp_path):
 def test_build_empty_store(tmp_path):
     build_site(Store(":memory:"), tmp_path, base_path="")
     assert "No WoW Forever posts gathered yet" in (tmp_path / "index.html").read_text()
+
+
+def test_build_writes_class_pages_and_icons(tmp_path):
+    build_site(Store(":memory:"), tmp_path, base_path="/wow-forever-news")
+    assert (tmp_path / "classes/mage/index.html").is_file()
+    assert (tmp_path / "static/classes/mage.jpg").is_file()
+    assert 'href="/wow-forever-news/classes/mage"' in (tmp_path / "index.html").read_text()
