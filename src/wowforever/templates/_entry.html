@@ -16,6 +16,11 @@
     </p>
     <h2>{{ post.title }}</h2>
     {% if post.summary %}<p class="summary">{{ post.summary }}</p>{% endif %}
-    <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">{% if post.on_forums %}Read on the Blizzard forums →{% else %}Read on Blizzard.com →{% endif %}</a>
+    {% if post.on_forums %}
+    <a class="source" href="{{ url_for('notes', post_id=post.id) }}">Read the full notes →</a>
+    <a class="source secondary" href="{{ post.url }}" target="_blank" rel="noopener">Blizzard forums ↗</a>
+    {% else %}
+    <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">Read on Blizzard.com →</a>
+    {% endif %}
   </div>
 </article>

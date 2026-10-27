@@ -128,7 +128,8 @@ def test_class_page_shows_only_that_class():
     assert "<li>Hot Streak longer</li>" in html and "Wrath up" not in html
     assert 'Beta build · <time datetime="2026-10-16T18:00:00+00:00">Oct 16</time>' in html
     assert 'href="https://us.forums.blizzard.com/en/wow/t/10/1"' in html
-    assert "Full notes on the Blizzard forums →" in html
+    assert 'href="/notes/1">Full notes →' in html
+    assert 'id="beta-2026-10-16"' in html
     assert FOOTER in html
 
 
@@ -171,7 +172,8 @@ def test_home_links_forum_posts_to_the_forums():
                       title="WoW Forever Beta Development Notes – Oct 16", summary="Today, we updated the Beta.")
     html = create_app(store).test_client().get("/").text
     assert "WoW Forever Beta Development Notes – Oct 16" in html
-    assert "Read on the Blizzard forums →" in html
+    assert '<a class="source" href="/notes/1">Read the full notes →</a>' in html
+    assert "Blizzard forums ↗" in html
     assert 'href="https://us.forums.blizzard.com/en/wow/t/10/1"' in html
     assert "Today, we updated the Beta." in create_app(store).test_client().get("/patches").text
 
@@ -266,7 +268,7 @@ def test_search_index_has_posts_and_plain_text_class_changes():
     items = client.get("/search.json").json
     assert {"title": "Claim Your Forever Names", "url": "https://worldofwarcraft.blizzard.com/en-us/news/1/x",
             "label": "News", "date": "Oct 20, 2026", "text": "Summary", "external": True} in items
-    assert {"title": "Warrior · Hotfix", "url": "/classes/warrior", "label": "Warrior", "date": "Oct 16, 2026",
+    assert {"title": "Warrior · Hotfix", "url": "/classes/warrior#hotfix-2026-10-16", "label": "Warrior", "date": "Oct 16, 2026",
             "text": "Mortal Strike & more", "external": False} in items
     page = client.get("/search").text
     assert 'data-index="/search.json"' in page and 'href="/search.json"' in page
@@ -308,3 +310,51 @@ def test_plate_links_latest_patch_after_launch(monkeypatch):
     ).get("/").text
     assert "Live now · Day 3" in html
     assert 'Latest: <a href="https://example.com/hotfix" target="_blank" rel="noopener">Hotfixes: November 5</a>' in html
+
+
+def test_search_index_has_full_notes_once():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(), "hotfix", {}, title="WoW Forever Hotfixes – Oct 16",
+                      summary="Hotfixes.", html="<p>Hotfixes.</p><ul><li>Ragefire Chasm loot fixed</li></ul>")
+    items = create_app(store).test_client().get("/search.json").json
+    assert items == [{"title": "WoW Forever Hotfixes – Oct 16", "url": "/notes/1", "label": "Hotfix",
+                      "date": "Oct 16, 2026", "text": "Hotfixes. Ragefire Chasm loot fixed", "external": False}]
+
+
+def test_notes_page_shows_full_notes_and_edits():
+    store = Store(":memory:")
+    post = make_forum_post()
+    store.save_update(post, "hotfix", {}, title="WoW Forever Hotfixes – Oct 16", summary="Hotfixes.",
+                      html="<h2>Dungeons</h2><ul><li>Old fix</li></ul>")
+    store.save_update(post, "hotfix", {}, title="WoW Forever Hotfixes – Oct 16", summary="Hotfixes.",
+                      html="<h2>Dungeons</h2><ul><li>New fix</li></ul>", now=datetime(2026, 10, 17, 20, tzinfo=UTC))
+    client = create_app(store).test_client()
+    html = client.get("/notes/1").text
+    assert "<h1>WoW Forever Hotfixes – Oct 16</h1>" in html
+    assert "<h2>Dungeons</h2><ul><li>New fix</li></ul>" in html
+    assert "Blizzard edited these notes · seen Oct 17" in html
+    assert '<ul class="added"><li>New fix</li></ul>' in html and '<ul class="removed"><li>Old fix</li></ul>' in html
+    assert 'href="https://us.forums.blizzard.com/en/wow/t/10/1"' in html
+    assert "Updated Oct 17" in client.get("/").text  # the feed card flags the edit
+    assert client.get("/notes/2").status_code == 404
+
+
+def test_notes_page_before_full_notes_are_gathered():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(), "beta", {}, title="Beta notes", summary="New build.")
+    html = create_app(store).test_client().get("/notes/1").text
+    assert "New build. The full notes will appear here after the next hourly check" in html
+
+
+def test_class_anchors_are_stable_when_a_second_update_lands_the_same_day():
+    from wowforever.store import ClassUpdate
+    from wowforever.web import _anchors
+
+    first = ClassUpdate(1, "hotfix", datetime(2026, 11, 6, 18, tzinfo=UTC), "u1", "x")
+    second = ClassUpdate(2, "hotfix", datetime(2026, 11, 6, 22, tzinfo=UTC), "u2", "y")
+    assert _anchors([first]) == {1: "hotfix-2026-11-06"}
+    assert _anchors([second, first]) == {1: "hotfix-2026-11-06", 2: "hotfix-2026-11-06-2"}
+
+
+def test_plate_has_a_slot_for_the_local_launch_time():
+    assert '<p class="plate-local" hidden></p>' in client_for().get("/").text

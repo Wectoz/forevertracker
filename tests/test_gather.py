@@ -339,3 +339,11 @@ def test_cli_build_with_site_url_writes_sitemap(tmp_path, capsys):
     assert cli.main(["--db", str(tmp_path / "d.sqlite3"), "build", "--out", str(out),
                      "--site-url", "https://wectoz.github.io/wow-forever-news"]) == 0
     assert "https://wectoz.github.io/wow-forever-news/news" in (out / "sitemap.xml").read_text()
+
+
+def test_gather_stores_full_notes():
+    store = Store(":memory:")
+    gather_class_notes(store, forum_fetch())
+    notes = store.notes()
+    assert notes and all(n.html.startswith("<p>") for n in notes)
+    assert all("<script" not in n.html for n in notes)

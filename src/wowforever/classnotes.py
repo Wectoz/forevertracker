@@ -1,11 +1,13 @@
 """Cut the per-class sections out of Blizzard's forum patch notes, keeping only safe HTML."""
 
 import html
+import re
 from urllib.parse import urljoin
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
 
 from wowforever.forum import FORUM_URL
+from wowforever.posts import plain_text
 
 CLASSES = ("Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Shaman", "Warlock", "Warrior")
 CLASS_COLORS = {
@@ -15,11 +17,14 @@ CLASS_COLORS = {
 }
 _BY_KEY = {name.casefold(): name for name in CLASSES}
 
-_ALLOWED = {"ul", "ol", "li", "strong", "b", "em", "i", "p", "br", "a"}
+_ALLOWED = {"ul", "ol", "li", "strong", "b", "em", "i", "p", "br", "a", "h2", "h3", "h4"}
+# Full notes sit under the page's own <h1>, so their headings start at <h2>.
+_HEADINGS = {"h1": "h2", "h5": "h4", "h6": "h4"}
 _DROPPED = {"script", "style"}  # removed together with their content
 _QUOTES = {"aside", "blockquote"}
 _BLOCK_HEADINGS = {"p", "h1", "h2", "h3", "h4", "h5", "h6"}
 _VOID = {"br", "img", "hr", "input", "meta", "link", "wbr", "source"}
+_LINE_BREAK_RE = re.compile(r"<(?:/?(?:p|li|ul|ol|h[2-4])|br)>")
 
 
 def slug(name: str) -> str:
@@ -101,11 +106,14 @@ def _classes_list(root: _Node) -> _Node | None:
 def _render(node: _Node | str) -> str:
     if isinstance(node, str):
         return html.escape(node, quote=False)
-    if node.tag in _DROPPED:
+    if node.tag in _DROPPED or node.tag in _QUOTES:
         return ""
     inner = "".join(_render(c) for c in node.children)
-    if node.tag not in _ALLOWED:
+    tag = _HEADINGS.get(node.tag, node.tag)
+    if tag not in _ALLOWED:
         return inner
+    if tag != node.tag:
+        return f"<{tag}>{inner}</{tag}>"
     if node.tag == "br":
         return "<br>"
     if node.tag == "a":
@@ -118,11 +126,25 @@ def _render(node: _Node | str) -> str:
     return f"<{node.tag}>{inner}</{node.tag}>"
 
 
-def split_classes(cooked: str) -> dict[str, str]:
+def _parse(cooked: str) -> _Node:
     builder = _TreeBuilder()
     builder.feed(cooked or "")
     builder.close()
-    classes = _classes_list(builder.root)
+    return builder.root
+
+
+def clean_html(cooked: str) -> str:
+    """A whole forum post as safe HTML, without quoted replies."""
+    return _render(_parse(cooked)).strip()
+
+
+def text_lines(safe_html: str) -> list[str]:
+    """One line of plain text per paragraph, heading or list item (nested items are their own lines)."""
+    return [line for line in map(plain_text, _LINE_BREAK_RE.split(safe_html)) if line]
+
+
+def split_classes(cooked: str) -> dict[str, str]:
+    classes = _classes_list(_parse(cooked))
     if classes is None:
         return {}
     sections = {}

@@ -225,3 +225,32 @@ def test_older_posts_table_gains_thumbnail(tmp_path):
     assert store.list_posts()[0].thumbnail is None
     store.upsert([make_post(id=1, title="Old", summary="s", thumbnail="https://cdn.example/a.png")])
     assert store.list_posts()[0].thumbnail == "https://cdn.example/a.png"
+
+
+def test_edits_are_recorded_only_when_the_text_changes():
+    store = Store(":memory:")
+    post = make_forum_post()
+    store.save_update(post, "beta", None)  # gathered before full notes were stored
+    store.save_update(post, "beta", None, html="<ul><li>a</li><li>b</li></ul>")
+    store.save_update(post, "beta", None, html="<ul><li>a</li>\n<li>b</li></ul>")  # same text
+    assert store.notes(1)[0].edits == []
+    assert store.list_posts()[0].edited_at is None
+    seen = datetime(2026, 10, 18, tzinfo=UTC)
+    store.save_update(post, "beta", None, html="<ul><li>a</li><li>c</li></ul>", now=seen)
+    notes = store.notes(1)[0]
+    assert notes.html == "<ul><li>a</li><li>c</li></ul>"
+    assert [(e.seen, e.added, e.removed) for e in notes.edits] == [(seen, ["c"], ["b"])]
+    assert store.list_posts()[0].edited_at == seen
+    store.prune_topic(10, keep=set())
+    assert store.notes() == []
+
+
+def test_announced_posts():
+    store = Store(":memory:")
+    assert store.unannounced() is None
+    store.upsert([make_post(id=1, url="https://a", published=datetime(2026, 10, 2, tzinfo=UTC)),
+                  make_post(id=2, url="https://b", published=datetime(2026, 10, 1, tzinfo=UTC))])
+    store.mark_announced(["https://a"])
+    assert [p.url for p in store.unannounced()] == ["https://b"]
+    store.mark_announced(["https://b", "https://b"])
+    assert store.unannounced() == []

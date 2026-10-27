@@ -50,6 +50,14 @@ jobs:
             uv run wowforever backfill
           fi
 
+      # Posts to Discord only when the DISCORD_WEBHOOK_URL secret is set. Before the cache is saved,
+      # so the record of what was announced is kept for the next run.
+      - name: Announce new posts on Discord
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: uv run wowforever announce
+
       - name: Save gathered posts
         if: always()
         uses: actions/cache/save@v4
