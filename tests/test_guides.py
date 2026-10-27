@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from wowforever.classnotes import CLASSES
-from wowforever.guides import CATEGORIES, MACRO_LIMIT, MACROS, TRENDING
+from wowforever.guides import CATEGORIES, GENERAL_MACROS, MACRO_LIMIT, MACROS, TRENDING
 
 
 def test_every_class_has_macros_and_nothing_else():
@@ -10,7 +10,7 @@ def test_every_class_has_macros_and_nothing_else():
 
 
 def test_macros_fit_in_the_game():
-    for cls, macros in MACROS.items():
+    for cls, macros in [*MACROS.items(), ("All classes", GENERAL_MACROS)]:
         for macro in macros:
             assert len(macro.text) <= MACRO_LIMIT, (cls, macro.name)
             assert "{" not in macro.text, (cls, macro.name)  # no placeholders to fill in

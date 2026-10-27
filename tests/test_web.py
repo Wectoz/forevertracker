@@ -376,7 +376,7 @@ def test_addons_page_links_each_addon_to_curseforge():
 
 def test_macros_page_has_a_section_per_class_with_escaped_macro_text():
     html = client_for().get("/macros").text
-    for cls in ("druid", "hunter", "mage", "paladin", "priest", "rogue", "shaman", "warlock", "warrior"):
+    for cls in ("general", "druid", "hunter", "mage", "paladin", "priest", "rogue", "shaman", "warlock", "warrior"):
         assert f'<section class="macro-class" id="{cls}"' in html
         assert f'href="#{cls}"' in html
     assert "#showtooltip Hunter&#39;s Mark\n/petattack\n/cast Hunter&#39;s Mark" in html

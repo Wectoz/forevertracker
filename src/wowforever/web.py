@@ -6,7 +6,7 @@ from flask import Flask, abort, jsonify, render_template, request, url_for
 
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
-from wowforever.guides import ADDONS_UPDATED, CATEGORIES, MACROS, TRENDING
+from wowforever.guides import ADDONS_UPDATED, CATEGORIES, GENERAL_MACROS, MACROS, TRENDING
 from wowforever.posts import plain_text
 from wowforever.store import ClassUpdate, Store
 
@@ -161,7 +161,8 @@ def create_app(store: Store) -> Flask:
     @app.get("/macros")
     def macros():
         return render_template(
-            "macros.html", macros=[(name, slug(name), CLASS_COLORS[name], MACROS[name]) for name in CLASSES],
+            "macros.html", macros=[("All classes", "general", None, GENERAL_MACROS)]
+            + [(name, slug(name), CLASS_COLORS[name], MACROS[name]) for name in CLASSES],
             page_title="WoW Forever Macros for Every Class · WoW Forever Tracker",
             description="Ready-to-copy World of Warcraft: Forever macros for all nine classes.",
         )

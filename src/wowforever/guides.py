@@ -85,7 +85,8 @@ CATEGORIES = (
     )),
 )
 
-# Spell names as in the Forever beta client, collected and checked by foreverdb.net. Nothing above the beta's
+# Spell names as in the Forever beta client, collected by foreverdb.net and cross-checked against
+# wowclassicforever.info and Blizzard's patch notes. Nothing above the beta's
 # level 30 cap, and nothing that needs you to type in your own item names.
 MACROS = {
     "Druid": (
@@ -94,7 +95,8 @@ MACROS = {
               "#showtooltip Cat Form\n/cancelform\n/cast Cat Form"),
         Macro("Bear Form, Maul, Shift for Swipe", "Shifts into Bear Form if needed, then Mauls, "
               "or Swipes while you hold Shift.",
-              "#showtooltip\n/startattack [form:1,harm,nodead]\n/cast [form:1,mod:shift] Swipe; [form:1] Maul; Bear Form"),
+              "#showtooltip\n/startattack [form:1,harm,nodead]\n"
+              "/cast [form:1,mod:shift] Swipe; [form:1] Maul; Bear Form"),
         Macro("Cat Form, then Prowl", "First press shifts into Cat Form, the next one Prowls. "
               "Pressing again never breaks stealth.",
               "#showtooltip Prowl\n/cast [noform][form:1] Cat Form; !Prowl"),
@@ -109,6 +111,16 @@ MACROS = {
         Macro("Mark of the Wild, Shift for Thorns", "Buffs the friend under your mouse, your target, or yourself.",
               "#showtooltip\n/cast [mod:shift,@mouseover,help,nodead][mod:shift,help,nodead][mod:shift,@player] "
               "Thorns; [@mouseover,help,nodead][help,nodead][@player] Mark of the Wild"),
+        Macro("The right travel form", "Aquatic Form in water, Travel Form outdoors, Cat Form indoors.",
+              "#showtooltip\n/cast [swimming] Aquatic Form; [outdoors] Travel Form; Cat Form"),
+        Macro("Leave your form and heal yourself", "Drops Bear or Cat Form and casts Rejuvenation on you, or Regrowth "
+              "with Shift.",
+              "#showtooltip\n/cancelform\n/cast [mod:shift,@player] Regrowth; [@player] Rejuvenation"),
+        Macro("Entangling Roots your focus", "Roots your focus, the enemy under your mouse, or your target.",
+              "#showtooltip Entangling Roots\n/cast [@focus,harm,nodead][@mouseover,harm,nodead][] Entangling Roots"),
+        Macro("Rebirth in combat, Revive out of it", "Resurrects the dead friend under your mouse or your dead target.",
+              "#showtooltip\n/cast [combat,@mouseover,help,dead][combat,help,dead] Rebirth; "
+              "[@mouseover,help,dead][help,dead] Revive"),
     ),
     "Hunter": (
         Macro("Mark and send the pet", "Puts Hunter's Mark on your target and sends your pet in.",
@@ -128,6 +140,13 @@ MACROS = {
         Macro("Every trap on one key", "Freezing Trap by default, Immolation Trap with Shift, "
               "Frost Trap with Ctrl.",
               "#showtooltip\n/cast [mod:shift] Immolation Trap; [mod:ctrl] Frost Trap; Freezing Trap"),
+        Macro("Arcane Shot that keeps Auto Shot on", "Fires Arcane Shot and makes sure Auto Shot keeps going.",
+              "#showtooltip Arcane Shot\n/cast !Auto Shot\n/cast Arcane Shot"),
+        Macro("Pet attack, follow or stay", "Attacks your mouseover or target. Shift brings the pet back, Ctrl makes "
+              "it stay.",
+              "/petfollow [mod:shift]\n/petstay [mod:ctrl]\n/petattack [nomod,@mouseover,harm,nodead][nomod]"),
+        Macro("Clean Feign Death", "Stops attacking, calls your pet back and Feigns Death.",
+              "#showtooltip Feign Death\n/stopattack\n/petfollow\n/cast Feign Death"),
     ),
     "Mage": (
         Macro("Polymorph your focus or mouseover", "Sheeps your focus, then the enemy under your mouse, "
@@ -146,6 +165,14 @@ MACROS = {
               "#showtooltip Flamestrike\n/cast [@cursor] Flamestrike"),
         Macro("Water, food or mana gem", "Conjures water, food with Shift, or a Mana Agate with Ctrl.",
               "#showtooltip\n/cast [mod:shift] Conjure Food; [mod:ctrl] Conjure Mana Agate; Conjure Water"),
+        Macro("Blizzard at your cursor", "Channels Blizzard where your mouse points, no targeting circle.",
+              "#showtooltip Blizzard\n/cast [@cursor] Blizzard"),
+        Macro("Ice Block, press again to leave it", "Casts Ice Block, and a second press removes it once you're safe.",
+              "#showtooltip Ice Block\n/stopcasting\n/cancelaura Ice Block\n/cast Ice Block"),
+        Macro("Mana Shield and wards", "Mana Shield by default, Fire Ward with Shift, Frost Ward with Ctrl.",
+              "#showtooltip\n/cast [mod:shift] Fire Ward; [mod:ctrl] Frost Ward; Mana Shield"),
+        Macro("Arcane Intellect on mouseover", "Buffs the friend under your mouse, your target, or yourself.",
+              "#showtooltip Arcane Intellect\n/cast [@mouseover,help,nodead][help,nodead][@player] Arcane Intellect"),
     ),
     "Paladin": (
         Macro("Holy Light on mouseover, Shift for Flash of Light", "Heals the friend under your mouse, "
@@ -170,6 +197,16 @@ MACROS = {
               "Doubles as an interrupt.",
               "#showtooltip Hammer of Justice\n/stopcasting\n/cast [@focus,harm,nodead][@mouseover,harm,nodead][] "
               "Hammer of Justice"),
+        Macro("Lay on Hands, Alt for yourself", "Lay on Hands on the friend under your mouse or your target. Alt "
+              "always targets you.",
+              "#showtooltip Lay on Hands\n/cast [mod:alt,@player][@mouseover,help,nodead][help,nodead][@player] "
+              "Lay on Hands"),
+        Macro("Blessing of Protection, even mid-cast", "Stops your cast and protects your mouseover or target. Alt for "
+              "yourself.",
+              "#showtooltip Blessing of Protection\n/stopcasting\n/cast "
+              "[mod:alt,@player][@mouseover,help,nodead][help,nodead][@player] Blessing of Protection"),
+        Macro("Redemption on the dead", "Resurrects the dead player under your mouse, or your dead target.",
+              "#showtooltip Redemption\n/cast [@mouseover,help,dead][help,dead] Redemption"),
     ),
     "Priest": (
         Macro("Heal on mouseover, Shift for Flash Heal", "Heals the friend under your mouse, "
@@ -189,6 +226,15 @@ MACROS = {
               "#showtooltip Shadow Word: Pain\n/cast [@mouseover,harm,nodead][] Shadow Word: Pain"),
         Macro("Wand that stays on", "Starts shooting your wand. A second press doesn't stop it.",
               "#showtooltip Shoot\n/cast !Shoot"),
+        Macro("Psychic Scream right now", "Stops your cast and sends nearby enemies running.",
+              "#showtooltip Psychic Scream\n/stopcasting\n/cast Psychic Scream"),
+        Macro("Fortitude, Spirit or Shadow Protection", "Fortitude by default, Divine Spirit with Shift, Shadow "
+              "Protection with Ctrl.",
+              "#showtooltip\n/cast [mod:shift,@mouseover,help,nodead][mod:shift,@player] Divine Spirit; "
+              "[mod:ctrl,@mouseover,help,nodead][mod:ctrl,@player] Shadow Protection; "
+              "[@mouseover,help,nodead][help,nodead][@player] Power Word: Fortitude"),
+        Macro("Resurrection on the dead", "Resurrects the dead player under your mouse, or your dead target.",
+              "#showtooltip Resurrection\n/cast [@mouseover,help,dead][help,dead] Resurrection"),
     ),
     "Rogue": (
         Macro("One opener key", "From Stealth: Ambush, Garrote with Ctrl, Cheap Shot with Shift. "
@@ -207,6 +253,12 @@ MACROS = {
               "Eviscerate"),
         Macro("Clean Vanish", "Stops auto-attack first, so your next swing can't pull you out of Stealth.",
               "#showtooltip Vanish\n/stopattack\n/cast Vanish"),
+        Macro("Evasion, Sprint or Vanish", "Evasion by default, Sprint with Shift, Vanish with Ctrl.",
+              "#showtooltip\n/stopattack [mod:ctrl]\n/cast [mod:shift] Sprint; [mod:ctrl] Vanish; Evasion"),
+        Macro("Cold Blood Eviscerate", "Cold Blood and Eviscerate on one press, for a guaranteed critical strike.",
+              "#showtooltip Cold Blood\n/cast Cold Blood\n/cast Eviscerate"),
+        Macro("Distract at your cursor", "Throws Distract where your mouse points, no targeting circle.",
+              "#showtooltip Distract\n/cast [@cursor] Distract"),
     ),
     "Shaman": (
         Macro("Call of the Elements, Shift for Totemic Recall", "Drops a full set of totems in one cast. "
@@ -228,6 +280,15 @@ MACROS = {
               "[mod:alt] Windfury Weapon; Rockbiter Weapon"),
         Macro("Ghost Wolf that stays on", "Shifts into Ghost Wolf. Pressing again doesn't cancel it.",
               "#showtooltip Ghost Wolf\n/cast !Ghost Wolf"),
+        Macro("Purge your mouseover", "Strips a magic buff from the enemy under your mouse, your focus, or your "
+              "target.",
+              "#showtooltip Purge\n/cast [@mouseover,harm,nodead][@focus,harm,nodead][] Purge"),
+        Macro("Lightning Shield, Shift for Water Shield", "Keeps your shield up with one key.",
+              "#showtooltip\n/cast [mod:shift] Water Shield; Lightning Shield"),
+        Macro("Grounding Totem, even mid-cast", "Stops your cast and drops Grounding Totem to soak an incoming spell.",
+              "#showtooltip Grounding Totem\n/stopcasting\n/cast Grounding Totem"),
+        Macro("Ancestral Spirit on the dead", "Resurrects the dead player under your mouse, or your dead target.",
+              "#showtooltip Ancestral Spirit\n/cast [@mouseover,help,dead][help,dead] Ancestral Spirit"),
     ),
     "Warlock": (
         Macro("Send your demon in", "Sends your demon at your target with its own opening attack.",
@@ -249,6 +310,14 @@ MACROS = {
               "#showtooltip Fear\n/cast [@focus,harm,nodead][@mouseover,harm,nodead][] Fear"),
         Macro("Healthstone, Shift for Soulstone", "Creates a Healthstone, or a Soulstone while you hold Shift.",
               "#showtooltip\n/cast [mod:shift] Create Soulstone; Create Healthstone"),
+        Macro("Life Tap, Shift for Health Funnel", "Turns health into mana, or heals your demon with Shift.",
+              "#showtooltip\n/cast [mod:shift] Health Funnel; Life Tap"),
+        Macro("Rain of Fire at your cursor", "Rains fire where your mouse points, no targeting circle.",
+              "#showtooltip Rain of Fire\n/cast [@cursor] Rain of Fire"),
+        Macro("Banish your focus", "Banishes your focus, mouseover or target. Works on demons and elementals.",
+              "#showtooltip Banish\n/cast [@focus,harm,nodead][@mouseover,harm,nodead][] Banish"),
+        Macro("Drain Soul rank 1 for shards", "The cheapest Drain Soul, for collecting Soul Shards from dying enemies.",
+              "#showtooltip Drain Soul\n/cast Drain Soul(Rank 1)"),
     ),
     "Warrior": (
         Macro("Overpower from any stance", "Overpowers in Battle Stance, or switches to it first.",
@@ -267,5 +336,31 @@ MACROS = {
               "#showtooltip\n/startattack\n/cast [mod:shift] Cleave; Heroic Strike"),
         Macro("Bloodrage into Battle Shout", "Instant Rage, then Battle Shout, on one press.",
               "#showtooltip Battle Shout\n/cast Bloodrage\n/cast Battle Shout"),
+        Macro("Victory Rush, else Heroic Strike", "Uses Victory Rush after a kill, otherwise queues Heroic Strike.",
+              "#showtooltip\n/cast Victory Rush\n/cast Heroic Strike"),
+        Macro("Interrupt from any stance", "Shield Bash in Battle or Defensive Stance, Pummel in Berserker Stance.",
+              "#showtooltip\n/cast [stance:1/2] Shield Bash; Pummel"),
+        Macro("Revenge with Shield Block", "Revenge and Shield Block on one press. Hold Shift for Revenge only.",
+              "#showtooltip Revenge\n/startattack\n/cast Revenge\n/cast [nomod:shift] Shield Block"),
+        Macro("Shield Wall, Shift for Last Stand", "Switches to Defensive Stance if needed.",
+              "#showtooltip Shield Wall\n/cast [mod:shift] Last Stand; [stance:2] Shield Wall; Defensive Stance"),
     ),
 }
+
+# Macros any class can use.
+GENERAL_MACROS = (
+    Macro("Target the nearest enemy, but keep yours", "Picks the nearest enemy only when you have no living enemy "
+          "targeted.",
+          "/targetenemy [noharm][dead]"),
+    Macro("Set your focus, Shift clears it", "Makes the unit under your mouse, or your target, your focus.",
+          "/clearfocus [mod:shift]\n/focus [nomod,@mouseover,exists,nodead][nomod,@target,exists]"),
+    Macro("Use your best Healthstone", "Uses the strongest Healthstone in your bags.",
+          "#showtooltip\n/use Greater Healthstone\n/use Healthstone\n/use Lesser Healthstone\n"
+          "/use Minor Healthstone"),
+    Macro("Skull on your mouseover", "Puts the Skull marker on the unit under your mouse, or your target.",
+          "/tm [@mouseover,exists,nodead][] !8"),
+    Macro("Pull timer", "Tells your party you're pulling and starts a 5-second countdown.",
+          "/p Pulling in 5\n/countdown 5"),
+    Macro("Zoom the camera further out", "Raises the camera's maximum distance beyond the options slider.",
+          "/console cameraDistanceMaxZoomFactor 2.6"),
+)

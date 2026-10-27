@@ -284,6 +284,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .class-tabs a:hover { border-color: var(--bronze); }
 .class-tabs a[aria-current="page"] { background: #2c231a; border-color: currentColor; }
 .class-tabs img { border-radius: 2px; }
+.class-tabs .all-classes { padding-left: 10px; color: var(--heading); }
 .macro-class { display: grid; gap: 8px; }
 .macro-class[hidden] { display: none; }
 .macro { padding: 10px 12px; }
