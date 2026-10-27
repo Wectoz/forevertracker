@@ -497,9 +497,10 @@ def test_class_page_has_tabs_for_changes_abilities_talents_and_macros():
         assert f'<section class="tab-panel' in html and f'id="{tab}"' in html
         assert f'href="#{tab}"' in html
     assert '<span class="spell">Arcane Shot</span>' in html
-    assert "Marksmanship" in html
+    assert 'src="/static/icons/' in html
+    assert "Marksmanship" in html and 'class="talent has-tip"' in html and 'class="talent-data"' in html
     assert "#showtooltip Hunter&#39;s Mark" in html
-    assert "Not 100% guaranteed" in html
+    assert "From the WoW Forever game client" in html
 
 
 def test_guides_menu_links_races_professions_addons_and_macros():
@@ -513,13 +514,15 @@ def test_races_page_lists_racials():
     html = client_for().get("/races").text
     assert 'id="high-order-skyborne"' in html
     assert '<span class="spell">Stoneform</span>' in html
-    assert "Not 100% guaranteed" in html
+    assert 'src="/static/icons/race-dwarf.png"' in html
+    assert "Artisan&#39;s Precision" in html and "Updated: " in html
+    assert "From the WoW Forever game client" in html
 
 
 def test_profession_pages():
     client = client_for()
     assert 'href="/professions/first-aid"' in client.get("/professions").text
     html = client.get("/professions/tailoring").text
-    assert '<td class="spell">Bolt of Linen Cloth</td>' in html
-    assert "the game files don't say what skill a trainer asks for" in html
+    assert '>Bolt of Linen Cloth</span>' in html and 'id="apprentice"' in html and 'role="tooltip"' in html
+    assert "the game files don't say what skill a trainer asks" in html
     assert client.get("/professions/underwater-basket-weaving").status_code == 404

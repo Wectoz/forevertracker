@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_icon.html" import icon %}
 {% block head %}<link rel="alternate" type="application/atom+xml" title="{{ cls }} patch notes" href="{{ url_for('class_feed', name=slug) }}">{% endblock %}
 {% block content %}
 <h1 class="class-title" style="color: {{ color }}">
@@ -45,42 +46,73 @@
 </section>
 
 <section class="tab-panel" id="abilities" aria-label="{{ cls }} abilities">
-<table class="game-table">
-  <thead><tr><th scope="col">Level</th><th scope="col">Ability</th><th scope="col">Later ranks</th></tr></thead>
-  <tbody>
-  {% for ability in data.abilities %}
-  <tr>
-    <td class="num">{{ ability.level }}</td>
-    <td><span class="spell">{{ ability.name }}</span>
-      {%- if ability.talent %} <span class="tag">Talent</span>{% endif %}
-      {%- if ability.races %} <span class="tag">{{ ability.races | join(", ") }} only</span>{% endif %}
-      {%- if ability.description %}<br><span class="desc">{{ ability.description }}</span>{% endif %}</td>
-    <td class="ranks">{{ ability.ranks | join(", ") }}</td>
-  </tr>
+<p class="game-note">Point at or tap an ability for what it does.</p>
+<div class="spellbook">
+  {% for level, abilities in data.abilities | groupby("level") %}
+  <div class="spell-level">
+    <span class="lvl" title="Level {{ level }}">{{ level }}</span>
+    <ul class="spell-tiles">
+      {% for ability in abilities %}
+      {% set tip = "ability-" ~ (ability.name | slugify) %}
+      <li class="spell-tile has-tip" tabindex="0" aria-describedby="{{ tip }}">
+        {{ icon(ability.icon) }}<span class="spell">{{ ability.name }}</span>
+        <span class="tip" role="tooltip" id="{{ tip }}">
+          <span class="spell">{{ ability.name }}</span>
+          {%- if ability.talent %} <span class="tag">Talent</span>{% endif %}
+          {%- if ability.races %} <span class="tag">{{ ability.races | join(", ") }} only</span>{% endif %}
+          <span class="tip-line">Level {{ ability.level }}{% if ability.ranks %} · later ranks at {{ ability.ranks | join(", ") }}{% endif %}</span>
+          {%- if ability.description %}<span class="desc">{{ ability.description }}</span>{% endif %}
+        </span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
   {% endfor %}
-  </tbody>
-</table>
+</div>
 {% include "_gamedata_note.html" %}
 </section>
 
-<section class="tab-panel" id="talents" aria-label="{{ cls }} talents">
-{% for tree in data.talents %}
-<h2 class="tree">{{ tree.name }}</h2>
-<table class="game-table">
-  <thead><tr><th scope="col">Level</th><th scope="col">Talent</th><th scope="col">Ranks</th></tr></thead>
-  <tbody>
-  {% for talent in tree.talents %}
-  <tr>
-    <td class="num">{{ talent.level }}</td>
-    <td><span class="spell">{{ talent.name }}</span>
-      {%- if talent.description %}<br><span class="desc">{% if talent.ranks > 1 %}Rank 1: {% endif %}{{ talent.description }}</span>{% endif %}</td>
-    <td class="num">{{ talent.ranks }}</td>
-  </tr>
-  {% endfor %}
-  </tbody>
-</table>
-{% endfor %}
-<p class="game-note">Level is the earliest you can reach that row of the tree: 5 talent points per row, one point per level from 10.</p>
+<section class="tab-panel" id="talents" aria-label="{{ cls }} talent calculator">
+<div class="talent-calc">
+  <p class="talent-summary" aria-live="polite">
+    <span>Points left: <b class="tc-left">51</b></span>
+    <span>Required level: <b class="tc-level">10</b></span>
+    <button type="button" class="tc-reset">Reset</button>
+    <a class="tc-link" href="#talents">Link to this build</a>
+  </p>
+  <div class="talent-trees">
+    {% for tree in data.talents %}
+    {% set t = loop.index0 %}
+    <section class="talent-tree" aria-label="{{ tree.name }} talents">
+      <h2 class="tree">{{ tree.name }} <span class="tree-points">0</span></h2>
+      <div class="talent-grid">
+        {% for talent in tree.talents %}
+        {% if talent.requires %}{% set from = tree.talents[talent.requires[0]] %}
+        {% if from.column == talent.column %}
+        <span class="talent-arrow down" data-to="{{ loop.index0 }}" style="grid-column: {{ talent.column + 1 }}; grid-row: {{ from.tier + 1 }} / {{ talent.tier + 2 }}"></span>
+        {% elif from.tier == talent.tier %}
+        <span class="talent-arrow side" data-to="{{ loop.index0 }}" style="grid-row: {{ talent.tier + 1 }}; grid-column: {{ [from.column, talent.column] | min + 1 }} / {{ [from.column, talent.column] | max + 2 }}"></span>
+        {% endif %}{% endif %}
+        {% set tip = "talent-" ~ t ~ "-" ~ loop.index0 %}
+        <button type="button" class="talent has-tip" data-index="{{ loop.index0 }}" aria-describedby="{{ tip }}"
+                aria-label="{{ talent.name }}, 0 of {{ talent.ranks | length }}"
+                style="grid-column: {{ talent.column + 1 }}; grid-row: {{ talent.tier + 1 }}">
+          {{ icon(talent.icon, 40) }}<span class="talent-rank">0/{{ talent.ranks | length }}</span>
+          <span class="tip" role="tooltip" id="{{ tip }}">
+            <span class="spell">{{ talent.name }}</span>
+            <span class="tip-line">Rank 0/{{ talent.ranks | length }}{% if talent.tier %} · needs {{ 5 * talent.tier }} points in {{ tree.name }}{% endif %}</span>
+            {%- if talent.ranks[0] %}<span class="desc">{{ talent.ranks[0] }}</span>{% endif %}
+          </span>
+        </button>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+  <script type="application/json" class="talent-data">{{ data.talents | tojson }}</script>
+</div>
+<p class="game-note">Click a talent to learn a rank, right-click (or Shift+click, or Delete) to unlearn it. 51 points at level 60:
+  one per level from 10, and 5 points in a tree open its next row.</p>
 {% include "_gamedata_note.html" %}
 </section>
 
@@ -91,5 +123,7 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='tabs.js') }}" defer></script>
+<script src="{{ url_for('static', filename='tooltips.js') }}" defer></script>
+<script src="{{ url_for('static', filename='talents.js') }}" defer></script>
 <script src="{{ url_for('static', filename='classpage.js') }}" defer></script>
 {% endblock %}

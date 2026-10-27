@@ -56,16 +56,12 @@ def _anchors(updates: list[ClassUpdate]) -> dict[int, str]:
     return anchors
 
 
-def _slugify(name: str) -> str:
-    return name.lower().replace(" ", "-")
-
-
 def create_app(store: Store) -> Flask:
     app = Flask(__name__)
     app.jinja_env.filters["short_date"] = _short_date
     app.jinja_env.filters["month_day"] = _month_day
     app.jinja_env.filters["checked_time"] = _checked_time
-    app.jinja_env.filters["slugify"] = _slugify
+    app.jinja_env.filters["slugify"] = gamedata.slugify
     game = gamedata.load()
 
     @app.context_processor
@@ -197,7 +193,8 @@ def create_app(store: Store) -> Flask:
     @app.get("/races")
     def races():
         return render_template(
-            "races.html", races=game["races"], page_title="WoW Forever Races & Racials · WoW Forever Tracker",
+            "races.html", races=gamedata.current_races(game), race_icons=game["race_icons"],
+            racial_notes=gamedata.RACIAL_NOTES, page_title="WoW Forever Races & Racials · WoW Forever Tracker",
             description="The racial abilities of every World of Warcraft: Forever race, Skyborne included.",
         )
 
@@ -211,7 +208,7 @@ def create_app(store: Store) -> Flask:
 
     @app.get("/professions/<name>")
     def profession(name: str):
-        found = next((p for p in game["professions"] if _slugify(p) == name), None)
+        found = next((p for p in game["professions"] if gamedata.slugify(p) == name), None)
         if found is None:
             abort(404)
         return render_template(

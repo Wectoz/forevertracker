@@ -62,11 +62,17 @@ Abilities, talents, racials and recipes are read from the WoW Forever game clien
 1. Get the tools once: [.NET 10](https://dotnet.microsoft.com), `git clone https://github.com/wowdev/TACTSharp` (build `TACTTool` with `dotnet build -c Release`), `git clone https://github.com/wowdev/WoWDBDefs`, and the [community listfile](https://github.com/wowdev/wow-listfile) saved as `listfile.csv`, which maps table names to file IDs.
 2. Extract the tables (from WSL; adjust the game folder):
    ```sh
-   for t in chrclasses chrraces skillline skilllineability skillraceclassinfo spellname spell spelllevels spelleffect spellmisc spellduration spellradius talent talenttab itemsparse itemeffect itemxitemeffect; do
+   for t in chrclasses chrraces skillline skilllineability skillraceclassinfo spellname spell spelllevels spelleffect spellmisc spellduration spellradius talent talenttab itemsparse itemeffect itemxitemeffect item spellauraoptions spelltargetrestrictions spellrange; do
      id=$(grep -i ";dbfilesclient/$t.db2$" listfile.csv | cut -d';' -f1)
      dotnet TACTTool.dll -p wowf -r eu -d "/mnt/c/Program Files (x86)/World of Warcraft" -m fdid -i $id -o db2/$t.db2
    done
    ```
-3. `uv run wowforever gamedata db2 WoWDBDefs/definitions`, check the pages with `uv run wowforever serve`, and commit `gamedata.json`.
+3. `uv run wowforever gamedata db2 WoWDBDefs/definitions`. This writes `gamedata.json` and `db2/icons.txt`, the icons the pages need.
+4. Extract and convert the icons:
+   ```sh
+   dotnet TACTTool.dll -p wowf -r eu -d "/mnt/c/Program Files (x86)/World of Warcraft" -m list -i db2/icons.txt -o blp
+   uv run --group gamedata wowforever icons blp
+   ```
+5. Check the pages with `uv run wowforever serve`, and commit `gamedata.json` and `src/wowforever/static/icons/`.
 
 Season of Discovery spells are still in the client files; they are left out by spell ID range (see `gamedata.py`).

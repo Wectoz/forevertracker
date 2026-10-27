@@ -16,15 +16,17 @@ def test_reads_a_client_table():
     assert {k: v["SortIndex"] for k, v in rows.items()}[9] == 4
 
 
-def spell(sid, name, text="", level=0, base=0.0, duration=None, period=0, chain=0):
+def spell(sid, name, text="", level=0, base=0.0, duration=None, period=0, chain=0, icon=0, effect=0, item=0):
     """Rows for one spell across the spell tables."""
     return {
         "SpellName": {sid: {"Name_lang": name}},
         "Spell": {sid: {"Description_lang": text}},
         "SpellLevels": {sid: {"SpellID": sid, "SpellLevel": level, "DifficultyID": 0}} if level else {},
         "SpellEffect": {sid: {"SpellID": sid, "EffectIndex": 0, "DifficultyID": 0, "EffectBasePointsF": base,
-                              "EffectAuraPeriod": period, "EffectChainTargets": chain, "EffectRadiusIndex": [0, 0]}},
-        "SpellMisc": {sid: {"SpellID": sid, "DifficultyID": 0, "DurationIndex": duration or 0}},
+                              "EffectAuraPeriod": period, "EffectChainTargets": chain, "EffectRadiusIndex": [0, 0],
+                              "EffectMiscValue": [0, 0], "EffectPointsPerResource": 0.0, "EffectAmplitude": 0.0,
+                              "Effect": effect, "EffectItemType": item}},
+        "SpellMisc": {sid: {"SpellID": sid, "DifficultyID": 0, "DurationIndex": duration or 0, "SpellIconFileDataID": icon}},
     }
 
 
@@ -49,12 +51,26 @@ def tables(*parts) -> dict:
     ("Deals ${19*$<frostdamage>} damage.", "Deals 19 damage."),
     ("Back to $z.", None),  # a placeholder this can't fill: no description rather than a wrong one
     ("", None),
+    ("The next $n attacks, $h% chance, up to $u stacks.", "The next 3 attacks, 20% chance, up to 5 stacks."),
+    ("Hits up to $i enemies of level $v or lower.", "Hits up to 4 enemies of level 50 or lower."),
+    ("Converts $*15;s1 mana.", "Converts 150 mana."),
+    ("Deals ${$s1+$SPFR*0.1+$rap} damage.", "Deals 10 damage."),
+    ("|cFFFF2020Requires Bear Form|r Charge.", "Requires Bear Form Charge."),
+    ("Roots. $@spelldesc2", "Roots. Deals 7 damage."),
 ])
 def test_describe_fills_placeholders(text, expected):
-    t = tables(spell(1, "Test", text, base=10, duration=1, chain=3))
+    t = tables(spell(1, "Test", text, base=10, duration=1, chain=3), spell(2, "Other", "Deals $s1 damage.", base=7))
+    t["SpellAuraOptions"] = {1: {"SpellID": 1, "DifficultyID": 0, "ProcCharges": 3, "ProcChance": 20, "CumulativeAura": 5}}
+    t["SpellTargetRestrictions"] = {1: {"SpellID": 1, "DifficultyID": 0, "MaxTargets": 4, "MaxTargetLevel": 50}}
     if "Lasts" in text:
         t["SpellMisc"][1]["DurationIndex"] = 2
     assert gamedata.Describer(t)(1) == expected
+
+
+def test_describe_falls_back_to_the_buff_text():
+    t = tables(spell(1, "Cat Form (Passive)"))
+    t["Spell"][1]["AuraDescription_lang"] = "Immune to Polymorph."
+    assert gamedata.Describer(t)(1) == "Immune to Polymorph."
 
 
 def hunter_data(*parts):
@@ -73,32 +89,46 @@ def ability(row_id, sid, line=50, class_mask=4, races=(0, 0)):
 
 def test_class_abilities_group_ranks_and_skip_pets_and_season_of_discovery():
     data = hunter_data(
-        spell(1978, "Serpent Sting", "Poisons for $s1.", level=4, base=20), ability(1, 1978),
+        spell(1978, "Serpent Sting", "Poisons for $s1.", level=4, base=20, icon=132204), ability(1, 1978),
         spell(13549, "Serpent Sting", level=10), ability(2, 13549, class_mask=0),
+        spell(5000, "Execute", level=24), ability(7, 5000),  # the first rank has no text, a later one does
+        spell(5001, "Execute", "Finish them for $s1.", level=32, base=125), ability(8, 5001),
         spell(17253, "Bite", level=1), ability(3, 17253, line=261),  # pet ability
         spell(409379, "Kill Command", level=1), ability(4, 409379),  # Season of Discovery rune
         spell(1293241, "Summon Hawk", level=25), ability(5, 1293241),  # Forever's own
         spell(9999, "Hunter Passive (DND)", level=1), ability(6, 9999),
     )
     assert data["abilities"] == [
-        {"name": "Serpent Sting", "level": 4, "ranks": [10], "talent": False, "races": [],
+        {"name": "Serpent Sting", "level": 4, "ranks": [10], "talent": False, "races": [], "icon": 132204,
          "description": "Poisons for 20."},
-        {"name": "Summon Hawk", "level": 25, "ranks": [], "talent": False, "races": [], "description": None},
+        {"name": "Execute", "level": 24, "ranks": [32], "talent": False, "races": [], "icon": None,
+         "description": "Finish them for 125."},
+        {"name": "Summon Hawk", "level": 25, "ranks": [], "talent": False, "races": [], "icon": None, "description": None},
     ]
 
 
 def test_talents_by_tree_and_trained_talent_ranks_are_tagged():
+    talent = lambda tier, column, ranks, prereq=0, rank=0: {
+        "TabID": 1, "TierID": tier, "ColumnIndex": column, "SpellRank": ranks, "PrereqTalent": [prereq, 0, 0],
+        "PrereqRank": [rank, 0, 0]}
     data = hunter_data(
         {"TalentTab": {1: {"ID": 1, "Name_lang": "Marksmanship", "ClassMask": 4, "OrderIndex": 1}},
-         "Talent": {1: {"TabID": 1, "TierID": 2, "ColumnIndex": 1, "SpellRank": [19434, 0]},
-                    2: {"TabID": 1, "TierID": 0, "ColumnIndex": 0, "SpellRank": [19407, 19412, 0]}}},
-        spell(19434, "Aimed Shot", level=20), ability(1, 19434),
+         "Talent": {1: talent(2, 1, [19434, 0], prereq=2, rank=1),
+                    2: talent(0, 0, [19407, 19412, 0]),
+                    3: talent(1, 0, [19420], prereq=99)}},  # its prerequisite isn't in the tree
+        spell(19434, "Aimed Shot", level=20, icon=135130), ability(1, 19434),
         spell(20900, "Aimed Shot", level=28), ability(2, 20900),
-        spell(19407, "Improved Concussive Shot", level=1), ability(3, 19407),  # talent only: not an ability
+        spell(19407, "Improved Concussive Shot", "Dazes $s1% longer.", level=1, base=1), ability(3, 19407),
+        spell(19412, "Improved Concussive Shot", "Dazes $s1% longer.", base=2),
+        spell(19420, "Lethal Shots"),
     )
     assert [t["name"] for t in data["talents"]] == ["Marksmanship"]
-    assert [(t["name"], t["level"], t["ranks"]) for t in data["talents"][0]["talents"]] == [
-        ("Improved Concussive Shot", 10, 2), ("Aimed Shot", 20, 1)]
+    assert data["talents"][0]["talents"] == [
+        {"name": "Improved Concussive Shot", "tier": 0, "column": 0, "icon": None,
+         "ranks": ["Dazes 1% longer.", "Dazes 2% longer."], "requires": None},
+        {"name": "Lethal Shots", "tier": 1, "column": 0, "icon": None, "ranks": [None], "requires": None},
+        {"name": "Aimed Shot", "tier": 2, "column": 1, "icon": 135130, "ranks": [None], "requires": [0, 2]},
+    ]
     assert [(a["name"], a["talent"], a["ranks"]) for a in data["abilities"]] == [("Aimed Shot", True, [28])]
 
 
@@ -119,9 +149,9 @@ def test_races_list_their_racials_once_and_skip_races_without_any():
         spell(1259416, "Walk on Air"), ability(4, 1259416, 2980, 0, (0, 1)),
     ), "b")
     assert data["races"] == {
-        "Human": [{"name": "The Human Spirit", "description": "Spirit increased by 5%."},
-                  {"name": "Expansive Mind", "description": None}],
-        "High Order Skyborne": [{"name": "Walk on Air", "description": None}],
+        "Human": [{"name": "The Human Spirit", "icon": None, "description": "Spirit increased by 5%."},
+                  {"name": "Expansive Mind", "icon": None, "description": None}],
+        "High Order Skyborne": [{"name": "Walk on Air", "icon": None, "description": None}],
     }
 
 
@@ -140,21 +170,52 @@ def test_professions_list_recipes_with_their_source():
     data = gamedata.build(tables(
         {"SkillLine": {197: {"CategoryID": 11, "DisplayName_lang": "Tailoring"},
                        2933: {"CategoryID": 11, "DisplayName_lang": "Test Profession [DNT]"}},
-         "ItemSparse": {7: {"Display_lang": "Pattern: Red Woolen Bag", "RequiredSkillRank": 115}},
+         "ItemSparse": {7: {"Display_lang": "Pattern: Red Woolen Bag", "RequiredSkillRank": 115},
+                        2592: {"Display_lang": "Wool Cloth"}},
+         "Item": {5764: {"IconFileDataID": 133639}, 2592: {"IconFileDataID": 132911}},
+         "SpellReagents": {1: {"SpellID": 6688, "Reagent": [2592, 0], "ReagentCount": [3, 0]}},
          "ItemEffect": {70: {"TriggerType": 6, "SpellID": 6688}},
          "ItemXItemEffect": {1: {"ItemEffectID": 70, "ItemID": 7}}},
         spell(3908, "Tailoring"), recipe(1, 3908, 0, 0),  # the profession itself
-        spell(2963, "Bolt of Linen Cloth"), recipe(2, 2963, 25, 50, acquire=1),
-        spell(6688, "Red Woolen Bag"), recipe(3, 6688, 115, 150),
-        spell(3915, "Brown Linen Shirt"), recipe(4, 3915, 35, 70),
+        spell(2963, "Bolt of Linen Cloth", icon=136243), recipe(2, 2963, 25, 50, acquire=1),
+        spell(6688, "Red Woolen Bag", effect=24, item=5764, icon=1), recipe(3, 6688, 115, 150),  # shows the bag
+        spell(3915, "Brown Linen Shirt", "Makes a shirt."), recipe(4, 3915, 35, 70),
         spell(435827, "Hyperconductive Arcano-Filament"), recipe(5, 435827, 200, 220),  # Season of Discovery
     ), "b")
+    extra = {"makes": 0, "item": None, "description": None, "reagents": []}
     assert data["professions"] == {"Tailoring": [
-        {"name": "Bolt of Linen Cloth", "yellow": 25, "grey": 50, "source": "Known when you learn the profession",
-         "skill": None},
-        {"name": "Brown Linen Shirt", "yellow": 35, "grey": 70, "source": "Trainer", "skill": None},
-        {"name": "Red Woolen Bag", "yellow": 115, "grey": 150, "source": "Pattern: Red Woolen Bag", "skill": 115},
+        {"name": "Bolt of Linen Cloth", "icon": 136243, "yellow": 25, "grey": 50, "source": "Starting recipe",
+         "skill": None, **extra},
+        {"name": "Brown Linen Shirt", "icon": None, "yellow": 35, "grey": 70, "source": "Trainer", "skill": None,
+         **extra, "description": "Makes a shirt."},
+        {"name": "Red Woolen Bag", "icon": 133639, "yellow": 115, "grey": 150, "source": "Pattern: Red Woolen Bag",
+         "skill": 115, **extra, "reagents": [[3, "Wool Cloth", 132911]]},
     ]}
+
+
+def item_tables(item_class, subclass, slot, quality=3, level=63, **sparse):
+    t = tables({
+        "Item": {1: {"ClassID": item_class, "SubclassID": subclass}},
+        "ItemSparse": {1: {"Display_lang": "Test Item", "ItemLevel": level, "OverallQualityID": quality,
+                           "InventoryType": slot, "Bonding": 2, "RequiredLevel": 58, "ContainerSlots": 0,
+                           "StatModifier_bonusStat": [7, 38, 32, -1], "StatPercentEditor": [5000, 10000, 2000, 0],
+                           "DmgVariance": 0.5, "ItemDelay": 3800, **sparse}},
+        "RandPropPoints": {level: {"Superior": [140, 100, 80, 60, 40]}},
+        "ItemDamageTwoHand": {1: {"ItemLevel": level, "Quality": [0, 0, 0, 53.9, 0, 0, 0]}},
+        "ItemArmorTotal": {1: {"ItemLevel": level, "Cloth": 100.0, "Leather": 0, "Mail": 0, "Plate": 0}},
+        "ArmorLocation": {5: {"Clothmodifier": 0.5, "Leathermodifier": 0, "Chainmodifier": 0, "Platemodifier": 0}},
+        "ItemArmorQuality": {level: {"Qualitymod": [0, 0, 0, 1.2, 0, 0, 0]}},
+    })
+    return gamedata.ItemTooltip(t, gamedata.Describer(t))(1)
+
+
+def test_item_tooltip_works_out_damage_armor_and_stats_from_item_level():
+    weapon = item_tables(2, 1, 17)  # a two-handed axe
+    assert weapon["lines"] == ["Binds when equipped", "Two-Hand · Axe", "153 - 256 Damage · Speed 3.80",
+                               "(53.9 damage per second)", "+70 Stamina", "Requires Level 58"]
+    assert weapon["effects"] == ["Equip: +140 Attack Power.", "Equip: Improves your chance to get a critical strike by 2%."]
+    robe = item_tables(4, 1, 20)  # a cloth robe: chest armor
+    assert robe["lines"][1:3] == ["Chest · Cloth", "60 Armor"]
 
 
 def test_committed_data_covers_every_class_race_and_profession():
@@ -165,3 +226,26 @@ def test_committed_data_covers_every_class_race_and_profession():
     assert {"Alchemy", "Cooking", "Tailoring"} <= set(data["professions"])
     names = {a["name"] for c in CLASSES for a in data["classes"][c]["abilities"]}
     assert "Riptide" in names and "Kill Command" not in names  # Forever's addition in, Season of Discovery rune out
+    assert all((gamedata.ICONS / f"{i}.jpg").exists() for i in gamedata.icon_ids(data))
+    assert set(data["race_icons"]) == set(data["races"])
+    assert all((gamedata.ICONS / f"race-{gamedata.slugify(r)}.png").exists() for r in data["race_icons"])
+
+
+def test_packed_values_keep_only_their_declared_bits():
+    # a u8 column whose 32-bit pallet entry carries the next float's bits on top (War Stomp's 5 targets)
+    assert wdc5._fit(0x41A00005, {"size": 8, "unsigned": True}) == 5
+    assert wdc5._fit(0xFFFF, {"size": 16, "unsigned": False}) == -1
+    assert wdc5._fit(0x41A00005, {"size": 32, "unsigned": False}) == 0x41A00005
+
+
+def test_announced_racial_changes_apply_to_the_client_racials():
+    data = gamedata.load()
+    names = {r["name"] for racials in data["races"].values() for r in racials}
+    # every change still names a racial the client has; drop entries a new client build has caught up with
+    assert set(gamedata.RACIAL_CHANGES) | gamedata.RACIALS_REMOVED <= names
+    races = gamedata.current_races(data)
+    dwarf = [r["name"] for r in races["Dwarf"]]
+    assert "Earth Fury" not in dwarf and "Artisan's Precision" in dwarf
+    ruthless = next(r for r in races["Human"] if r["name"] == "Ruthless")
+    assert "by 1%" in ruthless["description"] and ruthless["change"]
+    assert "change" not in data["races"]["Human"][0]  # the client data itself is left as read

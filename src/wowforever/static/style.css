@@ -1,7 +1,7 @@
 :root {
-  --stone: #16130f;
-  --stone-raised: #211b15;
-  --stone-edge: #4a3725;
+  --stone: #0c0a08;
+  --stone-raised: #16120e;
+  --stone-edge: #3c2c1e;
   --text: #e8dcc4;
   --muted: #a8875e;
   --bronze-dark: #5a3a1c;
@@ -30,7 +30,7 @@ h1, h2, .brand { font-family: Cinzel, Georgia, serif; letter-spacing: .04em; col
 h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 
 .site-header {
-  background: linear-gradient(180deg, #3a2a1a 0%, #2a1e13 55%, #1d150e 100%);
+  background: linear-gradient(180deg, #2a1e13 0%, #1c140d 55%, #120d09 100%);
   border-bottom: 3px solid var(--bronze);
   box-shadow: inset 0 1px 0 #6b4a2a, 0 2px 0 #0008;
 }
@@ -88,8 +88,8 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   position: relative;
   margin: 14px 0;
   padding: 16px 18px 14px;
-  background: #1f1913;
-  border: 1px solid #3d2d1e;
+  background: #15110d;
+  border: 1px solid #33261a;
   border-radius: 4px;
   box-shadow: inset 0 1px 0 #2e241a;
   overflow: hidden;
@@ -108,7 +108,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 /* Thumbnails: the article's header image, or a blue tile for forum (blue) posts. */
 .entry:has(> .thumb) { display: flex; gap: 16px; align-items: flex-start; }
 .entry-body { flex: 1; min-width: 0; }
-.thumb { flex: none; width: 180px; height: 101px; margin-top: 4px; border: 1px solid var(--stone-edge); border-radius: 3px; object-fit: cover; background: #2a1e13; }
+.thumb { flex: none; width: 180px; height: 101px; margin-top: 4px; border: 1px solid var(--stone-edge); border-radius: 3px; object-fit: cover; background: #1c140d; }
 .blue-tile {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   background: linear-gradient(180deg, #3d6fb0 0%, #2c5591 45%, #1b355c 100%); border-color: #3d6fb0; color: #e8f1ff;
@@ -135,7 +135,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .section-title { font-size: 1.2rem; margin: 2rem 0 .5rem; }
 
 .patch-list { list-style: none; padding: 0; margin: 0; }
-.patch-list li { position: relative; margin: 12px 0; padding: 14px 16px 12px; background: #1f1913; border: 1px solid #3d2d1e; border-radius: 4px; overflow: hidden; }
+.patch-list li { position: relative; margin: 12px 0; padding: 14px 16px 12px; background: #15110d; border: 1px solid #33261a; border-radius: 4px; overflow: hidden; }
 .patch-list li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, #6b431f, var(--bronze-light), #6b431f); }
 .patch-list a { font-family: Cinzel, Georgia, serif; font-weight: 600; font-size: 1.1rem; text-decoration: none; margin-right: 10px; }
 
@@ -151,8 +151,8 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   background: var(--stone-raised); border: 1px solid var(--bronze); border-radius: 3px; box-shadow: 0 8px 20px #000a;
 }
 .nav nav .class-menu a { display: flex; align-items: center; gap: 8px; margin: 0; padding: 5px 12px; font-weight: 600; }
-.nav nav .class-menu a:hover, .nav nav .class-menu a:focus-visible { background: #2c231a; }
-.nav nav .class-menu a[aria-current="page"] { background: #2c231a; box-shadow: inset 3px 0 0 currentColor; }
+.nav nav .class-menu a:hover, .nav nav .class-menu a:focus-visible { background: #221a13; }
+.nav nav .class-menu a[aria-current="page"] { background: #221a13; box-shadow: inset 3px 0 0 currentColor; }
 .class-menu img { border: 1px solid var(--stone-edge); border-radius: 2px; }
 
 /* Home call to action: pick your class. */
@@ -160,15 +160,15 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .cta a {
   display: inline-block; padding: 10px 20px; border-radius: 3px; text-decoration: none;
   font-family: Cinzel, Georgia, serif; font-weight: 700; letter-spacing: .04em; color: var(--gold-text);
-  background: #2c231a; border: 1px solid var(--bronze); box-shadow: inset 0 1px 0 #4a3725;
+  background: #221a13; border: 1px solid var(--bronze); box-shadow: inset 0 1px 0 #4a3725;
 }
-.cta a:hover { border-color: var(--bronze-light); background: #33281d; }
+.cta a:hover { border-color: var(--bronze-light); background: #2a2018; }
 
 /* Class page. */
 /* Sits over the banner's grass, where class colours like warrior tan lose contrast, so it gets a solid panel. */
 .class-title {
   display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px; background: #1f1913; border: 1px solid #3d2d1e; border-radius: 4px; box-shadow: 0 3px 0 #0007;
+  padding: 10px 14px; background: #15110d; border: 1px solid #33261a; border-radius: 4px; box-shadow: 0 3px 0 #0007;
 }
 .class-title img { border: 1px solid var(--bronze); border-radius: 3px; }
 .class-update .changes ul { margin: 6px 0 10px; padding-left: 20px; }
@@ -270,7 +270,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .guide-intro .meta { display: block; margin-top: 4px; }
 .guide-intro code, .macro code { font-family: ui-monospace, Consolas, monospace; }
 .addon-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 8px; }
-.addon, .macro { background: #1f1913; border: 1px solid #3d2d1e; border-radius: 4px; }
+.addon, .macro { background: #15110d; border: 1px solid #33261a; border-radius: 4px; }
 .addon { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; }
 .addon:hover { border-color: var(--bronze); }
 .addon img { flex: none; object-fit: contain; background: #0d0b08; border: 1px solid var(--stone-edge); border-radius: 3px; }
@@ -280,12 +280,13 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .addon h3 span { color: var(--muted); font-size: .8rem; }
 .addon p, .macro p { margin: 2px 0 0; font-size: .85rem; line-height: 1.4; color: #cdbfa3; }
 .class-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 10px; }
+.class-tabs[hidden] { display: none; }
 .class-tabs a {
   display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 6px; font-weight: 600; font-size: .9rem; text-decoration: none;
   background: var(--stone-raised); border: 1px solid var(--stone-edge); border-radius: 3px;
 }
 .class-tabs a:hover { border-color: var(--bronze); }
-.class-tabs a[aria-current="page"] { background: #2c231a; border-color: currentColor; }
+.class-tabs a[aria-current="page"] { background: #221a13; border-color: currentColor; }
 .class-tabs img { border-radius: 2px; }
 .class-tabs .all-classes { padding-left: 10px; color: var(--heading); }
 .macro-class { display: grid; gap: 8px; }
@@ -298,7 +299,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   font-size: .8rem; line-height: 1.45; color: var(--gold-text); background: var(--stone); border: 1px solid var(--stone-edge); border-radius: 3px;
 }
 
-.realm-warning { padding: 10px 14px; border: 1px solid var(--bronze); border-radius: 3px; background: #33281d; }
+.realm-warning { padding: 10px 14px; border: 1px solid var(--bronze); border-radius: 3px; background: #2a2018; }
 .table-wrap { overflow-x: auto; }
 table.realms { width: 100%; border-collapse: collapse; }
 table.realms th, table.realms td { padding: 8px 12px; border-bottom: 1px solid var(--bronze); text-align: left; white-space: nowrap; }
@@ -312,7 +313,7 @@ table.realms thead th { color: var(--heading); }
 /* Game data pages: class abilities and talents, races, professions. */
 .game-table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: .9rem; }
 .game-table th { text-align: left; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--stone-edge); }
-.game-table td { padding: 7px 8px; border-bottom: 1px solid #2c231a; vertical-align: top; }
+.game-table td { padding: 7px 8px; border-bottom: 1px solid #221a13; vertical-align: top; }
 .game-table .num { width: 1%; white-space: nowrap; color: var(--bronze-light); font-variant-numeric: tabular-nums; }
 .game-table .ranks { color: var(--muted); font-size: .8rem; }
 .spell { font-weight: 600; color: var(--heading); }
@@ -320,9 +321,89 @@ table.realms thead th { color: var(--heading); }
 .tag { margin-left: 6px; padding: 0 6px; border: 1px solid var(--stone-edge); border-radius: 3px; font-size: .7rem; color: var(--muted); white-space: nowrap; }
 .tree { font-size: 1.15rem; margin: 18px 0 4px; }
 .game-note { margin: 10px 0; font-size: .82rem; color: var(--muted); }
-.race h2 { font-size: 1.2rem; margin: 22px 0 6px; }
-.racials { margin: 0; padding-left: 20px; }
-.racials li { margin: 6px 0; }
+.race h2 { display: flex; align-items: center; gap: 12px; font-size: 1.3rem; margin: 18px 0 10px; }
+.race-icon { flex: none; border: 1px solid var(--stone-edge); border-radius: 50%; background: #000; }
+.race-tabs a { display: inline-flex; align-items: center; gap: 6px; }
+.race h2 .meta { font-family: inherit; font-size: .8rem; letter-spacing: 0; }
+.racials { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
+.racial { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid var(--stone-edge); border-radius: 6px;
+  background: var(--stone-raised); }
+.racial .spell { display: block; font-size: 1rem; }
+.racial .desc { display: block; margin-top: 4px; }
+.racial-change { display: block; margin-top: 6px; font-size: .78rem; color: var(--gold-text); }
+.icon { display: inline-block; flex: none; vertical-align: middle; border: 1px solid #000; border-radius: 3px; background: #070605; }
+.with-icon { display: inline-flex; gap: 8px; align-items: center; }
+.tab-count { margin-left: 4px; font-size: .75rem; color: var(--muted); }
+
+/* Item quality colors, as in the game. */
+.q0 { color: #9d9d9d; } .q1 { color: #fff; } .q2 { color: #1eff00; } .q3 { color: #3d9bff; } .q4 { color: #b469ff; } .q5 { color: #ff8000; }
+.recipes .has-tip { cursor: help; border-radius: 3px; }
+.recipes .has-tip:hover > .spell, .recipes .has-tip:focus-visible > .spell { text-decoration: underline; }
+.recipes .source { color: #cdbfa3; }
+.recipe-tools { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: end; margin: 12px 0 4px; font-size: .8rem; color: var(--muted); }
+.recipe-tools label { display: flex; flex-direction: column; gap: 3px; }
+.recipe-tools input, .recipe-tools select { padding: 5px 8px; border: 1px solid var(--stone-edge); border-radius: 3px;
+  background: var(--stone-raised); color: var(--text); font: inherit; font-size: .9rem; }
+.recipe-tools .rt-search { width: 14rem; max-width: 100%; }
+.recipe-tools .rt-skill { width: 6.5rem; }
+.recipe-tools input:focus-visible, .recipe-tools select:focus-visible { outline: 2px solid var(--bronze-light); outline-offset: 1px; }
+.rt-status { min-height: 1em; margin: 6px 0 0; font-size: .82rem; color: var(--muted); }
+.recipes tr[class*="sc-"] td:first-child { box-shadow: inset 4px 0 var(--skill-color); }
+.recipes tr.sc-orange { --skill-color: #ff8040; } .recipes tr.sc-yellow { --skill-color: #ffd200; }
+.recipes tr.sc-green { --skill-color: #40c040; } .recipes tr.sc-grey { --skill-color: #808080; }
+.recipes tr.too-high { opacity: .45; }
+.tip-stat { display: block; font-size: .85rem; color: var(--text); }
+.tip-effect { display: block; margin-top: 2px; font-size: .85rem; color: #1eff00; }
+.tip-flavor { display: block; margin-top: 4px; font-size: .85rem; color: #ffd200; }
+.reagents { display: flex; flex-direction: column; gap: 3px; margin-top: 3px; font-size: .85rem; }
+
+/* Abilities: one row per level, a tile per ability, details in a tooltip. */
+.spell-level { display: grid; grid-template-columns: 2.2rem 1fr; gap: 8px; padding: 4px 0; border-bottom: 1px solid #221a13; }
+.spell-level .lvl { padding-top: 9px; color: var(--bronze-light); font-variant-numeric: tabular-nums; }
+.spell-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2px 8px; margin: 0; padding: 0; list-style: none; }
+.spell-tile { display: flex; gap: 8px; align-items: center; min-width: 0; padding: 3px; border-radius: 4px; cursor: help; }
+.spell-tile > .spell { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: .9rem; }
+.spell-tile:hover, .spell-tile:focus-visible { background: var(--stone-raised); }
+
+/* Tooltips: shown on hover and focus; tooltips.js keeps them inside the window. */
+.has-tip { position: relative; }
+.tip { display: none; position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; width: 300px; max-width: calc(100vw - 32px);
+  padding: 8px 10px; border: 1px solid var(--stone-edge); border-radius: 4px; background: #070605; box-shadow: 0 4px 14px #000a;
+  text-align: left; font-weight: 400; cursor: auto; }
+.has-tip:hover > .tip, .has-tip:focus > .tip { display: block; }
+.tip .spell { font-size: .95rem; }
+.tip .tag { margin-left: 4px; }
+.tip-line { display: block; margin-top: 2px; font-size: .78rem; color: var(--muted); }
+.tip-line.unmet { color: #ff8a80; }
+.tip .desc { display: block; margin-top: 6px; }
+.tip .next { color: var(--muted); }
+
+/* Talent calculator: the class's three trees side by side. */
+.talent-summary { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 12px 0; }
+.talent-summary b { color: var(--gold-text); font-variant-numeric: tabular-nums; }
+.tc-reset { padding: 3px 10px; border: 1px solid var(--stone-edge); border-radius: 3px; background: var(--stone-raised); color: var(--text); font: inherit; cursor: pointer; }
+.tc-reset:hover { border-color: var(--bronze); }
+.talent-trees { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.talent-tree { padding: 6px 8px 14px; border: 1px solid var(--stone-edge); border-radius: 6px; background: var(--stone-raised); }
+.talent-tree .tree { display: flex; justify-content: space-between; margin: 4px 0 10px; font-size: 1rem; }
+.tree-points { color: var(--gold-text); font-variant-numeric: tabular-nums; }
+.talent-grid { display: grid; grid-template-columns: repeat(4, 46px); grid-auto-rows: 46px; grid-template-rows: repeat(7, 46px); gap: 10px; }
+.talent { position: relative; z-index: 1; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 4px; background: none; color: inherit; font: inherit; cursor: pointer; }
+.talent .tip { pointer-events: none; }  /* a click on it would learn a rank */
+.talent:hover, .talent:focus { z-index: 2; }  /* its tooltip above the other talents */
+.talent .icon { width: 46px; height: 46px; border: 2px solid #4d4d4d; border-radius: 4px; filter: grayscale(1) brightness(.55); }
+.talent.open .icon, .talent.learned .icon { filter: none; }
+.talent.open .icon { border-color: #2fa82f; }
+.talent.maxed .icon { border-color: var(--bronze-light); }
+.talent:focus-visible { outline: 2px solid var(--gold-text); outline-offset: 2px; }
+.talent-rank { position: absolute; right: -7px; bottom: -7px; padding: 0 3px; border: 1px solid #4d4d4d; border-radius: 3px; background: #070605;
+  font-size: .72rem; line-height: 1.3; color: #9d9d9d; font-variant-numeric: tabular-nums; }
+.talent.open .talent-rank { color: #4fd34f; }
+.talent.maxed .talent-rank { color: var(--gold-text); }
+.talent-arrow { z-index: 0; background: #4d4d4d; }
+.talent-arrow.down { justify-self: center; width: 4px; margin: 23px 0; }
+.talent-arrow.side { align-self: center; height: 4px; margin: 0 23px; }
+.talent-arrow.met { background: var(--bronze-light); }
 .profession-list { padding-left: 20px; }
 .profession-list li { margin: 6px 0; }
 .crumb { margin: 16px 0 0; font-size: .85rem; }
@@ -331,4 +412,5 @@ table.realms thead th { color: var(--heading); }
 @media (max-width: 480px) {
   .game-table { font-size: .82rem; }
   .game-table td, .game-table th { padding: 6px 4px; }
+  .spell-tiles { grid-template-columns: 1fr; }
 }

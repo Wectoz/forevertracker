@@ -29,8 +29,8 @@
       <stop offset="1" stop-color="#6e4a1e"/>
     </linearGradient>
     <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#16130f" stop-opacity="0"/>
-      <stop offset="1" stop-color="#16130f"/>
+      <stop offset="0" stop-color="#0c0a08" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0c0a08"/>
     </linearGradient>
     <pattern id="grass" width="60" height="40" patternUnits="userSpaceOnUse">
       <path d="M6 40 Q8 24 4 14 M10 40 Q12 26 16 18 M14 40 Q13 30 10 24 M34 40 Q36 22 32 10 M38 40 Q40 28 46 20 M42 40 Q41 30 38 26 M52 40 Q54 30 58 26"

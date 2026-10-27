@@ -1,25 +1,76 @@
 {% extends "base.html" %}
+{% from "_icon.html" import icon %}
 {% block content %}
 <p class="crumb"><a href="{{ url_for('professions') }}">Professions</a> ›</p>
 <h1>{{ name }}</h1>
-<table class="game-table">
-  <thead><tr><th scope="col">Recipe</th><th scope="col">Learned from</th><th scope="col">Skill needed</th>
-    <th scope="col"><span class="skill-yellow">Yellow</span></th><th scope="col"><span class="skill-grey">Grey</span></th></tr></thead>
+{# by the skill at which a recipe turns yellow, the training ranks' ranges #}
+{% set brackets = [("apprentice", "Apprentice", 0, 75), ("journeyman", "Journeyman", 75, 150),
+                   ("expert", "Expert", 150, 225), ("artisan", "Artisan", 225, 10000)] %}
+<nav class="class-tabs" aria-label="{{ name }} skill ranges">
+  {% for id, label, low, high in brackets %}
+  {% set count = recipes | selectattr("yellow", "ge", low) | selectattr("yellow", "lt", high) | list | length %}
+  {% if count %}<a href="#{{ id }}">{{ label }} <span class="tab-count">{{ count }}</span></a>{% endif %}
+  {% endfor %}
+</nav>
+<form class="recipe-tools" hidden onsubmit="return false">
+  <label>Search <input type="search" class="rt-search" placeholder="Recipe or reagent" autocomplete="off"></label>
+  <label>Learned from <select class="rt-source">
+    <option value="">Anywhere</option><option value="trainer">Trainer</option><option value="item">Recipe item</option>
+    <option value="start">Starting recipe</option></select></label>
+  {% set slots = recipes | selectattr("item") | map(attribute="item.slot") | select | unique | sort %}
+  {% if slots %}<label>Slot <select class="rt-slot"><option value="">Any</option>
+    {% for slot in slots %}<option>{{ slot }}</option>{% endfor %}</select></label>{% endif %}
+  <label>My skill <input type="number" class="rt-skill" min="1" max="450" inputmode="numeric" placeholder="e.g. 150"></label>
+</form>
+<p class="rt-status" role="status" aria-live="polite"></p>
+<p class="game-note">Point at or tap a recipe for what it makes and its reagents.</p>
+{% for id, label, low, high in brackets %}
+{% set shown = recipes | selectattr("yellow", "ge", low) | selectattr("yellow", "lt", high) | list %}
+{% if shown %}
+<section class="tab-panel" id="{{ id }}" aria-label="{{ label }} {{ name }} recipes">
+<table class="game-table recipes">
+  <thead><tr><th scope="col">Recipe</th><th scope="col">Learned from</th>
+    <th scope="col" class="num"><span class="skill-yellow">Yellow</span></th><th scope="col" class="num"><span class="skill-grey">Grey</span></th></tr></thead>
   <tbody>
-  {% for recipe in recipes %}
-  <tr>
-    <td class="spell">{{ recipe.name }}</td>
-    <td>{{ recipe.source }}</td>
-    <td class="num">{{ recipe.skill or "" }}</td>
+  {% for recipe in shown %}
+  {% set tip = "recipe-" ~ id ~ "-" ~ loop.index %}
+  <tr data-search="{{ ([recipe.name] + recipe.reagents | map(attribute=1) | list) | join(' ') | lower }}"
+      data-source="{{ 'trainer' if recipe.source == 'Trainer' else 'start' if recipe.source == 'Starting recipe' else 'item' }}"
+      data-slot="{{ recipe.item.slot if recipe.item and recipe.item.slot }}" data-yellow="{{ recipe.yellow }}"
+      data-grey="{{ recipe.grey }}" data-skill="{{ recipe.skill or 0 }}">
+    <td><span class="with-icon has-tip" tabindex="0" aria-describedby="{{ tip }}">{{ icon(recipe.icon, 24) }}<span class="spell q{{ recipe.item.quality if recipe.item else 1 }}">{{ recipe.name }}</span>
+      <span class="tip" role="tooltip" id="{{ tip }}">
+        {%- if recipe.item %}
+        <span class="spell q{{ recipe.item.quality }}">{{ recipe.item.name }}{% if recipe.makes > 1 %} ×{{ recipe.makes }}{% endif %}</span>
+        {%- for line in recipe.item.lines %}<span class="tip-stat">{{ line }}</span>{% endfor %}
+        {%- for line in recipe.item.effects %}<span class="tip-effect">{{ line }}</span>{% endfor %}
+        {%- if recipe.item.description %}<span class="tip-flavor">"{{ recipe.item.description }}"</span>{% endif %}
+        {%- else %}
+        <span class="spell">{{ recipe.name }}</span>
+        {%- if recipe.description %}<span class="desc">{{ recipe.description }}</span>{% endif %}
+        {%- endif %}
+        {%- if recipe.reagents %}
+        <span class="tip-line">Reagents</span>
+        <span class="reagents">{% for count, reagent, reagent_icon in recipe.reagents %}<span class="with-icon">{{ icon(reagent_icon, 18) }}{{ reagent }}{% if count > 1 %} ×{{ count }}{% endif %}</span>{% endfor %}</span>
+        {%- endif %}
+      </span></span></td>
+    <td class="source">{{ recipe.source }}{% if recipe.skill %} <span class="meta">· skill {{ recipe.skill }}</span>{% endif %}</td>
     <td class="num">{{ recipe.yellow }}</td>
     <td class="num">{{ recipe.grey }}</td>
   </tr>
   {% endfor %}
   </tbody>
 </table>
+</section>
+{% endif %}
+{% endfor %}
 <p class="game-note">Yellow is the skill at which a recipe stops giving a point every time, grey the skill at which it
-  gives none. "Skill needed" comes from the recipe item; the game files don't say what skill a trainer asks for, so it is
-  blank for those. "Trainer" means the game files list no recipe item: most of these are taught by trainers, but some
-  come from quests or reputation.</p>
+  gives none. The skill a recipe item asks for is shown next to it; the game files don't say what skill a trainer asks
+  for. "Trainer" means no recipe item: most are taught by trainers, some come from quests or reputation.</p>
 {% include "_gamedata_note.html" %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='tabs.js') }}" defer></script>
+<script src="{{ url_for('static', filename='tooltips.js') }}" defer></script>
+<script src="{{ url_for('static', filename='recipes.js') }}" defer></script>
 {% endblock %}
