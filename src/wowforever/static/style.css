@@ -419,3 +419,8 @@ table.realms thead th { color: var(--heading); }
   .game-table td, .game-table th { padding: 6px 4px; }
   .spell-tiles { grid-template-columns: 1fr; }
 }
+
+/* Items page on a phone: type and crafter are in the tooltip and filters; keep the table within the screen. */
+@media (max-width: 600px) {
+  .items th:nth-child(3), .items td:nth-child(3), .items th:nth-child(6), .items td:nth-child(6) { display: none; }
+}

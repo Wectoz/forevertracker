@@ -22,6 +22,8 @@ GAME = {
     "races": {"Gnome": [{"name": "Eureka!", "icon": 2, "description": "Smart."}]},
     "professions": {"Alchemy": [{"name": "Nature's Elixir", "icon": 3, "item": {
         "name": "Nature's Elixir", "quality": 2, "slot": None, "lines": [], "effects": ["Use: Heals."], "description": None}}]},
+    "items": [{"name": name, "icon": 4, "quality": quality, "level": 60, "lines": ["Head · Leather"], "effects": [],
+               "description": None} for name, quality in [("Wolfshead Helm", 3), ("Bracers", 2), ("Worn Helm", 1)]],
 }
 
 
@@ -36,6 +38,8 @@ def test_tooltips_cover_abilities_talents_racials_and_items():
                                                "kind": "Warrior talent · Arms, 2 ranks", "desc": "More rage."}
     assert tips["gnome-eureka"]["kind"] == "Gnome racial"
     assert tips["item-nature-s-elixir"]["effects"] == ["Use: Heals."]
+    assert tips["item-wolfshead-helm"]["kind"] == "Item level 60"
+    assert "item-bracers" not in tips and "item-worn-helm" not in tips  # one word, or common quality
 
 
 def test_link_wraps_names_longest_first():
@@ -84,3 +88,13 @@ def test_pages_link_names_and_serve_only_the_tooltips_they_use():
     tips = client.get("/tooltips.json").json
     assert set(tips) == {"warrior-mortal-strike", "rogue-sprint"}
     assert "gamelinks.js" not in client.get("/news").text
+
+
+def test_items_page_and_its_data():
+    client = create_app(Store(":memory:")).test_client()
+    page = client.get("/items").text
+    assert 'href="/items.json"' in page and "items.js" in page and "<option>Two-Hand</option>" in page
+    assert '<a href="/items">Items</a>' in client.get("/").text
+    items = client.get("/items.json").json
+    helm = next(i for i in items if i["name"] == "Wolfshead Helm")
+    assert helm["slot"] == "Head" and helm["type"] == "Leather" and helm["quality"] == 3

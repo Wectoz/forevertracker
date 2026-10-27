@@ -15,6 +15,10 @@ PAGE_SIZE = 20
 FEED_SIZE = 50
 STALE_AFTER = timedelta(minutes=30)
 REGION_NAMES = {"us": "Americas", "eu": "Europe"}
+# The Items page's slot filter, in the order of the character sheet.
+ITEM_SLOTS = ("Head", "Neck", "Shoulder", "Back", "Chest", "Shirt", "Tabard", "Wrist", "Hands", "Waist", "Legs", "Feet",
+              "Finger", "Trinket", "Main Hand", "One-Hand", "Two-Hand", "Off Hand", "Held In Off-hand", "Ranged",
+              "Thrown", "Relic", "Bag")
 UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix", "known": "Known Issues"}
 
 
@@ -219,6 +223,22 @@ def create_app(store: Store) -> Flask:
             description=f"All {len(game['professions'][found])} World of Warcraft: Forever {found} recipes, "
                         "where they come from and their skill-ups.",
         )
+
+    @app.get("/items")
+    def items():
+        present = {i["slot"] for i in game["items"]}
+        return render_template(
+            "items.html", count=len(game["items"]), slots=[s for s in ITEM_SLOTS if s in present],
+            types=sorted({i["type"] for i in game["items"] if i["type"]}),
+            professions=sorted({i["crafted"] for i in game["items"] if i["crafted"]}),
+            page_title="WoW Forever Items · WoW Forever Tracker",
+            description=f"Search all {len(game['items'])} World of Warcraft: Forever weapons, armor and bags by slot, "
+                        "type, quality and level, with their in-game tooltips.",
+        )
+
+    @app.get("/items.json")
+    def items_json():
+        return jsonify(game["items"])
 
     @app.get("/notes/<int:post_id>")
     def notes(post_id: int):
