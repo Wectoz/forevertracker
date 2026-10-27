@@ -1,0 +1,76 @@
+{
+  "posts": [
+    {
+      "id": 30628648,
+      "created_at": "2026-10-27T01:01:32.728Z",
+      "topic_id": 2382684,
+      "topic_title": "World of Warcraft: Midnight Hotfixes - October 26",
+      "post_number": 135,
+      "category_id": 171,
+      "username": "Linxy",
+      "user_title": "Community Manager",
+      "excerpt": "October 26, 2026 \nClasses \n\nShaman\n\nEnhancement\n\nResolved an issue causing Voltaic Blaze to not hit secondary targets when Ula’tek is the main target.\n\n\n\n\nWarlock\n\nAffliction\n\nFixed an issue where the Cooldown Manager would sometimes not display Summon Darkglare correctly.\n\n\n\n\n\nHallow’s End \n\nNeighb&hellip;",
+      "url": "/t/world-of-warcraft-midnight-hotfixes-october-26/2382684/135"
+    },
+    {
+      "id": 30624529,
+      "created_at": "2026-10-26T20:35:27.223Z",
+      "topic_id": 2360696,
+      "topic_title": "WoW Forever Beta Development Notes – Updated October 26",
+      "post_number": 7,
+      "category_id": 349,
+      "username": "Kaivax",
+      "user_title": "Community Manager",
+      "excerpt": "As we approach the launch of WoW Forever, we’ve been reflecting on feedback we’ve heard on racial abilities and passive traits: Some players have expressed that some of the new racial traits feel too generic, while others have raised concerns that some are objectively stronger than others. \nIn takin&hellip;",
+      "url": "/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-26/2360696/7"
+    },
+    {
+      "id": 30622338,
+      "created_at": "2026-10-26T17:01:29.812Z",
+      "topic_id": 2392363,
+      "topic_title": "Watch the WoW: Forever Short Story, “Unbowed”",
+      "post_number": 1,
+      "category_id": 347,
+      "username": "BlizzardEntertainment",
+      "user_title": "Blizzard News",
+      "excerpt": "<a href=\"https://bnetcmsus-a.akamaihd.net/cms/blog_header/a6/A6472MJY97H41792605774727.png\">[Watch the WoW: Forever Short Story, “Unbowed”]</a> Can a Forsaken still serve the Light? Join the fallen crusader, Cormack, for a special fireside telling of our newest short story, “Unbowed”.  <a href=\"https://worldofwarcraft.com/en-us/news/24313105\">View Full Article</a>",
+      "url": "/t/watch-the-wow-forever-short-story-%E2%80%9Cunbowed%E2%80%9D/2392363/1"
+    },
+    {
+      "id": 30600002,
+      "created_at": "2026-10-21T18:00:00.000Z",
+      "topic_id": 2352687,
+      "topic_title": "WoW Forever Beta Known Issues",
+      "post_number": 9,
+      "category_id": 349,
+      "username": "Kaivax",
+      "user_title": "Community Manager",
+      "excerpt": "Added: Some quests in Duskwood are not completing.",
+      "url": "/t/wow-forever-beta-known-issues/2352687/9"
+    },
+    {
+      "id": 30600001,
+      "created_at": "2026-10-20T18:00:00.000Z",
+      "topic_id": 2352687,
+      "topic_title": "WoW Forever Beta Known Issues",
+      "post_number": 1,
+      "category_id": 349,
+      "username": "Kaivax",
+      "user_title": "Community Manager",
+      "excerpt": "The following are known issues in the current WoW Forever Beta build.",
+      "url": "/t/wow-forever-beta-known-issues/2352687/1"
+    },
+    {
+      "id": 30590866,
+      "created_at": "2026-10-23T17:00:41.694Z",
+      "topic_id": 2390465,
+      "topic_title": "Thank You For Testing the WoW Forever Beta",
+      "post_number": 1,
+      "category_id": 349,
+      "username": "Kaivax",
+      "user_title": "Community Manager",
+      "excerpt": "The WoW Forever Beta is now closed, and we’re incredibly grateful to everyone who joined us over the last five weeks of playtesting, data gathering, bug reporting, and feedback. \nWe’re now quickly moving into a period of a few short days where we will do some focused work on priority issues and the &hellip;",
+      "url": "/t/thank-you-for-testing-the-wow-forever-beta/2390465/1"
+    }
+  ]
+}

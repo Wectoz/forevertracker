@@ -17,6 +17,9 @@ FORUM_URL = "https://us.forums.blizzard.com/en/wow"
 CATEGORY_ID = 349  # WoW Forever
 _NOTES_TITLE_RE = re.compile(r"(?i)\b(notes|hotfix(es)?|known issues)\b")
 _BATCH = 20
+FOREVER_CATEGORIES = frozenset({346, 347, 348, 349})  # the WoW Forever forum categories
+TRACKER_PATH = "/groups/blizzard-tracker/posts.json"
+_NEWS_ACCOUNT = "BlizzardEntertainment"  # the corporate news account, not a staff voice
 # "WoW Forever Beta Development Notes – Updated October 15" → "WoW Forever Beta Development Notes"
 _TITLE_DATE_RE = re.compile(r"\s*[–—-]\s*(?:updated\s+)?[a-z]+\.?\s+\d{1,2}(?:,?\s+\d{4})?\s*$", re.I)
 _FIRST_PARAGRAPH_RE = re.compile(r"<p>(.*?)</p>", re.S)
@@ -42,6 +45,19 @@ class ForumPost:
     thread_title: str
 
 
+@dataclass(frozen=True)
+class StaffPost:
+    id: int
+    topic_id: int
+    number: int
+    author: str
+    author_title: str
+    thread_title: str
+    excerpt: str
+    posted: datetime
+    url: str
+
+
 def fetch_json(path: str) -> dict:
     url = FORUM_URL + path
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
@@ -52,9 +68,13 @@ def fetch_json(path: str) -> dict:
         raise FetchError(f"{url}: {err}") from err
 
 
+def is_known_issues(title: str) -> bool:
+    return "known issues" in title.lower()
+
+
 def topic_kind(title: str) -> str:
     lowered = title.lower()
-    if "known issues" in lowered:
+    if is_known_issues(title):
         return "known"
     if "hotfix" in lowered:
         return "hotfix"
@@ -112,3 +132,23 @@ def thread_posts(topic_id: int, fetch: FetchJson) -> list[ForumPost]:
     except (KeyError, TypeError, ValueError, AttributeError) as err:
         raise ParseError(f"unexpected forum thread {topic_id}: {err!r}") from err
     return sorted(posts, key=lambda p: p.number)
+
+
+def tracker_page(fetch: FetchJson, before: int | None = None) -> list[StaffPost]:
+    """One page (20 posts, newest first) of Blizzard staff posts in the WoW Forever categories."""
+    path = TRACKER_PATH if before is None else f"{TRACKER_PATH}?before_post_id={before}"
+    try:
+        posts = [
+            StaffPost(
+                id=int(p["id"]), topic_id=int(p["topic_id"]), number=int(p["post_number"]),
+                author=p["username"], author_title=p.get("user_title") or "",
+                thread_title=p["topic_title"], excerpt=make_summary(p.get("excerpt") or ""),
+                posted=datetime.fromisoformat(p["created_at"]),
+                url=f"{FORUM_URL}/t/{p['topic_id']}/{p['post_number']}",
+            )
+            for p in fetch(path)["posts"]
+            if p["category_id"] in FOREVER_CATEGORIES and p["username"] != _NEWS_ACCOUNT
+        ]
+    except (KeyError, TypeError, ValueError, AttributeError) as err:
+        raise ParseError(f"unexpected forum tracker page: {err!r}") from err
+    return sorted(posts, key=lambda p: p.posted, reverse=True)

@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from wowforever.blizzard import FetchError, ParseError
-from wowforever.forum import fetch_json, note_topics, thread_posts, topic_kind
+from wowforever.forum import fetch_json, is_known_issues, note_topics, thread_posts, topic_kind, tracker_page
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -94,3 +94,36 @@ def test_fetch_json_wraps_broken_responses(monkeypatch):
     monkeypatch.setattr(urllib.request, "urlopen", broken)
     with pytest.raises(FetchError):
         fetch_json("/c/349.json")
+
+
+def test_tracker_page_keeps_forever_staff_posts():
+    posts = tracker_page(fake_fetch({"/groups/blizzard-tracker/posts.json": load("forum_tracker.json")}))
+    # The retail post (category 171) and the BlizzardEntertainment news post are gone.
+    assert [p.id for p in posts] == [30624529, 30600002, 30600001, 30590866]
+    first = posts[0]
+    assert (first.topic_id, first.number, first.author, first.author_title) == (2360696, 7, "Kaivax", "Community Manager")
+    assert first.thread_title == "WoW Forever Beta Development Notes – Updated October 26"
+    assert first.url == "https://us.forums.blizzard.com/en/wow/t/2360696/7"
+    assert first.posted.tzinfo is not None
+    assert first.excerpt
+
+
+def test_tracker_page_pages_with_before():
+    seen = []
+
+    def fetch(path):
+        seen.append(path)
+        return {"posts": []}
+
+    assert tracker_page(fetch, before=123) == []
+    assert seen == ["/groups/blizzard-tracker/posts.json?before_post_id=123"]
+
+
+def test_tracker_page_malformed_raises_parse_error():
+    with pytest.raises(ParseError):
+        tracker_page(lambda path: {"posts": [{"id": "x"}]})
+
+
+def test_is_known_issues():
+    assert is_known_issues("WoW Forever Beta Known Issues")
+    assert not is_known_issues("WoW Forever Beta Development Notes")
