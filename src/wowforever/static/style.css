@@ -48,6 +48,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   left: 0;
   right: 0;
   z-index: -1;
+  opacity: .6;
   height: clamp(140px, 22.5vw, 400px);  /* 22.5vw is the art's own aspect, so wide screens show the whole scene */
   background: url("mulgore.svg") 62% 100% / cover no-repeat;
 }
@@ -164,7 +165,11 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .cta a:hover { border-color: var(--bronze-light); background: #33281d; }
 
 /* Class page. */
-.class-title { display: flex; align-items: center; gap: 12px; }
+/* Sits over the banner's grass, where class colours like warrior tan lose contrast, so it gets a solid panel. */
+.class-title {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; background: #1f1913; border: 1px solid #3d2d1e; border-radius: 4px; box-shadow: 0 3px 0 #0007;
+}
 .class-title img { border: 1px solid var(--bronze); border-radius: 3px; }
 .class-update .changes ul { margin: 6px 0 10px; padding-left: 20px; }
 .class-update .changes li { margin: 3px 0; }
