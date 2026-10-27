@@ -82,8 +82,8 @@ def gather_blue_posts(store: Store, fetch: FetchJson | None = None, cutoff: date
     for page in range(max_pages):
         if page and delay:
             time.sleep(delay)
-        posts = tracker_page(fetch, before)
-        if not posts:
+        posts, before = tracker_page(fetch, before)
+        if before is None:  # the tracker has no older posts
             break
         stored = {p.id for p in posts if store.has_blue_post(p.id)}
         keep = []
@@ -94,13 +94,12 @@ def gather_blue_posts(store: Store, fetch: FetchJson | None = None, cutoff: date
                 _gather_topic(store, post.topic_id, "known", fetch)  # the thread is in the notes, not here
                 topics[post.topic_id] = "known"
             kind = topics.get(post.topic_id)
-            if kind == "known" and post.number == 1 or kind not in (None, "known"):
+            if (kind == "known" and post.number == 1) or kind not in (None, "known"):
                 continue
             keep.append(post)
         added += store.add_blue_posts(keep, announced=first_run)
         if stored or any(p.posted < cutoff for p in posts):
             break
-        before = min(p.id for p in posts)
     return added
 
 

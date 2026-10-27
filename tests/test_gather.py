@@ -25,6 +25,7 @@ LONG_AGO = datetime(2000, 1, 1, tzinfo=UTC)
 FORUM = {
     "/c/349.json": json.loads((FIXTURE_DIR / "forum_category.json").read_text(encoding="utf-8")),
     "/t/2360696.json": json.loads((FIXTURE_DIR / "forum_thread.json").read_text(encoding="utf-8")),
+    "/groups/blizzard-tracker/posts.json": {"posts": []},
 }
 
 
@@ -407,7 +408,6 @@ def test_blue_gather_skips_notes_threads_and_known_issues_opening_post(tmp_path)
     page = [_raw(9, 2360696, 7, day=26), _raw(8, 777, 3, title=ki, day=25), _raw(7, 777, 1, title=ki, day=24),
             _raw(6, 55, 1, title="Hello", day=23)]
     fetch = tracker_fetch(page, [])
-    store.add_blue_posts([])  # nothing stored yet
     assert gather.gather_blue_posts(store, fetch, delay=0) == 2
     assert sorted(p.id for p in store.list_blue_posts()) == [6, 8]
     assert store.note_topics()[777] == "known"
@@ -423,3 +423,12 @@ def test_blue_gather_stops_at_max_pages(tmp_path):
     fetch.calls = []
     assert gather.gather_blue_posts(store, fetch, max_pages=3, delay=0) == 3
     assert len(fetch.calls) == 3
+
+
+def test_blue_gather_continues_past_page_with_no_forever_posts(tmp_path):
+    store = Store(tmp_path / "t.db")
+    fetch = tracker_fetch([_raw(9, 1, 2, day=25, category=171), _raw(8, 1, 3, day=25, user="BlizzardEntertainment")],
+                          [_raw(7, 2, 2, day=24)], [])
+    assert gather.gather_blue_posts(store, fetch, delay=0) == 1
+    assert [p.id for p in store.list_blue_posts()] == [7]
+    assert fetch.calls[1].endswith("before_post_id=8")
