@@ -1,4 +1,4 @@
-"""Command line: wowforever fetch | backfill | serve | build | announce | realms."""
+"""Command line: wowforever fetch | backfill | serve | build | announce | realms | gamedata."""
 
 import argparse
 import logging
@@ -33,7 +33,21 @@ def main(argv: list[str] | None = None) -> int:
                                           " sets the base path and adds absolute preview URLs and a sitemap")
     commands.add_parser("announce", help="post new WoW Forever posts to the Discord webhook in $DISCORD_WEBHOOK_URL")
     commands.add_parser("realms", help="read WoW Forever realm status using $BLIZZARD_CLIENT_ID and $BLIZZARD_CLIENT_SECRET")
+    gamedata = commands.add_parser("gamedata", help="rebuild gamedata.json from tables extracted from the game client")
+    gamedata.add_argument("db2", type=Path, help="folder with the extracted .db2 files")
+    gamedata.add_argument("defs", type=Path, help="WoWDBDefs definitions folder")
     args = parser.parse_args(argv)
+
+    if args.command == "gamedata":
+        import json
+
+        from wowforever import gamedata as gd
+
+        data = gd.build(gd.read_tables(args.db2, args.defs), gd.client_build(args.db2))
+        gd.DATA_FILE.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        print(f"Wrote {gd.DATA_FILE.name} from build {data['build']}: {len(data['races'])} races, "
+              f"{sum(map(len, data['professions'].values()))} recipes.")
+        return 0
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     store = _open_store(args.db)

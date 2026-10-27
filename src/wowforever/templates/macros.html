@@ -17,15 +17,9 @@
   {% endfor %}
 </nav>
 {% for name, class_slug, color, class_macros in macros %}
-<section class="macro-class" id="{{ class_slug }}" aria-label="{{ name }} macros">
-  {% for macro in class_macros %}
-  <article class="macro">
-    <div class="macro-head"><h3>{{ macro.name }}</h3></div>
-    <p>{{ macro.blurb }}</p>
-    <pre><code>{{ macro.text }}</code></pre>
-  </article>
-  {% endfor %}
+<section class="macro-class tab-panel" id="{{ class_slug }}" aria-label="{{ name }} macros">
+  {% for macro in class_macros %}{% include "_macro.html" %}{% endfor %}
 </section>
 {% endfor %}
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='macros.js') }}" defer></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='tabs.js') }}" defer></script>{% endblock %}

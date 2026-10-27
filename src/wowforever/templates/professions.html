@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>WoW Forever professions</h1>
+<p class="guide-intro">Every recipe in World of Warcraft: Forever, where it comes from and the skill at which it
+  turns yellow and grey.</p>
+<ul class="profession-list">
+  {% for name, recipes in professions.items() %}
+  <li><a href="{{ url_for('profession', name=name | slugify) }}">{{ name }}</a> <span class="meta">{{ recipes | length }} recipe{{ "s" if recipes | length != 1 }}</span></li>
+  {% endfor %}
+</ul>
+{% include "_gamedata_note.html" %}
+{% endblock %}

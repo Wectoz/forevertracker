@@ -378,10 +378,10 @@ def test_addons_page_links_each_addon_to_curseforge():
 def test_macros_page_has_a_section_per_class_with_escaped_macro_text():
     html = client_for().get("/macros").text
     for cls in ("general", "druid", "hunter", "mage", "paladin", "priest", "rogue", "shaman", "warlock", "warrior"):
-        assert f'<section class="macro-class" id="{cls}"' in html
+        assert f'<section class="macro-class tab-panel" id="{cls}"' in html
         assert f'href="#{cls}"' in html
     assert "#showtooltip Hunter&#39;s Mark\n/petattack\n/cast Hunter&#39;s Mark" in html
-    assert "macros.js" in html
+    assert "tabs.js" in html
 
 
 def test_home_links_latest_known_issues():
@@ -489,3 +489,37 @@ def test_realms_page_warns_when_stale():
     assert "Last checked 2 hours ago; Blizzard's API isn't answering right now." in html
     html = realm_client(us_checked=datetime.now(UTC) - timedelta(minutes=45)).get("/realms").text
     assert "Last checked 45 minutes ago" in html
+
+
+def test_class_page_has_tabs_for_changes_abilities_talents_and_macros():
+    html = client_for().get("/classes/hunter").text
+    for tab in ("changes", "abilities", "talents", "macros"):
+        assert f'<section class="tab-panel' in html and f'id="{tab}"' in html
+        assert f'href="#{tab}"' in html
+    assert '<span class="spell">Arcane Shot</span>' in html
+    assert "Marksmanship" in html
+    assert "#showtooltip Hunter&#39;s Mark" in html
+    assert "Not 100% guaranteed" in html
+
+
+def test_guides_menu_links_races_professions_addons_and_macros():
+    html = client_for().get("/").text
+    assert "Guides ▾" in html
+    for path in ("/races", "/professions", "/addons", "/macros"):
+        assert f'href="{path}"' in html
+
+
+def test_races_page_lists_racials():
+    html = client_for().get("/races").text
+    assert 'id="high-order-skyborne"' in html
+    assert '<span class="spell">Stoneform</span>' in html
+    assert "Not 100% guaranteed" in html
+
+
+def test_profession_pages():
+    client = client_for()
+    assert 'href="/professions/first-aid"' in client.get("/professions").text
+    html = client.get("/professions/tailoring").text
+    assert '<td class="spell">Bolt of Linen Cloth</td>' in html
+    assert "the game files don't say what skill a trainer asks for" in html
+    assert client.get("/professions/underwater-basket-weaving").status_code == 404

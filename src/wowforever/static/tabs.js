@@ -1,9 +1,11 @@
-// Macros page: one class at a time, picked from the tabs, and a Copy button on each macro.
+// Tabbed pages (Macros, class pages): one section at a time, picked from the tabs, and a Copy button on each macro.
 (() => {
-  const sections = [...document.querySelectorAll(".macro-class")];
+  const sections = [...document.querySelectorAll(".tab-panel")];
   const tabs = [...document.querySelectorAll(".class-tabs a")];
   const show = () => {
-    const shown = sections.find((section) => `#${section.id}` === location.hash) ?? sections[0];
+    // a link into a section (e.g. one class update) opens the section that holds it
+    const target = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+    const shown = sections.find((section) => target && section.contains(target)) ?? sections[0];
     for (const section of sections) section.hidden = section !== shown;
     for (const tab of tabs) {
       if (tab.hash === `#${shown.id}`) tab.setAttribute("aria-current", "page");
@@ -12,7 +14,7 @@
   };
   for (const tab of tabs) {
     tab.addEventListener("click", (event) => {
-      event.preventDefault();  // switch class without jumping down the page
+      event.preventDefault();  // switch section without jumping down the page
       history.replaceState(null, "", tab.hash);
       show();
     });

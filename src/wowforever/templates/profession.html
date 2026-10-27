@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="{{ url_for('professions') }}">Professions</a> ›</p>
+<h1>{{ name }}</h1>
+<table class="game-table">
+  <thead><tr><th scope="col">Recipe</th><th scope="col">Learned from</th><th scope="col">Skill needed</th>
+    <th scope="col"><span class="skill-yellow">Yellow</span></th><th scope="col"><span class="skill-grey">Grey</span></th></tr></thead>
+  <tbody>
+  {% for recipe in recipes %}
+  <tr>
+    <td class="spell">{{ recipe.name }}</td>
+    <td>{{ recipe.source }}</td>
+    <td class="num">{{ recipe.skill or "" }}</td>
+    <td class="num">{{ recipe.yellow }}</td>
+    <td class="num">{{ recipe.grey }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<p class="game-note">Yellow is the skill at which a recipe stops giving a point every time, grey the skill at which it
+  gives none. "Skill needed" comes from the recipe item; the game files don't say what skill a trainer asks for, so it is
+  blank for those. "Trainer" means the game files list no recipe item: most of these are taught by trainers, but some
+  come from quests or reputation.</p>
+{% include "_gamedata_note.html" %}
+{% endblock %}
