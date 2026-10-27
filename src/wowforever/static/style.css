@@ -261,3 +261,20 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .edit-log .added li::marker { content: "+  "; color: #6cc47e; }
 .edit-log .removed li { color: var(--muted); text-decoration: line-through; }
 .edit-log .removed li::marker { content: "−  "; color: #d77; }
+
+/* Addons and Macros pages. */
+.guide-intro { margin: 0 0 8px; }
+.guide-intro .meta { display: block; margin-top: 6px; }
+.guide-intro code, .macro code { font-family: ui-monospace, Consolas, monospace; }
+.addon-list { list-style: none; padding: 0; margin: 0; }
+.entry h3 { font-family: Cinzel, Georgia, serif; font-weight: 700; letter-spacing: .02em; font-size: 1.1rem; line-height: 1.3; margin: 6px 0 6px; color: var(--heading); }
+.class-jump { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 16px 0; font-weight: 600; }
+.class-jump a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.class-jump a:hover { text-decoration: underline; }
+.class-jump img, .macro-class .class-title img { border: 1px solid var(--stone-edge); border-radius: 2px; }
+.macro-class { scroll-margin-top: 16px; }
+.macro-class .class-title { font-size: 1.3rem; margin: 2rem 0 .5rem; }
+.macro pre {
+  margin: 0; padding: 10px 12px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+  font-size: .85rem; line-height: 1.5; color: var(--gold-text); background: var(--stone); border: 1px solid var(--stone-edge); border-radius: 3px;
+}

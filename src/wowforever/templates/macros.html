@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>WoW Forever macros</h1>
+<p class="guide-intro">Copy a macro, type <code>/macro</code> in game, click <strong>New</strong>, paste it into the box
+  and drag the icon to your action bar. Spell names follow the Forever beta client, as collected by
+  <a href="https://foreverdb.net/macros" target="_blank" rel="noopener">ForeverDB</a>; if one stops working after a
+  patch, check the spell name in your spellbook.</p>
+<nav class="class-jump" aria-label="Classes">
+  {% for name, class_slug, color, _ in macros %}
+  <a href="#{{ class_slug }}" style="color: {{ color }}">
+    <img src="{{ url_for('static', filename='classes/' ~ class_slug ~ '.jpg') }}" alt="" width="20" height="20">{{ name }}</a>
+  {% endfor %}
+</nav>
+{% for name, class_slug, color, class_macros in macros %}
+<section class="macro-class" id="{{ class_slug }}">
+  <h2 class="class-title" style="color: {{ color }}">
+    <img src="{{ url_for('static', filename='classes/' ~ class_slug ~ '.jpg') }}" alt="" width="28" height="28">{{ name }}
+  </h2>
+  {% for macro in class_macros %}
+  <article class="entry macro">
+    <p class="meta">Level {{ macro.level }}</p>
+    <h3>{{ macro.name }}</h3>
+    <p class="summary">{{ macro.blurb }}</p>
+    <pre><code>{{ macro.text }}</code></pre>
+  </article>
+  {% endfor %}
+</section>
+{% endfor %}
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='macros.js') }}" defer></script>{% endblock %}
