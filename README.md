@@ -17,7 +17,7 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Full patch notes**: every Blizzard forum notes post on its own page, not just the class parts. When Blizzard edits one, the page lists what was added and removed.
 - **Blue posts**: what Blizzard staff say about WoW Forever on the official forums, newest first, with its own RSS feed.
 - **Known Issues**: a link next to the launch countdown on every page, straight to Blizzard's Known Issues thread.
-- **Realms**: whether each WoW Forever realm is up, and its population. This page appears once realm data is available.
+- **Realms**: whether each WoW Forever realm is up, and its population, with a chart of each realm's last 7 days in two-hour blocks (busier is brighter, red is down). This page appears once realm data is available.
 - **Guides** menu: Races, Professions, Addons and Macros.
 - **Addons**: the essential addons and the new Forever ones people are trying, each linked to its CurseForge page.
 - **Macros**: ready-to-copy macros for all nine classes, with a Copy button on each.

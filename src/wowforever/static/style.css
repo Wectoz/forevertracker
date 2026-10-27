@@ -414,3 +414,11 @@ table.realms thead th { color: var(--heading); }
   .game-table td, .game-table th { padding: 6px 4px; }
   .spell-tiles { grid-template-columns: 1fr; }
 }
+
+/* Realm population over the last week: one bronze hue, brighter = busier; down is red, unchecked an outline. */
+.pop-low { fill: #8a541c; } .pop-medium { fill: #cf8530; } .pop-high { fill: #f2bf78; } .pop-full { fill: #fff4dc; }
+.pop-other { fill: #6b6156; } .pop-down { fill: #e05a5a; } .pop-none { fill: none; stroke: var(--bronze-dark); stroke-width: .8; }
+.pop-strip { display: block; }
+.pop-strip rect:hover { stroke: var(--gold-text); stroke-width: .8; }
+.pop-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; font-size: .8rem; color: var(--muted); }
+.pop-legend span { display: inline-flex; gap: 5px; align-items: center; }

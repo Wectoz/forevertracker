@@ -1,5 +1,6 @@
 """Flask website: news feed, news, patches, class pages, races, professions, addons, macros, Atom feeds and search."""
 
+from collections import Counter
 from datetime import UTC, date, datetime, timedelta
 
 from flask import Flask, abort, jsonify, render_template, request, url_for
@@ -44,6 +45,29 @@ def _ago(delta: timedelta) -> str:
     if minutes < 120:
         return f"{minutes} minute{'s' if minutes != 1 else ''}"
     return f"{minutes // 60} hours"
+
+
+POPULATION_LEVELS = ("Low", "Medium", "High", "Full")  # coloured light to bright; any other label is grey
+STRIP_DAYS, STRIP_HOURS = 7, 2  # the population charts: the last week, in two-hour blocks
+
+
+def _population_strip(checks: list[tuple[datetime, bool, str]], now: datetime) -> dict:
+    """A realm's last week in blocks, each with its CSS class and hover text: "Down" if the realm was down at any check
+    in it, else the population at its last check. Also a one-line summary for screen readers."""
+    step = timedelta(hours=STRIP_HOURS)
+    end = now.replace(minute=0, second=0, microsecond=0) - timedelta(hours=now.hour % STRIP_HOURS) + step
+    blocks = []
+    for i in range(STRIP_DAYS * 24 // STRIP_HOURS):
+        start = end - step * (STRIP_DAYS * 24 // STRIP_HOURS - i)
+        inside = [c for c in checks if start <= c[0] < start + step]
+        state = None if not inside else "Down" if not all(up for _, up, _ in inside) else inside[-1][2]
+        css = "none" if state is None else state.lower() if state in (*POPULATION_LEVELS, "Down") else "other"
+        blocks.append({"css": css, "state": state,
+                       "title": f"{start:%a %b %-d, %H:%M}–{start + step:%H:%M} UTC: {state or 'not checked'}"})
+    seen = Counter(b["state"] for b in blocks if b["state"] and b["state"] != "Down")
+    down = sum(b["state"] == "Down" for b in blocks)
+    summary = (f"mostly {seen.most_common(1)[0][0]}" if seen else "no checks yet") + (f", down in {down} of them" if down else "")
+    return {"blocks": blocks, "summary": f"last 7 days in two-hour blocks: {summary}"}
 
 
 def _anchors(updates: list[ClassUpdate]) -> dict[int, str]:
@@ -143,7 +167,10 @@ def create_app(store: Store) -> Flask:
         if not data:
             abort(404)
         now = datetime.now(UTC)
-        sections = [{"name": REGION_NAMES[region], "checked": checked, "realms": rows} for region, (checked, rows) in data.items()]
+        history = store.realm_history(now - timedelta(days=STRIP_DAYS))
+        sections = [{"name": REGION_NAMES[region], "checked": checked, "realms": rows,
+                     "strips": {r.name: _population_strip(history.get((region, r.name), []), now) for r in rows}}
+                    for region, (checked, rows) in data.items()]
         oldest = min(checked for checked, _ in data.values())
         stale = _ago(now - oldest) if now - oldest > STALE_AFTER else None
         return render_template(
