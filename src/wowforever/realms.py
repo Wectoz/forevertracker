@@ -74,7 +74,8 @@ def parse_search(region: str, data: dict) -> list[Realm]:
             up = group["status"]["type"] == "UP"
             population = str(group["population"]["type"]).title()
             for realm in group["realms"]:
-                if not _FOREVER_RE.search(_name(realm["category"])):
+                category = realm.get("category")
+                if not isinstance(category, dict) or not _FOREVER_RE.search(_name(category)):
                     continue
                 kind = str(realm["type"]["type"])
                 found.append(Realm(region, _name(realm["name"]), _TYPES.get(kind, kind.title()), up, population))

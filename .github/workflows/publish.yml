@@ -50,7 +50,10 @@ jobs:
             gather=true
           else
             last=$(cat instance/gathered-at)
-            if [ $(( $(date +%s) - last )) -ge 3000 ]; then gather=true; fi
+            case "$last" in
+              ''|*[!0-9]*) gather=true ;;
+              *) if [ $(( $(date +%s) - last )) -ge 3000 ]; then gather=true; fi ;;
+            esac
           fi
           echo "gather=$gather" >> "$GITHUB_OUTPUT"
 

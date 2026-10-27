@@ -77,12 +77,13 @@ def gather_blue_posts(store: Store, fetch: FetchJson | None = None, cutoff: date
     fetch = fetch or fetch_json
     first_run = not store.has_blue_posts()
     topics = store.note_topics()
+    newest = store.list_blue_posts(limit=1)[0].posted if not first_run else None
     added = 0
     before = None
     for page in range(max_pages):
         if page and delay:
             time.sleep(delay)
-        posts, before = tracker_page(fetch, before)
+        posts, before, oldest = tracker_page(fetch, before)
         if before is None:  # the tracker has no older posts
             break
         stored = {p.id for p in posts if store.has_blue_post(p.id)}
@@ -92,13 +93,21 @@ def gather_blue_posts(store: Store, fetch: FetchJson | None = None, cutoff: date
                 continue
             if is_known_issues(post.thread_title) and topics.get(post.topic_id) != "known":
                 _gather_topic(store, post.topic_id, "known", fetch)  # the thread is in the notes, not here
-                topics[post.topic_id] = "known"
+                if post.topic_id in store.note_topics():  # a thread that could not be read is retried
+                    topics[post.topic_id] = "known"
             kind = topics.get(post.topic_id)
             if (kind == "known" and post.number == 1) or kind not in (None, "known"):
                 continue
+            if post.number == 1 and (store.has_blue_thread(post.author, post.thread_title) or any(
+                    k.number == 1 and k.author == post.author and k.thread_title.casefold() == post.thread_title.casefold()
+                    for k in keep)):
+                continue  # the same announcement cross-posted to another category
             keep.append(post)
         added += store.add_blue_posts(keep, announced=first_run)
         if stored or any(p.posted < cutoff for p in posts):
+            break
+        # The tracker lists every category: stop once the raw page reaches what is already stored.
+        if oldest is not None and (oldest < cutoff or (newest is not None and oldest <= newest)):
             break
     return added
 

@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<p class="crumb"><a href="{{ url_for('patches') }}">← All patches</a></p>
+{% if post.kind == 'known' %}<p class="crumb"><a href="{{ url_for('home') }}">← Home</a></p>
+{% else %}<p class="crumb"><a href="{{ url_for('patches') }}">← All patches</a></p>{% endif %}
 <h1>{{ title }}</h1>
 <p class="meta">{{ label }} · <time datetime="{{ post.posted.isoformat() }}">{{ post.posted | short_date }}</time>
   · <a href="{{ post.url }}" target="_blank" rel="noopener">Original on the Blizzard forums ↗</a></p>
 {% for edit in post.edits %}
 <details class="edit-log"{% if loop.first %} open{% endif %}>
-  <summary>Blizzard edited these notes · seen {{ edit.seen | month_day }}
+  <summary>Blizzard edited {% if post.kind == 'known' %}this list{% else %}these notes{% endif %} · seen {{ edit.seen | month_day }}
     ({{ edit.added | length }} added, {{ edit.removed | length }} removed)</summary>
   {% if edit.added %}<ul class="added">{% for line in edit.added %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}
   {% if edit.removed %}<ul class="removed">{% for line in edit.removed %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}

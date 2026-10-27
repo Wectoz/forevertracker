@@ -362,6 +362,13 @@ class Store:
         with self._lock:
             return self._conn.execute("SELECT 1 FROM blue_posts WHERE id = ?", (post_id,)).fetchone() is not None
 
+    def has_blue_thread(self, author: str, title: str) -> bool:
+        """Whether a first post by `author` titled `title` (any case) is stored: staff cross-post announcements."""
+        with self._lock:
+            return self._conn.execute(
+                "SELECT 1 FROM blue_posts WHERE number = 1 AND author = ? AND lower(thread_title) = lower(?)",
+                (author, title)).fetchone() is not None
+
     def _blue(self, where: str, order: str, params: tuple = ()) -> list[StaffPost]:
         with self._lock:
             rows = self._conn.execute(f"SELECT * FROM blue_posts {where} ORDER BY {order}", params).fetchall()

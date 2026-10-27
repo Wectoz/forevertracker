@@ -432,3 +432,53 @@ def test_blue_gather_continues_past_page_with_no_forever_posts(tmp_path):
     assert gather.gather_blue_posts(store, fetch, delay=0) == 1
     assert [p.id for p in store.list_blue_posts()] == [7]
     assert fetch.calls[1].endswith("before_post_id=8")
+
+
+def test_cross_posted_announcement_is_stored_once(tmp_path):
+    store = Store(tmp_path / "t.db")
+    page = [_raw(9, 20, 1, title="Realm Names", day=25, category=349),
+            _raw(8, 10, 1, title="realm names", day=25, category=347),
+            _raw(7, 11, 1, title="Realm Names", day=24, user="Other")]
+    assert gather.gather_blue_posts(store, tracker_fetch(page, []), delay=0) == 2
+    assert sorted(p.id for p in store.list_blue_posts()) == [7, 9]
+    # a later run does not add the sibling copy either
+    later = tracker_fetch([_raw(12, 21, 1, title="Realm names", day=26, category=347)], [])
+    assert gather.gather_blue_posts(store, later, delay=0) == 0
+
+
+def test_blue_gather_stops_at_raw_page_older_than_newest_stored(tmp_path):
+    store = Store(tmp_path / "t.db")
+    gather.gather_blue_posts(store, tracker_fetch([_raw(3, 1, 2, day=22)], []), delay=0)
+    fetch = tracker_fetch([_raw(9, 1, 2, day=20, category=171), _raw(8, 1, 3, day=19, category=171)], [])
+    assert gather.gather_blue_posts(store, fetch, delay=0) == 0
+    assert len(tracker_calls(fetch)) == 1
+
+
+def test_known_issues_read_failure_is_retried(tmp_path):
+    store = Store(tmp_path / "t.db")
+    ki = "WoW Forever Known Issues"
+    good = tracker_fetch([_raw(8, 777, 3, title=ki, day=25), _raw(7, 777, 2, title=ki, day=24)], [])
+    broken = {"on": True}
+
+    def flaky(path):
+        if "/t/" in path and broken["on"]:
+            broken["on"] = False  # only the first read fails
+            raise FetchError("boom")
+        return good(path)
+    gather.gather_blue_posts(store, flaky, delay=0)
+    # the failed read was not remembered as done: the next post of the thread retried it
+    assert [n.kind for n in store.notes()] == ["known"]
+
+
+def test_known_issues_failed_read_is_not_stored(tmp_path):
+    store = Store(tmp_path / "t.db")
+
+    def failing(path):
+        if "/t/" in path:
+            raise FetchError("boom")
+        return {"posts": [_raw(8, 777, 3, title="WoW Forever Known Issues", day=25)]}
+    gather.gather_blue_posts(store, failing, max_pages=1, delay=0)
+    assert store.notes() == []
+    ok = tracker_fetch([_raw(9, 777, 4, title="WoW Forever Known Issues", day=26)], [])
+    gather.gather_blue_posts(store, ok, delay=0)
+    assert [n.kind for n in store.notes()] == ["known"]

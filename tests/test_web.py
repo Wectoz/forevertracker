@@ -397,6 +397,16 @@ def test_notes_page_for_known_issues():
     store.save_update(make_forum_post(id=5, topic_id=11), "known", {}, title="Known Issues", html="<p>Bug</p>")
     response = create_app(store).test_client().get("/notes/5")
     assert response.status_code == 200 and "Known Issues" in response.text
+    assert "All patches" not in response.text and 'class="crumb"><a href="/">' in response.text
+
+
+def test_known_issues_edit_log_heading():
+    store = Store(":memory:")
+    post = make_forum_post(id=5, topic_id=11)
+    store.save_update(post, "known", {}, title="Known Issues", html="<p>Bug</p>")
+    store.save_update(post, "known", {}, title="Known Issues", html="<p>Bug 2</p>", now=datetime(2026, 10, 17, 20, tzinfo=UTC))
+    text = create_app(store).test_client().get("/notes/5").text
+    assert "Blizzard edited this list" in text and "these notes" not in text
 
 
 def blue_client(*staff):

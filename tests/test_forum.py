@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import urllib.error
 import urllib.request
@@ -97,10 +98,11 @@ def test_fetch_json_wraps_broken_responses(monkeypatch):
 
 
 def test_tracker_page_keeps_forever_staff_posts():
-    posts, next_before = tracker_page(fake_fetch({"/groups/blizzard-tracker/posts.json": load("forum_tracker.json")}))
+    posts, next_before, oldest = tracker_page(fake_fetch({"/groups/blizzard-tracker/posts.json": load("forum_tracker.json")}))
     # The retail post (category 171) and the BlizzardEntertainment news post are gone.
     assert [p.id for p in posts] == [30624529, 30600002, 30600001, 30590866]
     assert next_before == 30590866  # the last post of the unfiltered page
+    assert oldest == min(datetime.fromisoformat(p["created_at"]) for p in load("forum_tracker.json")["posts"])
     first = posts[0]
     assert (first.topic_id, first.number, first.author, first.author_title) == (2360696, 7, "Kaivax", "Community Manager")
     assert first.thread_title == "WoW Forever Beta Development Notes – Updated October 26"
@@ -116,7 +118,7 @@ def test_tracker_page_pages_with_before():
         seen.append(path)
         return {"posts": []}
 
-    assert tracker_page(fetch, before=123) == ([], None)
+    assert tracker_page(fetch, before=123) == ([], None, None)
     assert seen == ["/groups/blizzard-tracker/posts.json?before_post_id=123"]
 
 

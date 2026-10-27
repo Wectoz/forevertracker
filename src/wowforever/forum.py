@@ -134,9 +134,10 @@ def thread_posts(topic_id: int, fetch: FetchJson) -> list[ForumPost]:
     return sorted(posts, key=lambda p: p.number)
 
 
-def tracker_page(fetch: FetchJson, before: int | None = None) -> tuple[list[StaffPost], int | None]:
+def tracker_page(fetch: FetchJson, before: int | None = None) -> tuple[list[StaffPost], int | None, datetime | None]:
     """One page (20 posts, newest first) of Blizzard staff posts in the WoW Forever categories, plus the
-    id to pass as `before` for the next page: the last post of the unfiltered page, None when it is empty."""
+    id to pass as `before` for the next page (the last post of the unfiltered page, None when it is empty)
+    and the oldest `created_at` on the unfiltered page (None when it is empty)."""
     path = TRACKER_PATH if before is None else f"{TRACKER_PATH}?before_post_id={before}"
     try:
         raw = fetch(path)["posts"]
@@ -152,6 +153,7 @@ def tracker_page(fetch: FetchJson, before: int | None = None) -> tuple[list[Staf
             if p["category_id"] in FOREVER_CATEGORIES and p["username"] != _NEWS_ACCOUNT
         ]
         next_before = int(raw[-1]["id"]) if raw else None
+        oldest = min((datetime.fromisoformat(p["created_at"]) for p in raw), default=None)
     except (KeyError, TypeError, ValueError, AttributeError) as err:
         raise ParseError(f"unexpected forum tracker page: {err!r}") from err
-    return posts, next_before
+    return posts, next_before, oldest

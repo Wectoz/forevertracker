@@ -18,6 +18,12 @@ def test_parse_search_keeps_forever_realms_only():
     ]
 
 
+def test_parse_search_skips_realm_without_category():
+    data = json.loads(json.dumps(FIXTURE))
+    data["results"][0]["data"]["realms"].append({"name": {"en_US": "Nocat"}, "type": {"type": "NORMAL"}})
+    assert [r.name for r in parse_search("us", data)] == ["Ashenvale", "Zandalar"]
+
+
 def test_parse_search_without_forever_realms_is_empty():
     data = {"results": [FIXTURE["results"][1]]}
     assert parse_search("us", data) == []
