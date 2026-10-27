@@ -1,4 +1,4 @@
-"""Flask website: news feed, news, patches, class patch notes, Atom feeds and search."""
+"""Flask website: news feed, news, patches, class patch notes, addons, macros, Atom feeds and search."""
 
 from datetime import UTC, date, datetime
 
@@ -6,6 +6,7 @@ from flask import Flask, abort, jsonify, render_template, request, url_for
 
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
+from wowforever.guides import ADDONS_UPDATED, CATEGORIES, GENERAL_MACROS, MACROS, TRENDING
 from wowforever.posts import plain_text
 from wowforever.store import ClassUpdate, Store
 
@@ -146,6 +147,24 @@ def create_app(store: Store) -> Flask:
             "notes.html", post=post, title=title, label=UPDATE_LABELS[post.kind],
             page_title=f"{title} · WoW Forever Tracker",
             description=post.summary or f"World of Warcraft: Forever {UPDATE_LABELS[post.kind].lower()}.",
+        )
+
+    @app.get("/addons")
+    def addons():
+        return render_template(
+            "addons.html", sections=(("Trending right now", TRENDING), *CATEGORIES), updated=ADDONS_UPDATED,
+            page_title="WoW Forever Addons · WoW Forever Tracker",
+            description="The best World of Warcraft: Forever addons by category, and the new ones everyone is "
+                        "trying, with links to CurseForge.",
+        )
+
+    @app.get("/macros")
+    def macros():
+        return render_template(
+            "macros.html", macros=[("All classes", "general", None, GENERAL_MACROS)]
+            + [(name, slug(name), CLASS_COLORS[name], MACROS[name]) for name in CLASSES],
+            page_title="WoW Forever Macros for Every Class · WoW Forever Tracker",
+            description="Ready-to-copy World of Warcraft: Forever macros for all nine classes.",
         )
 
     def atom(title: str, page: str, entries: list[dict]):

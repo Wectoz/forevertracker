@@ -17,7 +17,7 @@ def filled_store():
 def test_build_writes_every_page(tmp_path):
     pages = build_site(filled_store(), tmp_path, base_path="/wow-forever-news")
     for path in ("index.html", "page/2/index.html", "news/index.html", "news/page/2/index.html",
-                 "patches/index.html", "patches/1.60.1/index.html", "static/style.css", "static/countdown.js",
+                 "patches/index.html", "patches/1.60.1/index.html", "addons/index.html", "macros/index.html", "static/style.css", "static/countdown.js",
                  "404.html"):
         assert (tmp_path / path).is_file(), path
     assert pages >= 6

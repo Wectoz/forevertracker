@@ -13,6 +13,8 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Patches**: patch notes grouped by version number, plus hotfixes.
 - **Classes**: pick your class from the menu to see only its changes from every beta build, patch and hotfix.
 - **Full patch notes**: every Blizzard forum notes post on its own page, not just the class parts. When Blizzard edits one, the page lists what was added and removed.
+- **Addons**: the essential addons and the new Forever ones people are trying, each linked to its CurseForge page.
+- **Macros**: ready-to-copy macros for all nine classes, with a Copy button on each.
 - **Search**: find any post or class change, e.g. every note that mentions Sunder Armor.
 - **Your class**: mark your class on its page and the site points out posts with changes for it. Class pages can also show only the changes since a given build, patch or hotfix.
 - **New since your last visit**: posts you haven't seen yet get a "New" badge.

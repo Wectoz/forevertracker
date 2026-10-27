@@ -1,5 +1,5 @@
 // Remembers the reader's class: set from a class page, then highlighted in the menu, on the Home call
-// to action, and on forum notes posts that have changes for it.
+// to action, and on forum notes posts that have changes for it. The Macros page opens at that class.
 (() => {
   const KEY = "wf-my-class";
   const read = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
@@ -25,6 +25,10 @@
   }
 
   const mine = read();
+  // Runs before macros.js, which shows the class in the address bar.
+  if (mine && !location.hash && document.querySelector(`.macro-class#${CSS.escape(mine)}`)) {
+    history.replaceState(null, "", `#${mine}`);
+  }
   const link = menuLink(mine);
   if (!link) return;
   const name = link.textContent.trim();

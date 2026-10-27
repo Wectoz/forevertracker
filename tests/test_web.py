@@ -358,3 +358,26 @@ def test_class_anchors_are_stable_when_a_second_update_lands_the_same_day():
 
 def test_plate_has_a_slot_for_the_local_launch_time():
     assert '<p class="plate-local" hidden></p>' in client_for().get("/").text
+
+
+def test_menu_links_addons_and_macros():
+    html = client_for().get("/").text
+    assert 'href="/addons"' in html
+    assert 'href="/macros"' in html
+
+
+def test_addons_page_links_each_addon_to_curseforge():
+    html = client_for().get("/addons").text
+    assert "Trending right now" in html and "Questing &amp; leveling" in html
+    assert 'href="https://www.curseforge.com/wow/addons/questie" target="_blank" rel="noopener"' in html
+    assert 'src="/static/addons/questie.png"' in html
+    assert "List updated Oct 27, 2026" in html
+
+
+def test_macros_page_has_a_section_per_class_with_escaped_macro_text():
+    html = client_for().get("/macros").text
+    for cls in ("general", "druid", "hunter", "mage", "paladin", "priest", "rogue", "shaman", "warlock", "warrior"):
+        assert f'<section class="macro-class" id="{cls}"' in html
+        assert f'href="#{cls}"' in html
+    assert "#showtooltip Hunter&#39;s Mark\n/petattack\n/cast Hunter&#39;s Mark" in html
+    assert "macros.js" in html

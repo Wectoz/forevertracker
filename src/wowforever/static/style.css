@@ -261,3 +261,36 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .edit-log .added li::marker { content: "+  "; color: #6cc47e; }
 .edit-log .removed li { color: var(--muted); text-decoration: line-through; }
 .edit-log .removed li::marker { content: "−  "; color: #d77; }
+
+/* Addons and Macros pages. */
+.guide-intro { margin: 0 0 8px; font-size: .95rem; }
+.guide-intro .meta { display: block; margin-top: 4px; }
+.guide-intro code, .macro code { font-family: ui-monospace, Consolas, monospace; }
+.addon-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 8px; }
+.addon, .macro { background: #1f1913; border: 1px solid #3d2d1e; border-radius: 4px; }
+.addon { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; }
+.addon:hover { border-color: var(--bronze); }
+.addon img { flex: none; object-fit: contain; background: #0d0b08; border: 1px solid var(--stone-edge); border-radius: 3px; }
+.addon h3, .macro h3 { margin: 0; font-size: .95rem; line-height: 1.3; }
+.addon h3 a { color: var(--heading); text-decoration: none; }
+.addon h3 a:hover { text-decoration: underline; }
+.addon h3 span { color: var(--muted); font-size: .8rem; }
+.addon p, .macro p { margin: 2px 0 0; font-size: .85rem; line-height: 1.4; color: #cdbfa3; }
+.class-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 10px; }
+.class-tabs a {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 6px; font-weight: 600; font-size: .9rem; text-decoration: none;
+  background: var(--stone-raised); border: 1px solid var(--stone-edge); border-radius: 3px;
+}
+.class-tabs a:hover { border-color: var(--bronze); }
+.class-tabs a[aria-current="page"] { background: #2c231a; border-color: currentColor; }
+.class-tabs img { border-radius: 2px; }
+.class-tabs .all-classes { padding-left: 10px; color: var(--heading); }
+.macro-class { display: grid; gap: 8px; }
+.macro-class[hidden] { display: none; }
+.macro { padding: 10px 12px; }
+.macro-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.macro-head .copy-link { flex: none; font-size: .8rem; padding: 1px 8px; }
+.macro pre {
+  margin: 8px 0 0; padding: 8px 10px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+  font-size: .8rem; line-height: 1.45; color: var(--gold-text); background: var(--stone); border: 1px solid var(--stone-edge); border-radius: 3px;
+}

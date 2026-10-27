@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>WoW Forever addons</h1>
+<p class="guide-intro">Every addon here has a WoW Forever version on CurseForge. When you install, pick the
+  <strong>Forever</strong> file: the Classic file of the same addon won't load properly.
+  <span class="meta">List updated {{ updated | short_date }}</span></p>
+{% for heading, addons in sections %}
+<h2 class="section-title">{{ heading }}</h2>
+<ul class="addon-list">
+  {% for addon in addons %}
+  <li class="addon">
+    <img src="{{ url_for('static', filename='addons/' ~ addon.slug ~ '.png') }}" alt="" width="40" height="40" loading="lazy">
+    <div>
+      <h3><a href="{{ addon.url }}" target="_blank" rel="noopener">{{ addon.name }} <span aria-hidden="true">↗</span></a></h3>
+      <p>{{ addon.blurb }}</p>
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% endfor %}
+{% endblock %}
