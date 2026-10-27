@@ -36,6 +36,14 @@ def _bits(data: bytes, bit_offset: int, bit_count: int) -> int:
     return (chunk >> (bit_offset & 7)) & ((1 << bit_count) - 1)
 
 
+def _fit(v: int, field: dict) -> int:
+    """A 32-bit pallet or common value cut to the field's declared width: the bits above it are not part of it."""
+    if field["size"] >= 32:
+        return v
+    v &= (1 << field["size"]) - 1
+    return v - (1 << field["size"]) if not field["unsigned"] and v >> (field["size"] - 1) else v
+
+
 def _read_sparse(b: bytes, sections, fields) -> dict[int, dict]:
     """Offset-map tables: variable-size records, fields packed in order, strings inline."""
     out = {}
@@ -184,6 +192,8 @@ def read(path: Path, table: str, defs: Path) -> dict[int, dict]:
                 raise NotImplementedError(f"storage type {stype}")
             if f["type"] == "float" and stype != 0:  # packed floats come out as raw bits
                 vals = [struct.unpack("<f", struct.pack("<I", v & 0xFFFFFFFF))[0] for v in vals]
+            elif f["type"] == "int" and stype in (3, 4):
+                vals = [_fit(v, f) for v in vals]
             row[f["name"]] = vals if f["count"] > 1 else vals[0]
             if "id" in f["ann"] and rid is None:
                 rid = row[f["name"]]
@@ -192,7 +202,7 @@ def read(path: Path, table: str, defs: Path) -> dict[int, dict]:
         for fi, f in enumerate(inline):
             if storage[fi][3] == 2:
                 v = common_maps[fi].get(rid, storage[fi][4])
-                row[f["name"]] = struct.unpack("<f", struct.pack("<I", v))[0] if f["type"] == "float" else v
+                row[f["name"]] = struct.unpack("<f", struct.pack("<I", v))[0] if f["type"] == "float" else _fit(v, f)
         if id_noninline:
             row[id_noninline["name"]] = rid
         if relation:

@@ -1,4 +1,4 @@
-"""Command line: wowforever fetch | backfill | serve | build | announce | realms | gamedata."""
+"""Command line: wowforever fetch | backfill | serve | build | announce | realms | gamedata | icons."""
 
 import argparse
 import logging
@@ -36,6 +36,8 @@ def main(argv: list[str] | None = None) -> int:
     gamedata = commands.add_parser("gamedata", help="rebuild gamedata.json from tables extracted from the game client")
     gamedata.add_argument("db2", type=Path, help="folder with the extracted .db2 files")
     gamedata.add_argument("defs", type=Path, help="WoWDBDefs definitions folder")
+    icons = commands.add_parser("icons", help="convert the icons extracted from the game client for gamedata.json")
+    icons.add_argument("blp", type=Path, help="folder with the extracted <file ID>.blp icons")
     args = parser.parse_args(argv)
 
     if args.command == "gamedata":
@@ -45,9 +47,18 @@ def main(argv: list[str] | None = None) -> int:
 
         data = gd.build(gd.read_tables(args.db2, args.defs), gd.client_build(args.db2))
         gd.DATA_FILE.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
+        wanted = args.db2 / "icons.txt"  # a TACTTool list: file ID;output name
+        wanted.write_text("".join(f"{i};{i}.blp\n" for i in sorted(gd.icon_files(data))), encoding="utf-8")
         print(f"Wrote {gd.DATA_FILE.name} from build {data['build']}: {len(data['races'])} races, "
-              f"{sum(map(len, data['professions'].values()))} recipes.")
+              f"{sum(map(len, data['professions'].values()))} recipes. Icons to extract are listed in {wanted}.")
         return 0
+
+    if args.command == "icons":
+        from wowforever import gamedata as gd
+
+        missing = gd.write_icons(gd.load(), args.blp)
+        print(f"Wrote icons to {gd.ICONS}." + (f" Missing from {args.blp}: {missing}" if missing else ""))
+        return 1 if missing else 0
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     store = _open_store(args.db)

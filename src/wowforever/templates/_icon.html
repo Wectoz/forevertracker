@@ -1,0 +1,8 @@
+{# A spell or item icon from the game client; decorative, the name is always next to it. #}
+{% macro icon(id, size=32) -%}
+{%- if id -%}
+<img class="icon" src="{{ url_for('static', filename='icons/' ~ id ~ '.jpg') }}" alt="" width="{{ size }}" height="{{ size }}" loading="lazy">
+{%- else -%}
+<span class="icon" style="width: {{ size }}px; height: {{ size }}px"></span>
+{%- endif -%}
+{%- endmacro %}

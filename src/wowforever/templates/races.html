@@ -1,20 +1,33 @@
 {% extends "base.html" %}
+{% from "_icon.html" import icon %}
 {% block content %}
 <h1>WoW Forever races</h1>
 <p class="guide-intro">Every playable race's racial abilities in World of Warcraft: Forever, including the October 2026
-  racial rework and the new Skyborne.</p>
-<nav class="class-tabs" aria-label="Races">
-  {% for race in races %}<a href="#{{ race | slugify }}">{{ race }}</a>{% endfor %}
+  racial rework and the new Skyborne. Pick a race:</p>
+{% macro portrait(race, size) -%}
+{%- if race in race_icons -%}
+<img class="race-icon" src="{{ url_for('static', filename='icons/race-' ~ (race | slugify) ~ '.png') }}" alt="" width="{{ size }}" height="{{ size }}">
+{%- endif -%}
+{%- endmacro %}
+<nav class="class-tabs race-tabs" aria-label="Races">
+  {% for race in races %}<a href="#{{ race | slugify }}">{{ portrait(race, 24) }}{{ race }}</a>{% endfor %}
 </nav>
 {% for race, racials in races.items() %}
-<section class="race" id="{{ race | slugify }}">
-  <h2>{{ race }}</h2>
+<section class="tab-panel race" id="{{ race | slugify }}" aria-label="{{ race }} racials">
+  <h2>{{ portrait(race, 48) }}{{ race }} <span class="meta">{{ racials | length }} racial{{ "s" if racials | length != 1 }}</span></h2>
   <ul class="racials">
     {% for racial in racials %}
-    <li><span class="spell">{{ racial.name }}</span>{% if racial.description %}<br><span class="desc">{{ racial.description }}</span>{% endif %}</li>
+    <li class="racial">{{ icon(racial.icon, 44) }}<div><span class="spell">{{ racial.name }}</span>
+      {%- if racial.description %}<span class="desc">{{ racial.description }}</span>{% endif %}
+      {%- if racial.change %}<span class="racial-change">Updated: {{ racial.change }}</span>{% endif %}</div></li>
     {% endfor %}
   </ul>
 </section>
 {% endfor %}
+<p class="game-note">Changes marked "Updated" come from the <a href="{{ racial_notes[1] }}" target="_blank" rel="noopener">{{ racial_notes[0] }}</a>,
+  which are newer than the game client the rest is read from.</p>
 {% include "_gamedata_note.html" %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='tabs.js') }}" defer></script>
 {% endblock %}

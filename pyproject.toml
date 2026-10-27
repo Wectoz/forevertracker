@@ -15,6 +15,9 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = ["pytest>=8"]
+gamedata = [
+    "pillow>=13.0.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
