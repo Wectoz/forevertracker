@@ -370,13 +370,14 @@ def test_addons_page_links_each_addon_to_curseforge():
     html = client_for().get("/addons").text
     assert "Essentials" in html and "Trending right now" in html
     assert 'href="https://www.curseforge.com/wow/addons/questie" target="_blank" rel="noopener"' in html
+    assert 'src="/static/addons/questie.png"' in html
     assert "List updated Oct 27, 2026" in html
 
 
 def test_macros_page_has_a_section_per_class_with_escaped_macro_text():
     html = client_for().get("/macros").text
     for cls in ("druid", "hunter", "mage", "paladin", "priest", "rogue", "shaman", "warlock", "warrior"):
-        assert f'<section class="macro-class" id="{cls}">' in html
+        assert f'<section class="macro-class" id="{cls}"' in html
         assert f'href="#{cls}"' in html
     assert "#showtooltip Hunter&#39;s Mark\n/petattack\n/cast Hunter&#39;s Mark" in html
     assert "macros.js" in html

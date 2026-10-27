@@ -8,10 +8,12 @@
 <h2 class="section-title">{{ heading }}</h2>
 <ul class="addon-list">
   {% for addon in addons %}
-  <li class="entry">
-    <h3>{{ addon.name }}</h3>
-    <p class="summary">{{ addon.blurb }}</p>
-    <a class="source" href="{{ addon.url }}" target="_blank" rel="noopener">Get it on CurseForge ↗</a>
+  <li class="addon">
+    <img src="{{ url_for('static', filename='addons/' ~ addon.slug ~ '.png') }}" alt="" width="40" height="40" loading="lazy">
+    <div>
+      <h3><a href="{{ addon.url }}" target="_blank" rel="noopener">{{ addon.name }} <span aria-hidden="true">↗</span></a></h3>
+      <p>{{ addon.blurb }}</p>
+    </div>
   </li>
   {% endfor %}
 </ul>
