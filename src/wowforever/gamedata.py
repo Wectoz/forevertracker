@@ -14,6 +14,7 @@ from wowforever.classnotes import CLASSES
 
 DATA_FILE = Path(__file__).parent / "gamedata.json"
 ICONS = Path(__file__).parent / "static" / "icons"
+QUESTION_MARK = 134400  # the game's own icon for one it can't show
 ICON_SIZE = 56  # shown at 28-40 px; big enough for sharp icons on high-density screens
 
 # file name (as TACTTool writes it) -> table name in WoWDBDefs
@@ -29,6 +30,7 @@ TABLES = {
     "itemarmorshield": "ItemArmorShield", "itemdamageonehand": "ItemDamageOneHand", "itemdamagetwohand": "ItemDamageTwoHand",
     "itemdamageranged": "ItemDamageRanged", "itemdamagewand": "ItemDamageWand",
     "uitextureatlasmember": "UiTextureAtlasMember", "uitextureatlas": "UiTextureAtlas",
+    "itemmodifiedappearance": "ItemModifiedAppearance", "itemappearance": "ItemAppearance",
 }
 
 CLASS_SKILLS, SECONDARY_SKILLS, PROFESSIONS = 7, 9, 11  # SkillLine.CategoryID
@@ -66,6 +68,17 @@ BONUS_ARMOR = 50
 BUDGET_COLUMN = {1: 0, 5: 0, 7: 0, 17: 0, 20: 0, 3: 1, 6: 1, 8: 1, 10: 1, 12: 1, 2: 2, 9: 2, 11: 2, 14: 2, 16: 2,
                  23: 2, 13: 3, 21: 3, 22: 3, 15: 4, 25: 4, 26: 4}
 BUDGET = {2: "Good", 3: "Superior", 4: "Epic"}  # by OverallQualityID; lower qualities have no stats
+
+# The Items page: gear and bags of common quality and up.
+CONTAINER, QUIVER = 1, 11
+LISTED_ITEMS = {WEAPON, ARMOR, CONTAINER, QUIVER}
+# Blizzard's test, template and placeholder gear: "90 Epic Rogue Cap", "(OLD)Heavy Throwing Axe", "Monster - Bow",
+# "QATest +1000 Spell Dmg Ring", "Gamemaster's Robe", "Black Leather D02 Boots", "Template Item".
+_TEST_ITEM = re.compile(r"(?i)^\d|^\(old\)|^(?-i:OLD[A-Z ])|^monster - |\[|\b(?:test|qa|qatest|deprecated|unused|placeholder|template"
+                        r"|gamemaster|dnd|dnt|ph)\b|\b(?-i:[A-Z]0\d)\b")
+# Item IDs of Season of Discovery's own items, still in the client. Forever reuses some (Greater Mystic Wand); those
+# are kept when a Forever recipe makes them.
+SEASON_OF_DISCOVERY_ITEMS = range(190000, 240000)
 
 # Spell IDs Blizzard used for Season of Discovery. The client still ships them, but they are not part of Forever:
 # none of them appear in Forever's patch notes, while Forever's own additions (Riptide, Penance, ...) start at 1235000.
@@ -343,7 +356,20 @@ def _races(t, describe, names, icons) -> dict:
     return races
 
 
-def _professions(t, describe, names, icons) -> dict:
+def _item_icons(t) -> dict[int, int]:
+    """Each item's icon: its own, else its appearance's, which is all most Classic gear has."""
+    appearance = {}
+    for link in sorted(t["ItemModifiedAppearance"].values(), key=lambda m: -m["OrderIndex"]):
+        appearance[link["ItemID"]] = link["ItemAppearanceID"]  # the first appearance (lowest OrderIndex) wins
+    out = {}
+    for item_id, item in t["Item"].items():
+        icon = item.get("IconFileDataID") or t["ItemAppearance"].get(appearance.get(item_id), {}).get("DefaultIconFileDataID")
+        if icon:
+            out[item_id] = icon
+    return out
+
+
+def _professions(t, describe, names, icons, item_icons) -> dict:
     effects = t["ItemEffect"]
     tooltip = ItemTooltip(t, describe)
     # the profession window shows what a recipe makes; enchants and the like make nothing and show their spell
@@ -365,14 +391,14 @@ def _professions(t, describe, names, icons) -> dict:
                 or is_season_of_discovery(spell):
             continue  # no skill-up range: the profession's own spells (ranks, Find Fish), not recipes
         makes = made.get(spell, {})
-        item_icon = t["Item"].get(makes.get("EffectItemType"), {}).get("IconFileDataID")
+        item_icon = item_icons.get(makes.get("EffectItemType"))
         needs = reagents.get(spell, {})
         recipe = {"name": names[spell], "icon": item_icon or icons.get(spell), "yellow": row["TrivialSkillLineRankLow"],
                   "grey": row["TrivialSkillLineRankHigh"], "source": "Trainer", "skill": None,
                   "makes": int(makes.get("EffectBasePointsF", 0)) if makes else 0,
                   "item": makes and tooltip(makes["EffectItemType"]) or None,
                   "description": None if makes else describe(spell),
-                  "reagents": [[count, items.get(r, {}).get("Display_lang", "?"), t["Item"].get(r, {}).get("IconFileDataID")]
+                  "reagents": [[count, items.get(r, {}).get("Display_lang", "?"), item_icons.get(r)]
                                for r, count in zip(needs.get("Reagent", []), needs.get("ReagentCount", [])) if r]}
         item = next((items[i] for i in taught.get(spell, []) if items.get(i, {}).get("Display_lang")), None)
         if item:
@@ -383,6 +409,26 @@ def _professions(t, describe, names, icons) -> dict:
     for recipes in out.values():
         recipes.sort(key=lambda r: (r["yellow"], r["name"]))
     return dict(sorted(out.items()))
+
+
+def _items(t, tooltip: ItemTooltip, crafted: dict[str, str], icons: dict[int, int]) -> list[dict]:
+    """Every listed item's tooltip, with its icon, item level, required level, type and the profession that makes it."""
+    out = []
+    for item_id, row in t["ItemSparse"].items():
+        item, name = t["Item"].get(item_id), row["Display_lang"]
+        # quality 6 is Blizzard's developer gear; above level 60, leftovers from The Burning Crusade
+        if not item or item.get("ClassID") not in LISTED_ITEMS or not 1 <= row["OverallQualityID"] <= 5 or not name \
+                or row["RequiredLevel"] > 60 or _TEST_ITEM.search(name) \
+                or (item_id in SEASON_OF_DISCOVERY_ITEMS and name not in crafted):
+            continue
+        tip = tooltip(item_id)
+        if not tip["slot"]:
+            continue  # not worn: warlock stones, seals and the like
+        kind = ARMOR_TYPES.get(item["SubclassID"]) if item["ClassID"] == ARMOR else \
+            WEAPON_TYPES.get(item["SubclassID"]) if item["ClassID"] == WEAPON else None
+        out.append({"id": item_id, "icon": icons.get(item_id), "level": row["ItemLevel"],
+                    "required": row["RequiredLevel"], "type": kind, "crafted": crafted.get(name), **tip})
+    return sorted(out, key=lambda i: (-i["level"], i["name"]))
 
 
 def _race_icons(t, races) -> dict:
@@ -410,13 +456,17 @@ def build(t: dict[str, dict[int, dict]], build_name: str) -> dict:
     class_ids = {v["Name_lang"]: k for k, v in t["ChrClasses"].items()}
     races = _races(t, describe, names, icons)
     playable = {name: race.pop("bit") for name, race in races.items()}
+    item_icons = _item_icons(t)
+    professions = _professions(t, describe, names, icons, item_icons)
+    crafted = {r["item"]["name"]: name for name, recipes in professions.items() for r in recipes if r["item"]}
     return {
         "build": build_name,
         "classes": {cls: _class_data(t, describe, names, levels, icons, 1 << (class_ids[cls] - 1), playable)
                     for cls in CLASSES},
         "races": {name: race["racials"] for name, race in races.items()},
         "race_icons": _race_icons(t, races),
-        "professions": _professions(t, describe, names, icons),
+        "professions": professions,
+        "items": _items(t, ItemTooltip(t, describe), crafted, item_icons),
     }
 
 
@@ -432,12 +482,13 @@ def icon_ids(data: dict) -> set[int]:
     spells.append([{"icon": icon} for recipes in data["professions"].values() for r in recipes for *_, icon in r["reagents"]])
     for cls in data["classes"].values():
         spells += [cls["abilities"], *(tree["talents"] for tree in cls["talents"])]
+    spells.append(data["items"])
     return {x["icon"] for group in spells for x in group if x["icon"]}
 
 
 def icon_files(data: dict) -> set[int]:
     """Every client file the icons are cut from: the icons themselves and the race portraits' textures."""
-    return icon_ids(data) | {art["file"] for art in data["race_icons"].values()}
+    return icon_ids(data) | {art["file"] for art in data["race_icons"].values()} | {QUESTION_MARK}
 
 
 def _open_blp(source: Path):
@@ -468,7 +519,11 @@ def write_icons(data: dict, blp: Path) -> list[int]:
         if not source.exists():
             missing.append(icon)
             continue
-        image = _open_blp(source).convert("RGB")
+        try:
+            image = _open_blp(source).convert("RGB")
+        except OSError:  # an encrypted file (the extractor writes zeros): the question mark, as in game
+            image = _open_blp(blp / f"{QUESTION_MARK}.blp").convert("RGB")
+            print(f"{source.name} is unreadable (encrypted?); used the question mark icon")
         image.resize((ICON_SIZE, ICON_SIZE), Image.LANCZOS).save(ICONS / f"{icon}.jpg", quality=85)
     for race, art in data["race_icons"].items():
         source = blp / f"{art['file']}.blp"

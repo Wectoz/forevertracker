@@ -218,12 +218,38 @@ def test_item_tooltip_works_out_damage_armor_and_stats_from_item_level():
     assert robe["lines"][1:3] == ["Chest · Cloth", "60 Armor"]
 
 
+def test_items_list_gear_and_bags_but_not_test_season_of_discovery_or_unworn_items():
+    def row(name, quality=2, required=10, slot=5, **extra):
+        return {"Display_lang": name, "ItemLevel": 20, "OverallQualityID": quality, "InventoryType": slot,
+                "Bonding": 2, "RequiredLevel": required, "ContainerSlots": 0, "StatModifier_bonusStat": [],
+                "StatPercentEditor": [], **extra}
+    sparse = {1: row("Linen Robe"), 2: row("Torn Robe", quality=0), 3: row("Test Robe"), 4: row("Outland Robe", required=70),
+              5: row("Firestone", slot=0), 6: row("Woolen Bag", slot=18, ContainerSlots=8), 7: row("Linen Cloth"),
+              8: row("90 Epic Rogue Cap"), 9: row("OLDThug Belt", slot=6), 11: row("Old Leather Belt", slot=6),
+              210000: row("Rune Robe"), 217287: row("Greater Mystic Wand", slot=15)}
+    kinds = {7: (7, 5), 6: (1, 0), 217287: (2, 19)}  # cloth (a trade good), a bag, a wand; the rest cloth armor
+    t = tables({"ItemSparse": sparse, "Item": {i: {"ClassID": kinds.get(i, (4, 1))[0], "SubclassID": kinds.get(i, (4, 1))[1],
+                                                   "IconFileDataID": 100 + i if i != 6 else 0} for i in sparse},
+                "ItemModifiedAppearance": {1: {"ItemID": 6, "ItemAppearanceID": 9, "OrderIndex": 0}},
+                "ItemAppearance": {9: {"DefaultIconFileDataID": 999}}})  # the bag's icon is its appearance's
+    items = gamedata._items(t, gamedata.ItemTooltip(t, gamedata.Describer(t)), {"Greater Mystic Wand": "Enchanting"},
+                            gamedata._item_icons(t))
+    assert [(i["name"], i["slot"], i["type"], i["crafted"]) for i in items] == [
+        ("Greater Mystic Wand", "Ranged", "Wand", "Enchanting"), ("Linen Robe", "Chest", "Cloth", None),
+        ("Old Leather Belt", "Waist", "Cloth", None), ("Woolen Bag", "Bag", None, None)]
+    assert items[-1]["icon"] == 999
+    assert items[1] | {"lines": None} == {"id": 1, "icon": 101, "level": 20, "required": 10, "type": "Cloth", "crafted": None,
+                                          "name": "Linen Robe", "quality": 2, "slot": "Chest", "lines": None,
+                                          "effects": [], "description": None}
+
+
 def test_committed_data_covers_every_class_race_and_profession():
     data = gamedata.load()
     assert set(data["classes"]) == set(CLASSES)
     assert all(data["classes"][c]["abilities"] and len(data["classes"][c]["talents"]) == 3 for c in CLASSES)
     assert {"Human", "Orc", "High Order Skyborne", "Windshaper Skyborne"} <= set(data["races"])
     assert {"Alchemy", "Cooking", "Tailoring"} <= set(data["professions"])
+    assert {"Thunderfury, Blessed Blade of the Windseeker", "Wolfshead Helm"} <= {i["name"] for i in data["items"]}
     names = {a["name"] for c in CLASSES for a in data["classes"][c]["abilities"]}
     assert "Riptide" in names and "Kill Command" not in names  # Forever's addition in, Season of Discovery rune out
     assert all((gamedata.ICONS / f"{i}.jpg").exists() for i in gamedata.icon_ids(data))

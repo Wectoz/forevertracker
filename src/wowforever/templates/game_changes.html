@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="{{ url_for('patches') }}">← All patches</a></p>
+<h1>Game data changes</h1>
+<p>What changed in the WoW Forever game files from one client update to the next: abilities, talents, racials, recipes
+  and items. Blizzard's patch notes don't always list every change. The site's game data is from build {{ build }}.</p>
+{% for update in updates %}
+<section class="game-update" id="build-{{ update.to }}">
+  <h2><time datetime="{{ update.date.isoformat() }}">{{ update.date | short_date }}</time> · build {{ update.from }} → {{ update.to }}</h2>
+  {% for section, changes in update.sections.items() %}
+  <details class="data-section" open>
+    <summary>{{ section }} <span class="tab-count">{{ changes | length }}</span></summary>
+    <ul class="data-changes">
+      {% for change in changes %}
+      <li><span class="change-{{ change.change }}">{{ change.change | capitalize }}</span> {{ change.what }}
+        <span class="spell">{{ change.name }}</span>
+        {% for detail in change.details %}
+        <div class="change-detail"><span class="change-field">{{ detail.field }}:</span> {{ detail.before | word_diff(detail.after) }}</div>
+        {% endfor %}
+      </li>
+      {% endfor %}
+    </ul>
+  </details>
+  {% endfor %}
+</section>
+{% else %}
+<p class="note">No changes recorded yet. The first ones will appear here when Blizzard updates the game client.</p>
+{% endfor %}
+{% endblock %}

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>WoW Forever patches</h1>
+<p class="cta"><a href="{{ url_for('game_changes') }}">Changes found in the game files →</a></p>
 {% if not has_posts %}
   {% include "_empty.html" %}
 {% elif not patches and not hotfixes %}
