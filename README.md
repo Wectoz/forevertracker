@@ -13,6 +13,9 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Patches**: patch notes grouped by version number, plus hotfixes.
 - **Classes**: pick your class from the menu to see only its changes from every beta build, patch and hotfix.
 - **Full patch notes**: every Blizzard forum notes post on its own page, not just the class parts. When Blizzard edits one, the page lists what was added and removed.
+- **Blue posts**: what Blizzard staff say about WoW Forever on the official forums, newest first, with its own RSS feed.
+- **Known Issues**: a link next to the launch countdown on every page, straight to Blizzard's Known Issues thread.
+- **Realms**: whether each WoW Forever realm is up, and its population. This page appears once realm data is available.
 - **Addons**: the essential addons and the new Forever ones people are trying, each linked to its CurseForge page.
 - **Macros**: ready-to-copy macros for all nine classes, with a Copy button on each.
 - **Search**: find any post or class change, e.g. every note that mentions Sunder Armor.
@@ -25,7 +28,7 @@ Each post shows its date, a short summary when Blizzard gives one, and a link to
 
 ## Always up to date
 
-The site checks Blizzard's news page every hour and adds new WoW Forever posts on its own. If Blizzard's site is down, the tracker keeps showing what it already has and tries again the next hour.
+The site checks Blizzard's news page and forums every hour and adds new WoW Forever posts on its own. Realm status is checked about every 10 minutes. If Blizzard's site is down, the tracker keeps showing what it already has and tries again on the next check.
 
 ---
 
@@ -45,6 +48,8 @@ uv run wowforever serve       # run the site at http://127.0.0.1:5000 (checks fo
 
 `uv run wowforever fetch` gathers the newest posts right away. Run the tests with `uv run pytest`.
 
-The live site is published to GitHub Pages by `.github/workflows/publish.yml`, every hour and on every push to `master`. To build the static site locally: `uv run wowforever build --out _site --site-url https://wectoz.github.io/wow-forever-news` (this also writes `sitemap.xml`). The build fails if any page links to a page that doesn't exist.
+The live site is published to GitHub Pages by `.github/workflows/publish.yml`, about every 10 minutes and on every push to `master`. Realm status is refreshed on every run; news and forum posts are gathered about once an hour. To build the static site locally: `uv run wowforever build --out _site --site-url https://wectoz.github.io/wow-forever-news` (this also writes `sitemap.xml`). The build fails if any page links to a page that doesn't exist.
 
 To announce new posts in a Discord channel, create a webhook in the channel's settings (Integrations → Webhooks) and save its URL as the repository secret `DISCORD_WEBHOOK_URL`. The hourly run then posts each new WoW Forever post once (`uv run wowforever announce`). The first run only records the posts that already exist, so the channel isn't flooded with old ones.
+
+Realm status comes from Blizzard's game data API. Create an app at [develop.battle.net](https://develop.battle.net) and save its client ID and secret as the repository secrets `BLIZZARD_CLIENT_ID` and `BLIZZARD_CLIENT_SECRET`. Then `uv run wowforever realms` reads the status of the WoW Forever realms. Without the secrets it prints a skip message and the Realms page stays hidden.

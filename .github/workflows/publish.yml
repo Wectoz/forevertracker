@@ -1,11 +1,11 @@
-# Gathers new WoW Forever posts from Blizzard every hour and publishes the site to GitHub Pages.
+# Refreshes realm status every 10 minutes, gathers new WoW Forever posts hourly, and publishes the site to GitHub Pages.
 name: Publish site
 
 on:
   push:
     branches: [master]
   schedule:
-    - cron: "17 * * * *"
+    - cron: "4-59/10 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -40,10 +40,28 @@ jobs:
           key: posts-v2-${{ github.run_id }}
           restore-keys: posts-v2-
 
+      # News and forum posts are gathered about hourly; the scheduled runs in between only refresh realm status.
+      # A missing gathered-at (first run after a deploy, or an evicted cache) means gather now.
+      - name: Check whether posts are due
+        id: due
+        run: |
+          gather=false
+          if [ "${{ github.event_name }}" != "schedule" ] || [ ! -f instance/gathered-at ]; then
+            gather=true
+          else
+            last=$(cat instance/gathered-at)
+            if [ $(( $(date +%s) - last )) -ge 3000 ]; then gather=true; fi
+          fi
+          echo "gather=$gather" >> "$GITHUB_OUTPUT"
+
       - name: Gather from Blizzard
+        if: steps.due.outputs.gather == 'true'
         # A Blizzard outage must not stop publishing: the site is rebuilt from what is already stored.
         continue-on-error: true
         run: |
+          # Stamp the time even if gathering fails, so an outage doesn't hit Blizzard every 10 minutes.
+          mkdir -p instance
+          trap 'date +%s > instance/gathered-at' EXIT
           if [ -f instance/wowforever.sqlite3 ]; then
             uv run wowforever fetch
           else
@@ -53,10 +71,19 @@ jobs:
       # Posts to Discord only when the DISCORD_WEBHOOK_URL secret is set. Before the cache is saved,
       # so the record of what was announced is kept for the next run.
       - name: Announce new posts on Discord
+        if: steps.due.outputs.gather == 'true'
         continue-on-error: true
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: uv run wowforever announce
+
+      # Skips itself when the Blizzard API secrets are not set. Runs every time.
+      - name: Realm status
+        continue-on-error: true
+        env:
+          BLIZZARD_CLIENT_ID: ${{ secrets.BLIZZARD_CLIENT_ID }}
+          BLIZZARD_CLIENT_SECRET: ${{ secrets.BLIZZARD_CLIENT_SECRET }}
+        run: uv run wowforever realms
 
       - name: Save gathered posts
         if: always()
