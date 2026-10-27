@@ -75,3 +75,18 @@ def test_build_fails_on_a_broken_internal_link(tmp_path, monkeypatch):
     monkeypatch.setattr(build, "create_app", app_with_broken_link)
     with pytest.raises(RuntimeError, match="/missing-page"):
         build_site(Store(":memory:"), tmp_path)
+
+
+def test_build_writes_feeds_and_search_index_as_files(tmp_path):
+    import json
+
+    build_site(filled_store(), tmp_path, site_url=SITE)
+    feed = (tmp_path / "feed.xml").read_text()
+    assert feed.startswith('<?xml version="1.0" encoding="utf-8"?>')
+    assert f'<link rel="self" href="{SITE}/feed.xml"/>' in feed
+    assert (tmp_path / "classes/mage/feed.xml").is_file()
+    items = json.loads((tmp_path / "search.json").read_text())
+    assert any(item["title"] == "Patch 1.60.1 Notes" for item in items)
+    assert (tmp_path / "search/index.html").is_file()
+    sitemap = (tmp_path / "sitemap.xml").read_text()
+    assert "feed.xml" not in sitemap and "search.json" not in sitemap

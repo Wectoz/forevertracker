@@ -1,14 +1,16 @@
-"""Flask website: news feed, news, patches, class patch notes."""
+"""Flask website: news feed, news, patches, class patch notes, Atom feeds and search."""
 
 from datetime import UTC, date, datetime
 
-from flask import Flask, abort, render_template, request, url_for
+from flask import Flask, abort, jsonify, render_template, request, url_for
 
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
+from wowforever.posts import plain_text
 from wowforever.store import Store
 
 PAGE_SIZE = 20
+FEED_SIZE = 50
 UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix"}
 
 
@@ -36,7 +38,9 @@ def create_app(store: Store) -> Flask:
     def banner():
         now = datetime.now(UTC)
         root = request.url_root.rstrip("/")
+        latest_patch = store.list_posts("patch", limit=1) if now >= LAUNCH else []
         return {"banner": launch_banner(now), "left": time_left(now), "launch_iso": LAUNCH.isoformat(),
+                "latest_patch": latest_patch[0] if latest_patch else None,
                 "page_url": root + request.path, "site_root": root,
                 "classes": [(name, slug(name), CLASS_COLORS[name]) for name in CLASSES]}
 
@@ -103,11 +107,15 @@ def create_app(store: Store) -> Flask:
             description=f"What changed in World of Warcraft: Forever patch {version}.",
         )
 
-    @app.get("/classes/<name>")
-    def class_page(name: str):
+    def class_or_404(name: str) -> str:
         cls = class_for_slug(name)
         if cls is None or name != slug(cls):
             abort(404)
+        return cls
+
+    @app.get("/classes/<name>")
+    def class_page(name: str):
+        cls = class_or_404(name)
         return render_template(
             "class.html", cls=cls, slug=name, current_class=name, color=CLASS_COLORS[cls], updates=store.class_updates(cls),
             labels=UPDATE_LABELS,
@@ -115,5 +123,42 @@ def create_app(store: Store) -> Flask:
             description=f"Every World of Warcraft: Forever change for the {cls} class, "
                         "from beta builds, patches and hotfixes.",
         )
+
+    def atom(title: str, page: str, entries: list[dict]):
+        root = request.url_root.rstrip("/")
+        updated = max((e["updated"] for e in entries), default=datetime.now(UTC))
+        xml = render_template("atom.xml", title=title, feed_url=root + request.path, page_url=root + page,
+                              updated=updated, entries=entries)
+        return app.response_class(xml, mimetype="application/atom+xml")
+
+    @app.get("/feed.xml")
+    def feed_xml():
+        entries = [{"id": p.url, "title": p.title, "url": p.url, "published": p.published,
+                    "updated": p.edited_at or p.published, "summary": p.summary, "html": None}
+                   for p in store.list_posts(limit=FEED_SIZE)]
+        return atom("WoW Forever Tracker", url_for("home"), entries)
+
+    @app.get("/classes/<name>/feed.xml")
+    def class_feed(name: str):
+        cls = class_or_404(name)
+        entries = [{"id": f"{u.url}#{name}", "title": f"{cls}: {UPDATE_LABELS[u.kind]}, {_month_day(u.posted)}",
+                    "url": u.url, "published": u.posted, "updated": u.posted, "summary": None, "html": u.html}
+                   for u in store.class_updates(cls) if u.html][:FEED_SIZE]
+        return atom(f"{cls} patch notes · WoW Forever Tracker", url_for("class_page", name=name), entries)
+
+    @app.get("/search")
+    def search():
+        return render_template("search.html", page_title="Search · WoW Forever Tracker",
+                               description="Search every World of Warcraft: Forever news post and class change.")
+
+    @app.get("/search.json")
+    def search_index():
+        items = [{"title": p.title, "url": p.url, "label": "Patch" if p.kind == "patch" else "News",
+                  "date": _short_date(p.published), "text": p.summary, "external": True}
+                 for p in store.list_posts(limit=-1)]
+        items += [{"title": f"{cls} · {UPDATE_LABELS[u.kind]}", "url": url_for("class_page", name=slug(cls)),
+                   "label": cls, "date": _short_date(u.posted), "text": plain_text(u.html), "external": False}
+                  for cls, u in store.all_class_changes()]
+        return jsonify(items)
 
     return app

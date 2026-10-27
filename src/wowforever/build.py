@@ -38,13 +38,19 @@ def build_site(store: Store, out: Path, base_path: str = "", site_url: str | Non
         response = client.get(path, base_url=base_url)
         if response.status_code != 200:
             raise RuntimeError(f"{path} returned {response.status_code}")
-        html = response.get_data(as_text=True)
+        body = response.get_data(as_text=True)
+        if response.mimetype != "text/html":
+            # A data file (Atom feed, search index): written as is, and not a page to crawl or list.
+            target = out / path.strip("/")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(body, encoding="utf-8")
+            continue
         target = out / path.strip("/") / "index.html"
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(html, encoding="utf-8")
+        target.write_text(body, encoding="utf-8")
         pages += 1
         written.append(path)
-        for href in _HREF_RE.findall(html):
+        for href in _HREF_RE.findall(body):
             if not href.startswith(base_path + "/"):
                 continue  # external link
             link = href[len(base_path):]

@@ -12,8 +12,12 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **News**: every WoW Forever announcement Blizzard has published so far.
 - **Patches**: patch notes grouped by version number, plus hotfixes.
 - **Classes**: pick your class from the menu to see only its changes from every beta build, patch and hotfix.
+- **Search**: find any post or class change, e.g. every note that mentions Sunder Armor.
+- **Your class**: mark your class on its page and the site points out posts with changes for it. Class pages can also show only the changes since a given build, patch or hotfix.
+- **New since your last visit**: posts you haven't seen yet get a "New" badge.
+- **RSS feeds**: one for every post, and one per class (linked on each class page). They work in any feed reader or a Discord RSS bot.
 
-Each post shows its date, a short summary when Blizzard gives one, and a link to the full article on Blizzard.com. The launch countdown sits at the top of every page.
+Each post shows its date, a short summary when Blizzard gives one, and a link to the full article on Blizzard.com. The launch countdown sits at the top of every page; after launch it shows the day count and links the latest patch notes.
 
 ## Always up to date
 

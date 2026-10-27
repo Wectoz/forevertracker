@@ -11,7 +11,7 @@ LAUNCH = datetime(2026, 11, 4, 23, 0, tzinfo=UTC)  # Nov 4, 3:00 p.m. PST (DST e
 
 def launch_banner(now: datetime) -> str:
     if now >= LAUNCH:
-        return "Live since Nov 4"
+        return f"Live now · Day {days_live(now)}"
     days = (LAUNCH.date() - now.astimezone(UTC).date()).days
     if days <= 0:
         return "Launches today · Nov 4, 3:00 p.m. PST"
@@ -24,3 +24,8 @@ def time_left(now: datetime) -> tuple[int, int, int] | None:
         return None
     minutes = int((LAUNCH - now).total_seconds() // 60)
     return minutes // 1440, minutes % 1440 // 60, minutes % 60
+
+
+def days_live(now: datetime) -> int:
+    """Launch day is day 1, counted in Pacific time like Blizzard's posts."""
+    return (now.astimezone(PACIFIC).date() - LAUNCH.astimezone(PACIFIC).date()).days + 1

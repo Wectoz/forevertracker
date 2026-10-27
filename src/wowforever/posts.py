@@ -31,8 +31,13 @@ class Post:
     thumbnail: str | None  # the article's header image
 
 
+def plain_text(text: str) -> str:
+    """HTML to one line of plain text."""
+    return " ".join(html.unescape(_TAG_RE.sub(" ", text or "")).split())
+
+
 def make_summary(text: str, limit: int = 300) -> str:
-    plain = " ".join(html.unescape(_TAG_RE.sub(" ", text or "")).split())
+    plain = plain_text(text)
     if len(plain) <= limit:
         return plain
     cut = plain.rfind(" ", 0, limit + 1)

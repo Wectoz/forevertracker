@@ -32,7 +32,7 @@ def test_home_lists_posts_with_link_and_footer():
     assert "Read on Blizzard.com" in html
     assert 'href="https://worldofwarcraft.blizzard.com/en-us/news/9/claim"' in html
     assert FOOTER in html
-    assert "Launches Nov 4" in html or "Live since Nov 4" in html or "Launches today" in html
+    assert "Launches Nov 4" in html or "Live now" in html or "Launches today" in html
 
 
 def test_news_excludes_patch_posts():
@@ -95,7 +95,7 @@ def test_edited_label():
 def test_home_shows_countdown_plate():
     html = client_for().get("/").text
     assert 'class="plate"' in html
-    assert "Launches Nov 4" in html or "Live since Nov 4" in html or "Launches today" in html
+    assert "Launches Nov 4" in html or "Live now" in html or "Launches today" in html
 
 
 def test_patches_page_with_news_but_no_patches():
@@ -126,7 +126,7 @@ def test_class_page_shows_only_that_class():
     ).get("/classes/mage").text
     assert "Mage patch notes" in html
     assert "<li>Hot Streak longer</li>" in html and "Wrath up" not in html
-    assert "Beta build · Oct 16" in html
+    assert 'Beta build · <time datetime="2026-10-16T18:00:00+00:00">Oct 16</time>' in html
     assert 'href="https://us.forums.blizzard.com/en/wow/t/10/1"' in html
     assert "Full notes on the Blizzard forums →" in html
     assert FOOTER in html
@@ -139,7 +139,7 @@ def test_update_without_class_changes_shows_dimmed_card():
 
 def test_hotfix_label():
     html = class_client((make_forum_post(), "hotfix", {"Mage": "<ul><li>x</li></ul>"})).get("/classes/mage").text
-    assert "Hotfix · Oct 16" in html
+    assert "Hotfix · <time" in html and ">Oct 16</time>" in html
 
 
 def test_class_page_with_no_updates_is_200_with_message():
@@ -155,7 +155,7 @@ def test_dates_are_shown_in_pacific_time_like_blizzard():
     # 00:15 UTC on Oct 16 is still Oct 15 in California, which is how Blizzard dates its posts.
     late = datetime(2026, 10, 16, 0, 15, tzinfo=UTC)
     html = class_client((make_forum_post(posted=late), "beta", {"Mage": "<ul><li>x</li></ul>"})).get("/classes/mage").text
-    assert "Beta build · Oct 15" in html
+    assert "Beta build · <time" in html and ">Oct 15</time>" in html
     assert "Oct 15, 2026" in client_for(make_post(published=late, updated=late)).get("/").text
 
 
@@ -215,3 +215,96 @@ def test_blue_post_card_is_tinted_with_tag_and_tile():
     assert 'class="entry blue-post"' in html
     assert '<span class="blue-tag">Blue post</span>' in html
     assert 'class="thumb blue-tile"' in html
+
+
+def test_atom_feed_lists_newest_posts_escaped():
+    response = client_for(
+        make_post(id=1, title="Old <b>news</b>", published=datetime(2026, 10, 1, tzinfo=UTC)),
+        make_post(id=2, title="New news", url="https://worldofwarcraft.blizzard.com/en-us/news/2/new",
+                  published=datetime(2026, 10, 2, tzinfo=UTC)),
+    ).get("/feed.xml")
+    assert response.mimetype == "application/atom+xml"
+    xml = response.text
+    assert xml.index("New news") < xml.index("Old &lt;b&gt;news&lt;/b&gt;")
+    assert "<id>https://worldofwarcraft.blizzard.com/en-us/news/2/new</id>" in xml
+    assert "<updated>2026-10-02T00:00:00+00:00</updated>" in xml
+    assert "<summary>Summary</summary>" in xml
+
+
+def test_empty_atom_feed_is_valid():
+    assert "<entry>" not in client_for().get("/feed.xml").text
+
+
+def test_class_feed_has_only_updates_with_changes_for_that_class():
+    xml = class_client(
+        (make_forum_post(id=1, url="https://us.forums.blizzard.com/en/wow/t/10/1"), "hotfix",
+         {"Mage": "<ul><li>Hot Streak longer</li></ul>"}),
+        (make_forum_post(id=2, url="https://us.forums.blizzard.com/en/wow/t/10/2"), "beta",
+         {"Druid": "<ul><li>Wrath up</li></ul>"}),
+    ).get("/classes/mage/feed.xml").text
+    assert "<title>Mage: Hotfix, Oct 16</title>" in xml
+    assert "<id>https://us.forums.blizzard.com/en/wow/t/10/1#mage</id>" in xml
+    assert '<content type="html">&lt;ul&gt;&lt;li&gt;Hot Streak longer&lt;/li&gt;&lt;/ul&gt;</content>' in xml
+    assert "Wrath up" not in xml
+
+
+def test_class_feed_unknown_class_is_404():
+    assert client_for().get("/classes/deathknight/feed.xml").status_code == 404
+
+
+def test_pages_link_their_feeds():
+    client = client_for()
+    assert 'type="application/atom+xml" title="WoW Forever Tracker" href="/feed.xml"' in client.get("/").text
+    assert 'href="/classes/mage/feed.xml"' in client.get("/classes/mage").text
+
+
+def test_search_index_has_posts_and_plain_text_class_changes():
+    store = Store(":memory:")
+    store.upsert([make_post(id=1, title="Claim Your Forever Names")])
+    store.save_update(make_forum_post(), "hotfix", {"Warrior": "<ul><li><strong>Mortal Strike</strong> &amp; more</li></ul>"})
+    client = create_app(store).test_client()
+    items = client.get("/search.json").json
+    assert {"title": "Claim Your Forever Names", "url": "https://worldofwarcraft.blizzard.com/en-us/news/1/x",
+            "label": "News", "date": "Oct 20, 2026", "text": "Summary", "external": True} in items
+    assert {"title": "Warrior · Hotfix", "url": "/classes/warrior", "label": "Warrior", "date": "Oct 16, 2026",
+            "text": "Mortal Strike & more", "external": False} in items
+    page = client.get("/search").text
+    assert 'data-index="/search.json"' in page and 'href="/search.json"' in page
+
+
+def test_forum_posts_carry_their_classes_for_the_my_class_highlight():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(), "beta", {"Warrior": "w", "Mage": "m"}, title="Beta notes")
+    store.upsert([make_post(id=5, title="Plain news")])
+    html = create_app(store).test_client().get("/").text
+    assert 'class="entry blue-post" data-classes="mage warrior"' in html
+    assert html.count("data-classes") == 1
+
+
+def test_class_page_offers_changes_since_each_older_update():
+    html = class_client(
+        (make_forum_post(id=1, posted=datetime(2026, 10, 10, 18, tzinfo=UTC)), "beta", {"Mage": "<ul><li>a</li></ul>"}),
+        (make_forum_post(id=2, posted=datetime(2026, 10, 12, 18, tzinfo=UTC)), "beta", {"Druid": "<ul><li>b</li></ul>"}),
+        (make_forum_post(id=3, posted=datetime(2026, 10, 14, 18, tzinfo=UTC)), "hotfix", {"Mage": "<ul><li>c</li></ul>"}),
+    ).get("/classes/mage").text
+    # The newest Mage update is offered; the oldest is not, since "since the oldest" is everything.
+    assert '<option value="2026-10-14T18:00:00+00:00">Hotfix · Oct 14</option>' in html
+    assert "2026-10-10T18" not in html.split("<select>")[1].split("</select>")[0]
+    assert 'data-class="mage" data-name="Mage"' in html
+
+
+def test_plate_links_latest_patch_after_launch(monkeypatch):
+    from wowforever import web
+
+    class AfterLaunch(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return datetime(2026, 11, 6, 12, tzinfo=UTC)
+
+    monkeypatch.setattr(web, "datetime", AfterLaunch)
+    html = client_for(
+        make_post(id=1, title="Hotfixes: November 5", kind="patch", url="https://example.com/hotfix"),
+        make_post(id=2, title="Later news", published=datetime(2026, 11, 6, tzinfo=UTC)),
+    ).get("/").text
+    assert "Live now · Day 3" in html
+    assert 'Latest: <a href="https://example.com/hotfix" target="_blank" rel="noopener">Hotfixes: November 5</a>' in html
