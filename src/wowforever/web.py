@@ -6,7 +6,7 @@ from flask import Flask, abort, jsonify, render_template, request, url_for
 
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
-from wowforever.guides import ADDONS_UPDATED, ESSENTIALS, MACROS, TRENDING
+from wowforever.guides import ADDONS_UPDATED, CATEGORIES, MACROS, TRENDING
 from wowforever.posts import plain_text
 from wowforever.store import ClassUpdate, Store
 
@@ -152,10 +152,10 @@ def create_app(store: Store) -> Flask:
     @app.get("/addons")
     def addons():
         return render_template(
-            "addons.html", essentials=ESSENTIALS, trending=TRENDING, updated=ADDONS_UPDATED,
+            "addons.html", sections=(("Trending right now", TRENDING), *CATEGORIES), updated=ADDONS_UPDATED,
             page_title="WoW Forever Addons · WoW Forever Tracker",
-            description="The essential World of Warcraft: Forever addons and the new ones everyone is trying, "
-                        "with links to CurseForge.",
+            description="The best World of Warcraft: Forever addons by category, and the new ones everyone is "
+                        "trying, with links to CurseForge.",
         )
 
     @app.get("/macros")

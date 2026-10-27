@@ -270,7 +270,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .addon, .macro { background: #1f1913; border: 1px solid #3d2d1e; border-radius: 4px; }
 .addon { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; }
 .addon:hover { border-color: var(--bronze); }
-.addon img { flex: none; border: 1px solid var(--stone-edge); border-radius: 3px; }
+.addon img { flex: none; object-fit: contain; background: #0d0b08; border: 1px solid var(--stone-edge); border-radius: 3px; }
 .addon h3, .macro h3 { margin: 0; font-size: .95rem; line-height: 1.3; }
 .addon h3 a { color: var(--heading); text-decoration: none; }
 .addon h3 a:hover { text-decoration: underline; }

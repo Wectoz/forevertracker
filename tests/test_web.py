@@ -368,7 +368,7 @@ def test_menu_links_addons_and_macros():
 
 def test_addons_page_links_each_addon_to_curseforge():
     html = client_for().get("/addons").text
-    assert "Essentials" in html and "Trending right now" in html
+    assert "Trending right now" in html and "Questing &amp; leveling" in html
     assert 'href="https://www.curseforge.com/wow/addons/questie" target="_blank" rel="noopener"' in html
     assert 'src="/static/addons/questie.png"' in html
     assert "List updated Oct 27, 2026" in html

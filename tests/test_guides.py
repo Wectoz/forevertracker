@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from wowforever.classnotes import CLASSES
-from wowforever.guides import ESSENTIALS, MACRO_LIMIT, MACROS, TRENDING
+from wowforever.guides import CATEGORIES, MACRO_LIMIT, MACROS, TRENDING
 
 
 def test_every_class_has_macros_and_nothing_else():
@@ -16,13 +16,16 @@ def test_macros_fit_in_the_game():
             assert "{" not in macro.text, (cls, macro.name)  # no placeholders to fill in
 
 
+ADDONS = TRENDING + tuple(addon for _, addons in CATEGORIES for addon in addons)
+
+
 def test_addons_link_to_curseforge_once_each():
-    addons = ESSENTIALS + TRENDING
+    addons = ADDONS
     assert len({a.slug for a in addons}) == len(addons)
     assert all(a.url.startswith("https://www.curseforge.com/wow/addons/") for a in addons)
 
 
 def test_every_addon_has_its_icon():
     static = Path(__file__).parent.parent / "src/wowforever/static/addons"
-    for addon in ESSENTIALS + TRENDING:
+    for addon in ADDONS:
         assert (static / f"{addon.slug}.png").is_file(), addon.slug

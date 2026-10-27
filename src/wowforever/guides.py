@@ -25,19 +25,6 @@ class Macro:
     text: str
 
 
-# Long-standing addons that ship a Forever build on CurseForge.
-ESSENTIALS = (
-    Addon("Questie", "questie", "Shows quest givers, objectives and turn-ins on your map and minimap."),
-    Addon("Details!", "details", "Damage, healing and threat meter, to see how you and your group are doing."),
-    Addon("Auctionator", "auctionator", "Faster auction house searches and selling, with price history in tooltips."),
-    Addon("Baganator", "baganator", "All your bags in one window, with search and an optional category view."),
-    Addon("Leatrix Plus", "leatrix-plus", "Dozens of small quality-of-life switches: auto-repair, faster looting, "
-                                          "less clutter."),
-    Addon("Leatrix Maps", "leatrix-maps", "Reveals unexplored map areas and adds coordinates."),
-    Addon("Deadly Boss Mods", "deadly-boss-mods", "Timers and warnings for boss abilities. The core works on Forever; "
-                                                  "timers for Forever's new bosses may come later."),
-)
-
 # Made for Forever, and the most downloaded of the new ones.
 TRENDING = (
     Addon("ClassicUI Forever", "classicui-forever", "Brings back the original Classic look for Forever's interface, "
@@ -46,12 +33,56 @@ TRENDING = (
                                                   "with weekly rankings."),
     Addon("ForeverPlus", "foreverplus", "Buff and consumable reminders, quest and vendor automation, and profiles "
                                         "shared across characters."),
+    Addon("ForeverForge", "foreverforge", "Auto quest accept and turn-in, junk selling and repairs, plus NPC voice "
+                                          "narration and UI skins."),
     Addon("AtlasLoot Classic Forever", "atlasloot-forever", "Loot tables for every dungeon and raid, best-in-slot "
                                                             "lists and an honor rank calculator."),
     Addon("ForeverUI", "foreverui", "A complete replacement interface: unit and raid frames, action bars, "
                                     "nameplates, bags and chat."),
     Addon("Dungeon Quests Forever", "dungeon-quests-forever", "Step-by-step guide to every dungeon quest and "
                                                               "pre-quest, with an arrow and map pins."),
+)
+
+# Long-standing addons that ship a Forever build on CurseForge, by what they help with.
+CATEGORIES = (
+    ("Questing & leveling", (
+        Addon("Questie", "questie", "Shows quest givers, objectives and turn-ins on your map and minimap."),
+        Addon("Guidelime", "guidelime", "Step-by-step leveling guides in a small on-screen window, with an arrow "
+                                        "to the next stop."),
+        Addon("Hardcore", "hardcore", "Extra tools for one-life play: death alerts, achievements and checks for "
+                                      "your guild."),
+    )),
+    ("Maps & navigation", (
+        Addon("Leatrix Maps", "leatrix-maps", "Reveals unexplored map areas and adds coordinates."),
+        Addon("TomTom", "tomtom", "Waypoint arrow and coordinates: type /way and follow the arrow."),
+        Addon("HandyNotes", "handynotes", "Your own notes as pins on the map, and the base for many pin packs."),
+    )),
+    ("Combat", (
+        Addon("Details!", "details", "Damage, healing and threat meter, to see how you and your group are doing."),
+        Addon("Deadly Boss Mods", "deadly-boss-mods", "Timers and warnings for boss abilities. The core works on "
+                                                      "Forever; timers for Forever's new bosses may come later."),
+        Addon("BigWigs", "big-wigs", "The lighter alternative to Deadly Boss Mods, with the same idea: boss timers "
+                                     "and warnings."),
+        Addon("Plater", "plater-nameplates", "Clearer enemy nameplates with threat colors, cast bars and debuffs."),
+    )),
+    ("Interface & quality of life", (
+        Addon("Leatrix Plus", "leatrix-plus", "Dozens of small quality-of-life switches: auto-repair, faster "
+                                              "looting, less clutter."),
+        Addon("Bartender4", "bartender4", "Move, resize and add action bars, with mouseover fading."),
+        Addon("Dominos", "dominos", "A simpler way to rearrange your action bars."),
+        Addon("MoveAny", "moveany", "Move, scale and hide any part of the default interface."),
+    )),
+    ("Bags & gear", (
+        Addon("Baganator", "baganator", "All your bags in one window, with search and an optional category view."),
+        Addon("Bagnon", "bagnon", "The classic all-in-one bag, and it shows your other characters' items too."),
+        Addon("Pawn", "pawn", "Tells you in the tooltip whether a drop is an upgrade for your class and spec."),
+    )),
+    ("Auction house & gathering", (
+        Addon("Auctionator", "auctionator", "Faster auction house searches and selling, with price history in "
+                                            "tooltips."),
+        Addon("GatherMate2", "gathermate2", "Remembers every herb, ore and fishing node you find and pins them on "
+                                            "the map."),
+    )),
 )
 
 # Spell names as in the Forever beta client, collected and checked by foreverdb.net. Nothing above the beta's
