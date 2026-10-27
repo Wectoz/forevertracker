@@ -280,3 +280,35 @@ def test_latest_known_issues_prefers_most_recent_change():
     latest = store.latest_known_issues()
     assert latest.id == 1 and len(latest.edits) == 1
     assert latest.edited_at == datetime(2026, 11, 5, tzinfo=UTC)
+
+
+def make_staff(**overrides):
+    from wowforever.forum import StaffPost
+    data = dict(id=1, topic_id=10, number=2, author="Kaivax", author_title="Community Manager",
+                thread_title="Thread", excerpt="Hello", posted=datetime(2026, 10, 20, 12, tzinfo=UTC),
+                url="https://us.forums.blizzard.com/en/wow/t/10/2")
+    data.update(overrides)
+    return StaffPost(**data)
+
+
+def test_blue_posts_roundtrip_and_ignore_duplicates(tmp_path):
+    store = Store(tmp_path / "t.db")
+    assert not store.has_blue_posts()
+    old, new = make_staff(id=1), make_staff(id=2, posted=datetime(2026, 10, 21, tzinfo=UTC))
+    assert store.add_blue_posts([old, new]) == 2
+    assert store.add_blue_posts([old, make_staff(id=3)]) == 1
+    assert store.has_blue_posts()
+    assert store.count_blue_posts() == 3
+    assert store.list_blue_posts(limit=2)[0] == new
+    assert store.list_blue_posts(limit=1, offset=1)[0].id in (1, 3)
+
+
+def test_unannounced_blue_posts_oldest_first(tmp_path):
+    store = Store(tmp_path / "t.db")
+    store.add_blue_posts([make_staff(id=1, posted=datetime(2026, 10, 22, tzinfo=UTC)),
+                          make_staff(id=2, posted=datetime(2026, 10, 20, tzinfo=UTC)),
+                          make_staff(id=3, posted=datetime(2026, 10, 21, tzinfo=UTC))])
+    store.add_blue_posts([make_staff(id=4)], announced=True)
+    assert [p.id for p in store.unannounced_blue_posts()] == [2, 3, 1]
+    store.mark_blue_announced([2, 3])
+    assert [p.id for p in store.unannounced_blue_posts()] == [1]

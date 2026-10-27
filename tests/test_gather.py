@@ -355,3 +355,71 @@ def test_known_issues_thread_keeps_only_opening_post():
     notes = store.notes()
     assert [(n.kind, n.url.rsplit("/", 1)[1]) for n in notes] == [("known", "1")]
     assert all(store.class_updates(cls) == [] for cls in ("Mage", "Druid", "Warrior"))
+
+
+def _raw(id, topic, number, title="Some thread", user="Kaivax", day=20, category=349):
+    return {"id": id, "created_at": f"2026-10-{day:02d}T12:00:00.000Z", "topic_id": topic,
+            "topic_title": title, "post_number": number, "category_id": category, "username": user,
+            "user_title": "Community Manager", "excerpt": "Text"}
+
+
+def tracker_fetch(*pages):
+    """Serves the given tracker pages in order; the last one repeats."""
+    calls = []
+
+    def fetch(path):
+        calls.append(path)
+        if "/t/" in path:
+            return json.loads(json.dumps(FORUM["/t/2360696.json"]))
+        return {"posts": pages[min(len([c for c in calls if "/t/" not in c]) - 1, len(pages) - 1)]}
+    fetch.calls = calls
+    return fetch
+
+
+def tracker_calls(fetch):
+    return [c for c in fetch.calls if "/t/" not in c]
+
+
+def test_first_blue_gather_marks_everything_announced(tmp_path):
+    store = Store(tmp_path / "t.db")
+    store.mark_announced(["https://x/1"])
+    fetch = tracker_fetch([_raw(5, 1, 2, day=25), _raw(4, 1, 3, day=24)], [])
+    assert gather.gather_blue_posts(store, fetch, delay=0) == 2
+    assert store.count_blue_posts() == 2
+    assert store.unannounced_blue_posts() == []
+
+
+def test_later_blue_gather_stops_at_stored_post_and_leaves_new_unannounced(tmp_path):
+    store = Store(tmp_path / "t.db")
+    gather.gather_blue_posts(store, tracker_fetch([_raw(3, 1, 2, day=22)], []), delay=0)
+    fetch = tracker_fetch([_raw(5, 1, 4, day=25), _raw(4, 1, 3, day=24), _raw(3, 1, 2, day=22)],
+                          [_raw(2, 1, 1, day=21)])
+    assert gather.gather_blue_posts(store, fetch, delay=0) == 2
+    assert len(tracker_calls(fetch)) == 1
+    assert [p.id for p in store.unannounced_blue_posts()] == [4, 5]
+    assert store.count_blue_posts() == 3
+
+
+def test_blue_gather_skips_notes_threads_and_known_issues_opening_post(tmp_path):
+    store = Store(tmp_path / "t.db")
+    gather._gather_topic(store, 2360696, "beta", forum_fetch())
+    ki = "WoW Forever Known Issues"
+    page = [_raw(9, 2360696, 7, day=26), _raw(8, 777, 3, title=ki, day=25), _raw(7, 777, 1, title=ki, day=24),
+            _raw(6, 55, 1, title="Hello", day=23)]
+    fetch = tracker_fetch(page, [])
+    store.add_blue_posts([])  # nothing stored yet
+    assert gather.gather_blue_posts(store, fetch, delay=0) == 2
+    assert sorted(p.id for p in store.list_blue_posts()) == [6, 8]
+    assert store.note_topics()[777] == "known"
+
+
+def test_blue_gather_stops_at_max_pages(tmp_path):
+    store = Store(tmp_path / "t.db")
+    counter = iter(range(1000, 0, -1))
+
+    def fetch(path):
+        fetch.calls.append(path)
+        return {"posts": [_raw(next(counter), 1, 2, day=25)]}
+    fetch.calls = []
+    assert gather.gather_blue_posts(store, fetch, max_pages=3, delay=0) == 3
+    assert len(fetch.calls) == 3

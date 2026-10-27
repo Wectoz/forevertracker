@@ -9,7 +9,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 from wowforever.classnotes import text_lines
-from wowforever.forum import FORUM_URL, ForumPost
+from wowforever.forum import FORUM_URL, ForumPost, StaffPost
 from wowforever.posts import Post
 
 _SCHEMA = """
@@ -48,6 +48,19 @@ CREATE INDEX IF NOT EXISTS update_edits_post ON update_edits (post_id);
 CREATE TABLE IF NOT EXISTS announced (
     url TEXT PRIMARY KEY
 );
+CREATE TABLE IF NOT EXISTS blue_posts (
+    id INTEGER PRIMARY KEY,
+    topic_id INTEGER NOT NULL,
+    number INTEGER NOT NULL,
+    author TEXT NOT NULL,
+    author_title TEXT NOT NULL,
+    thread_title TEXT NOT NULL,
+    excerpt TEXT NOT NULL,
+    url TEXT NOT NULL,
+    posted TEXT NOT NULL,
+    announced INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS blue_posts_posted ON blue_posts (posted);
 CREATE TABLE IF NOT EXISTS class_changes (
     post_id INTEGER NOT NULL,
     class TEXT NOT NULL,
@@ -131,6 +144,12 @@ def _row_to_post(row: sqlite3.Row) -> StoredPost:
         thumbnail=row["thumbnail"],
         classes=tuple(sorted(row["classes"].split(","))) if row["classes"] else (),
     )
+
+
+def _row_to_staff_post(row: sqlite3.Row) -> StaffPost:
+    return StaffPost(id=row["id"], topic_id=row["topic_id"], number=row["number"], author=row["author"],
+                     author_title=row["author_title"], thread_title=row["thread_title"],
+                     excerpt=row["excerpt"], posted=datetime.fromisoformat(row["posted"]), url=row["url"])
 
 
 def _row_to_update(row: sqlite3.Row) -> ClassUpdate:
@@ -310,3 +329,42 @@ class Store:
             self._conn.executemany("DELETE FROM class_changes WHERE post_id = ?", [(i,) for i in stale])
             self._conn.executemany("DELETE FROM update_edits WHERE post_id = ?", [(i,) for i in stale])
             self._conn.executemany("DELETE FROM updates WHERE post_id = ?", [(i,) for i in stale])
+
+    def add_blue_posts(self, posts: Iterable[StaffPost], announced: bool = False) -> int:
+        """Store staff posts not stored yet; returns how many were added."""
+        with self._lock, self._conn:
+            before = self._conn.total_changes
+            self._conn.executemany(
+                "INSERT OR IGNORE INTO blue_posts (id, topic_id, number, author, author_title, thread_title,"
+                " excerpt, url, posted, announced) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                [(p.id, p.topic_id, p.number, p.author, p.author_title, p.thread_title, p.excerpt, p.url,
+                  p.posted.isoformat(), int(announced)) for p in posts])
+            return self._conn.total_changes - before
+
+    def has_blue_posts(self) -> bool:
+        with self._lock:
+            return self._conn.execute("SELECT 1 FROM blue_posts LIMIT 1").fetchone() is not None
+
+    def has_blue_post(self, post_id: int) -> bool:
+        with self._lock:
+            return self._conn.execute("SELECT 1 FROM blue_posts WHERE id = ?", (post_id,)).fetchone() is not None
+
+    def _blue(self, where: str, order: str, params: tuple = ()) -> list[StaffPost]:
+        with self._lock:
+            rows = self._conn.execute(f"SELECT * FROM blue_posts {where} ORDER BY {order}", params).fetchall()
+        return [_row_to_staff_post(r) for r in rows]
+
+    def list_blue_posts(self, limit: int = 20, offset: int = 0) -> list[StaffPost]:
+        return self._blue("", "posted DESC, id DESC LIMIT ? OFFSET ?", (limit, offset))
+
+    def count_blue_posts(self) -> int:
+        with self._lock:
+            return self._conn.execute("SELECT COUNT(*) FROM blue_posts").fetchone()[0]
+
+    def unannounced_blue_posts(self) -> list[StaffPost]:
+        """Blue posts not yet announced on Discord, oldest first."""
+        return self._blue("WHERE announced = 0", "posted ASC, id ASC")
+
+    def mark_blue_announced(self, ids: Iterable[int]) -> None:
+        with self._lock, self._conn:
+            self._conn.executemany("UPDATE blue_posts SET announced = 1 WHERE id = ?", [(i,) for i in ids])

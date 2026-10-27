@@ -84,4 +84,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Could not gather class notes from the forums: {err}", file=sys.stderr)
     else:
         print(f"Saved {saved} class patch-note updates.")
+    try:
+        blue = gather.gather_blue_posts(store, gather.fetch_json)
+    except (FetchError, ParseError) as err:
+        print(f"Could not gather blue posts from the forums: {err}", file=sys.stderr)
+    else:
+        print(f"Added {blue} blue posts.")
     return status

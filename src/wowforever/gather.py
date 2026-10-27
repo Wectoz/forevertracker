@@ -8,7 +8,8 @@ from datetime import UTC, datetime
 
 from wowforever.blizzard import FetchError, ParseError, fetch_listing, parse_listing
 from wowforever.classnotes import clean_html, split_classes
-from wowforever.forum import CATEGORY_ID, FetchJson, feed_summary, feed_title, fetch_json, note_topics, thread_posts
+from wowforever.forum import (CATEGORY_ID, FetchJson, feed_summary, feed_title, fetch_json, is_known_issues,
+                              note_topics, thread_posts, tracker_page)
 from wowforever.posts import to_post
 from wowforever.store import Store
 
@@ -68,6 +69,41 @@ def gather_class_notes(store: Store, fetch: FetchJson | None = None) -> int:
     return sum(_gather_topic(store, topic_id, kind, fetch) for topic_id, kind in topics.items())
 
 
+def gather_blue_posts(store: Store, fetch: FetchJson | None = None, cutoff: datetime = BACKFILL_CUTOFF,
+                      max_pages: int = 40, delay: float = 1.0) -> int:
+    """Read Blizzard staff posts from the forum tracker, newest first, until a page holds a post that is
+    already stored, a post older than `cutoff`, or `max_pages` is reached. Returns how many were added.
+    The first gather only fills the history, so those posts count as announced."""
+    fetch = fetch or fetch_json
+    first_run = not store.has_blue_posts()
+    topics = store.note_topics()
+    added = 0
+    before = None
+    for page in range(max_pages):
+        if page and delay:
+            time.sleep(delay)
+        posts = tracker_page(fetch, before)
+        if not posts:
+            break
+        stored = {p.id for p in posts if store.has_blue_post(p.id)}
+        keep = []
+        for post in posts:
+            if post.id in stored or post.posted < cutoff:
+                continue
+            if is_known_issues(post.thread_title) and topics.get(post.topic_id) != "known":
+                _gather_topic(store, post.topic_id, "known", fetch)  # the thread is in the notes, not here
+                topics[post.topic_id] = "known"
+            kind = topics.get(post.topic_id)
+            if kind == "known" and post.number == 1 or kind not in (None, "known"):
+                continue
+            keep.append(post)
+        added += store.add_blue_posts(keep, announced=first_run)
+        if stored or any(p.posted < cutoff for p in posts):
+            break
+        before = min(p.id for p in posts)
+    return added
+
+
 def _gather_topic(store: Store, topic_id: int, kind: str, fetch: FetchJson) -> int:
     """Read one notes thread and save its posts; returns how many had class sections.
     A Known Issues thread keeps only its opening post, the list Blizzard keeps editing."""
@@ -117,6 +153,13 @@ def start_hourly(store: Store, interval: float = 3600, fetch: Fetch | None = Non
                 logger.warning("Gathering class notes failed: %s", err)
             except Exception:
                 logger.exception("Gathering class notes failed unexpectedly")
+            try:
+                added = gather_blue_posts(store, fetch_forum or fetch_json)
+                logger.info("Gathered: added %d blue posts", added)
+            except (FetchError, ParseError) as err:
+                logger.warning("Gathering blue posts failed: %s", err)
+            except Exception:
+                logger.exception("Gathering blue posts failed unexpectedly")
             time.sleep(interval)
 
     thread = threading.Thread(target=run, name="hourly-gather", daemon=True)
