@@ -40,6 +40,18 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .nav nav a:first-child { margin-left: 0; }
 .nav nav a:hover { color: var(--gold-text); }
 
+/* Mulgore at dusk under the header; it fades into the page background, so it reads as scenery, not a box.
+   Absolute without a top keeps it just below the header but out of the flow, so the page's content sits on
+   top of the scene instead of being pushed down by it. */
+.zone-banner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height: clamp(140px, 22.5vw, 400px);  /* 22.5vw is the art's own aspect, so wide screens show the whole scene */
+  background: url("mulgore.svg") 62% 100% / cover no-repeat;
+}
+
 /* Countdown: a polished bronze plate with sunken, engraved digits. */
 .plate {
   margin: 20px 0 0;
