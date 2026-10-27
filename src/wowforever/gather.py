@@ -7,7 +7,7 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 
 from wowforever.blizzard import FetchError, ParseError, fetch_listing, parse_listing
-from wowforever.classnotes import split_classes
+from wowforever.classnotes import clean_html, split_classes
 from wowforever.forum import CATEGORY_ID, FetchJson, feed_summary, feed_title, fetch_json, note_topics, thread_posts
 from wowforever.posts import to_post
 from wowforever.store import Store
@@ -84,7 +84,7 @@ def gather_class_notes(store: Store, fetch: FetchJson | None = None) -> int:
             if any_parsed and not sections:
                 logger.info("No class sections in %s; shown in the feed only", post.url)
             store.save_update(post, kind, sections if any_parsed else None,
-                              title=feed_title(post), summary=feed_summary(post.cooked))
+                              title=feed_title(post), summary=feed_summary(post.cooked), html=clean_html(post.cooked))
             saved += bool(sections)
         if posts:
             store.prune_topic(topic_id, {post.id for post in posts})  # posts Blizzard deleted

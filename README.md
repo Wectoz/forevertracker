@@ -12,12 +12,14 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **News**: every WoW Forever announcement Blizzard has published so far.
 - **Patches**: patch notes grouped by version number, plus hotfixes.
 - **Classes**: pick your class from the menu to see only its changes from every beta build, patch and hotfix.
+- **Full patch notes**: every Blizzard forum notes post on its own page, not just the class parts. When Blizzard edits one, the page lists what was added and removed.
 - **Search**: find any post or class change, e.g. every note that mentions Sunder Armor.
 - **Your class**: mark your class on its page and the site points out posts with changes for it. Class pages can also show only the changes since a given build, patch or hotfix.
 - **New since your last visit**: posts you haven't seen yet get a "New" badge.
 - **RSS feeds**: one for every post, and one per class (linked on each class page). They work in any feed reader or a Discord RSS bot.
+- **Links to one update**: each update on a class page has a "Copy link" button, handy for sharing a hotfix.
 
-Each post shows its date, a short summary when Blizzard gives one, and a link to the full article on Blizzard.com. The launch countdown sits at the top of every page; after launch it shows the day count and links the latest patch notes.
+Each post shows its date, a short summary when Blizzard gives one, and a link to the full article on Blizzard.com. The launch countdown sits at the top of every page, with the launch time in your own time zone; after launch it shows the day count and links the latest patch notes.
 
 ## Always up to date
 
@@ -42,3 +44,5 @@ uv run wowforever serve       # run the site at http://127.0.0.1:5000 (checks fo
 `uv run wowforever fetch` gathers the newest posts right away. Run the tests with `uv run pytest`.
 
 The live site is published to GitHub Pages by `.github/workflows/publish.yml`, every hour and on every push to `master`. To build the static site locally: `uv run wowforever build --out _site --site-url https://wectoz.github.io/wow-forever-news` (this also writes `sitemap.xml`). The build fails if any page links to a page that doesn't exist.
+
+To announce new posts in a Discord channel, create a webhook in the channel's settings (Integrations → Webhooks) and save its URL as the repository secret `DISCORD_WEBHOOK_URL`. The hourly run then posts each new WoW Forever post once (`uv run wowforever announce`). The first run only records the posts that already exist, so the channel isn't flooded with old ones.

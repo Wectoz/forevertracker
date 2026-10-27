@@ -21,11 +21,12 @@
 </div>
 <p class="since-status" role="status" aria-live="polite"></p>
 {% for update in updates %}
-<article class="entry class-update{% if not update.html %} class-dim{% endif %}">
+<article class="entry class-update{% if not update.html %} class-dim{% endif %}" id="{{ anchors[update.post_id] }}">
   <p class="meta">{{ labels[update.kind] }} · <time datetime="{{ update.posted.isoformat() }}">{{ update.posted | month_day }}</time></p>
   {% if update.html %}
   <div class="changes">{{ update.html | safe }}</div>
-  <a class="source" href="{{ update.url }}" target="_blank" rel="noopener">Full notes on the Blizzard forums →</a>
+  <a class="source" href="{{ url_for('notes', post_id=update.post_id) }}">Full notes →</a>
+  <a class="source secondary" href="{{ update.url }}" target="_blank" rel="noopener">Blizzard forums ↗</a>
   {% else %}
   <p class="summary">No {{ cls }} changes in this update.</p>
   {% endif %}
@@ -34,4 +35,4 @@
 <p class="empty">No {{ cls }} patch notes gathered yet. They will appear here as soon as Blizzard posts them.</p>
 {% endfor %}
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='since.js') }}" defer></script>{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='classpage.js') }}" defer></script>{% endblock %}

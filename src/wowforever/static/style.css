@@ -212,3 +212,35 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .results h2 a { color: inherit; text-decoration: none; }
 .results h2 a:hover { text-decoration: underline; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Launch time in the reader's own time zone. */
+.plate-local { margin: 8px 0 0; font-size: .85rem; font-weight: 600; color: #1a0f05; }
+
+/* Secondary link next to the main one, e.g. the original forum post. */
+.source.secondary { margin-left: 14px; font-weight: 400; color: var(--muted); }
+.entry.blue-post .source.secondary { color: #8fa6c4; }
+
+/* Class page: link to one update. */
+.copy-link {
+  margin-left: 10px; padding: 0 6px; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer;
+  color: var(--bronze-light); background: none; border: 1px solid var(--stone-edge); border-radius: 2px;
+}
+.copy-link:hover { border-color: var(--bronze); }
+.copy-link:focus-visible { outline: 2px solid var(--gold-text); outline-offset: 2px; }
+.class-update { scroll-margin-top: 16px; }
+.class-update:target { border-color: var(--bronze-light); box-shadow: 0 0 0 1px var(--bronze-light); }
+
+/* Full notes page. */
+.notes { margin-top: 16px; }
+.notes h2 { font-size: 1.25rem; margin: 1.6rem 0 .5rem; }
+.notes h3, .notes h4 { font-family: Cinzel, Georgia, serif; color: var(--heading); margin: 1.2rem 0 .4rem; }
+.notes ul { padding-left: 22px; }
+.notes li { margin: 3px 0; }
+.notes strong { color: var(--bronze-light); }
+.notes em { color: var(--muted); }
+.edit-log { margin: 14px 0; padding: 10px 14px; background: var(--stone-raised); border: 1px solid var(--stone-edge); border-radius: 4px; }
+.edit-log summary { cursor: pointer; font-weight: 600; color: var(--heading); }
+.edit-log ul { margin: 8px 0 0; padding-left: 22px; }
+.edit-log .added li::marker { content: "+  "; color: #6cc47e; }
+.edit-log .removed li { color: var(--muted); text-decoration: line-through; }
+.edit-log .removed li::marker { content: "−  "; color: #d77; }

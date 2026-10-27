@@ -7,7 +7,7 @@ from flask import Flask, abort, jsonify, render_template, request, url_for
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
 from wowforever.posts import plain_text
-from wowforever.store import Store
+from wowforever.store import ClassUpdate, Store
 
 PAGE_SIZE = 20
 FEED_SIZE = 50
@@ -27,6 +27,16 @@ def _short_date(value: date | datetime) -> str:
 def _month_day(value: date | datetime) -> str:
     value = _local(value)
     return f"{value:%b} {value.day}"
+
+
+def _anchors(updates: list[ClassUpdate]) -> dict[int, str]:
+    """A readable, stable anchor per update, e.g. "hotfix-2026-11-06". Assigned oldest first, so a later
+    update on the same day gets the suffixed anchor and links already shared keep working."""
+    anchors: dict[int, str] = {}
+    for update in sorted(updates, key=lambda u: (u.posted, u.post_id)):
+        anchor = f"{update.kind}-{_local(update.posted):%Y-%m-%d}"
+        anchors[update.post_id] = anchor if anchor not in anchors.values() else f"{anchor}-{update.post_id}"
+    return anchors
 
 
 def create_app(store: Store) -> Flask:
@@ -116,12 +126,26 @@ def create_app(store: Store) -> Flask:
     @app.get("/classes/<name>")
     def class_page(name: str):
         cls = class_or_404(name)
+        updates = store.class_updates(cls)
         return render_template(
-            "class.html", cls=cls, slug=name, current_class=name, color=CLASS_COLORS[cls], updates=store.class_updates(cls),
-            labels=UPDATE_LABELS,
+            "class.html", cls=cls, slug=name, current_class=name, color=CLASS_COLORS[cls], updates=updates,
+            anchors=_anchors(updates), labels=UPDATE_LABELS,
             page_title=f"{cls} Patch Notes · WoW Forever Tracker",
             description=f"Every World of Warcraft: Forever change for the {cls} class, "
                         "from beta builds, patches and hotfixes.",
+        )
+
+    @app.get("/notes/<int:post_id>")
+    def notes(post_id: int):
+        found = store.notes(post_id)
+        if not found:
+            abort(404)
+        post = found[0]
+        title = post.title or f"{UPDATE_LABELS[post.kind]}, {_short_date(post.posted)}"
+        return render_template(
+            "notes.html", post=post, title=title, label=UPDATE_LABELS[post.kind],
+            page_title=f"{title} · WoW Forever Tracker",
+            description=post.summary or f"World of Warcraft: Forever {UPDATE_LABELS[post.kind].lower()}.",
         )
 
     def atom(title: str, page: str, entries: list[dict]):
@@ -155,10 +179,17 @@ def create_app(store: Store) -> Flask:
     def search_index():
         items = [{"title": p.title, "url": p.url, "label": "Patch" if p.kind == "patch" else "News",
                   "date": _short_date(p.published), "text": p.summary, "external": True}
-                 for p in store.list_posts(limit=-1)]
-        items += [{"title": f"{cls} · {UPDATE_LABELS[u.kind]}", "url": url_for("class_page", name=slug(cls)),
-                   "label": cls, "date": _short_date(u.posted), "text": plain_text(u.html), "external": False}
-                  for cls, u in store.all_class_changes()]
+                 for p in store.list_posts(limit=-1) if not p.on_forums]  # forum posts: as notes below
+        items += [{"title": n.title, "url": url_for("notes", post_id=n.id), "label": UPDATE_LABELS[n.kind],
+                   "date": _short_date(n.posted), "text": plain_text(n.html) or n.summary, "external": False}
+                  for n in store.notes()]
+        for cls in CLASSES:
+            updates = store.class_updates(cls)
+            anchors = _anchors(updates)
+            items += [{"title": f"{cls} · {UPDATE_LABELS[u.kind]}",
+                       "url": url_for("class_page", name=slug(cls), _anchor=anchors[u.post_id]),
+                       "label": cls, "date": _short_date(u.posted), "text": plain_text(u.html), "external": False}
+                      for u in updates if u.html]
         return jsonify(items)
 
     return app

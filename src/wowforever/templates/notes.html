@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="crumb"><a href="{{ url_for('patches') }}">← All patches</a></p>
+<h1>{{ title }}</h1>
+<p class="meta">{{ label }} · <time datetime="{{ post.posted.isoformat() }}">{{ post.posted | short_date }}</time>
+  · <a href="{{ post.url }}" target="_blank" rel="noopener">Original on the Blizzard forums ↗</a></p>
+{% for edit in post.edits %}
+<details class="edit-log"{% if loop.first %} open{% endif %}>
+  <summary>Blizzard edited these notes · seen {{ edit.seen | month_day }}
+    ({{ edit.added | length }} added, {{ edit.removed | length }} removed)</summary>
+  {% if edit.added %}<ul class="added">{% for line in edit.added %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}
+  {% if edit.removed %}<ul class="removed">{% for line in edit.removed %}<li>{{ line }}</li>{% endfor %}</ul>{% endif %}
+</details>
+{% endfor %}
+{% if post.html %}
+<article class="notes">{{ post.html | safe }}</article>
+{% else %}
+<p class="note">{{ post.summary }} The full notes will appear here after the next hourly check;
+  until then, read them on the <a href="{{ post.url }}" target="_blank" rel="noopener">Blizzard forums</a>.</p>
+{% endif %}
+{% endblock %}

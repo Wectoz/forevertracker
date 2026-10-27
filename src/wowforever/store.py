@@ -1,12 +1,14 @@
 """SQLite storage for gathered WoW Forever posts."""
 
+import json
 import sqlite3
 import threading
 from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 
+from wowforever.classnotes import text_lines
 from wowforever.forum import FORUM_URL, ForumPost
 from wowforever.posts import Post
 
@@ -31,9 +33,21 @@ CREATE TABLE IF NOT EXISTS updates (
     url TEXT NOT NULL,
     posted TEXT NOT NULL,
     title TEXT NOT NULL DEFAULT '',
-    summary TEXT NOT NULL DEFAULT ''
+    summary TEXT NOT NULL DEFAULT '',
+    html TEXT NOT NULL DEFAULT '',
+    edited_at TEXT
 );
 CREATE INDEX IF NOT EXISTS updates_posted ON updates (posted);
+CREATE TABLE IF NOT EXISTS update_edits (
+    post_id INTEGER NOT NULL,
+    seen TEXT NOT NULL,
+    added TEXT NOT NULL,
+    removed TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS update_edits_post ON update_edits (post_id);
+CREATE TABLE IF NOT EXISTS announced (
+    url TEXT PRIMARY KEY
+);
 CREATE TABLE IF NOT EXISTS class_changes (
     post_id INTEGER NOT NULL,
     class TEXT NOT NULL,
@@ -45,14 +59,15 @@ _COLUMNS = "id, title, url, summary, kind, version, published, updated, edited_a
 # Columns added after the tables first shipped; older databases get them on open.
 _ADDED_COLUMNS = {
     "posts": {"thumbnail": "TEXT"},
-    "updates": {"title": "TEXT NOT NULL DEFAULT ''", "summary": "TEXT NOT NULL DEFAULT ''"},
+    "updates": {"title": "TEXT NOT NULL DEFAULT ''", "summary": "TEXT NOT NULL DEFAULT ''",
+                "html": "TEXT NOT NULL DEFAULT ''", "edited_at": "TEXT"},
 }
 # The feed: news-site posts plus every forum notes post (shown as patch posts without a version),
 # each forum post with the comma-separated classes it has changes for.
 _FEED_COLUMNS = _COLUMNS + ", classes"
 _FEED = (
     f"(SELECT {_COLUMNS}, NULL AS classes FROM posts UNION ALL"
-    " SELECT post_id, title, url, summary, 'patch', NULL, posted, posted, NULL, NULL,"
+    " SELECT post_id, title, url, summary, 'patch', NULL, posted, posted, edited_at, NULL,"
     " (SELECT group_concat(class) FROM class_changes c WHERE c.post_id = updates.post_id) FROM updates)"
 )
 
@@ -71,10 +86,34 @@ class StoredPost(Post):
 class ClassUpdate:
     """One forum update as seen from one class; html is None when it has no changes for that class."""
 
+    post_id: int
     kind: str
     posted: datetime
     url: str
     html: str | None
+
+
+@dataclass(frozen=True)
+class Edit:
+    """Lines Blizzard added to and removed from a notes post, as first seen by a gather."""
+
+    seen: datetime
+    added: list[str]
+    removed: list[str]
+
+
+@dataclass(frozen=True)
+class Notes:
+    """One forum notes post in full."""
+
+    id: int
+    kind: str
+    title: str
+    summary: str
+    url: str
+    posted: datetime
+    html: str
+    edits: list[Edit]
 
 
 def _row_to_post(row: sqlite3.Row) -> StoredPost:
@@ -91,6 +130,10 @@ def _row_to_post(row: sqlite3.Row) -> StoredPost:
         thumbnail=row["thumbnail"],
         classes=tuple(sorted(row["classes"].split(","))) if row["classes"] else (),
     )
+
+
+def _row_to_update(row: sqlite3.Row) -> ClassUpdate:
+    return ClassUpdate(row["post_id"], row["kind"], datetime.fromisoformat(row["posted"]), row["url"], row["html"])
 
 
 class Store:
@@ -169,15 +212,33 @@ class Store:
         return self._select("WHERE kind = 'patch' AND version IS NULL")
 
     def save_update(self, post: ForumPost, kind: str, sections: dict[str, str] | None,
-                    title: str = "", summary: str = "") -> None:
-        """Store a forum notes post. `sections` replaces its class sections; None leaves them as they are."""
+                    title: str = "", summary: str = "", html: str = "", now: datetime | None = None) -> None:
+        """Store a forum notes post. `sections` replaces its class sections; None leaves them as they are.
+        `html` is the whole post; when its text changed since the last gather, the change is kept as an Edit."""
+        now = now or datetime.now(UTC)
         with self._lock, self._conn:
+            row = self._conn.execute("SELECT html FROM updates WHERE post_id = ?", (post.id,)).fetchone()
+            old = text_lines(row["html"]) if row and row["html"] else []
+            new = text_lines(html)
+            edited = bool(old and new and old != new)
+            if edited:
+                old_set, new_set = set(old), set(new)
+                added = [line for line in new if line not in old_set]
+                removed = [line for line in old if line not in new_set]
+                self._conn.execute(
+                    "INSERT INTO update_edits (post_id, seen, added, removed) VALUES (?, ?, ?, ?)",
+                    (post.id, now.isoformat(), json.dumps(added), json.dumps(removed)),
+                )
             self._conn.execute(
-                "INSERT INTO updates (post_id, topic_id, kind, url, posted, title, summary) VALUES (?, ?, ?, ?, ?, ?, ?)"
+                "INSERT INTO updates (post_id, topic_id, kind, url, posted, title, summary, html)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
                 " ON CONFLICT (post_id) DO UPDATE SET topic_id = excluded.topic_id, kind = excluded.kind,"
-                " url = excluded.url, posted = excluded.posted, title = excluded.title, summary = excluded.summary",
-                (post.id, post.topic_id, kind, post.url, post.posted.isoformat(), title, summary),
+                " url = excluded.url, posted = excluded.posted, title = excluded.title, summary = excluded.summary,"
+                " html = excluded.html",
+                (post.id, post.topic_id, kind, post.url, post.posted.isoformat(), title, summary, html),
             )
+            if edited:
+                self._conn.execute("UPDATE updates SET edited_at = ? WHERE post_id = ?", (now.isoformat(), post.id))
             if sections is None:
                 return
             self._conn.execute("DELETE FROM class_changes WHERE post_id = ?", (post.id,))
@@ -189,24 +250,42 @@ class Store:
     def class_updates(self, cls: str) -> list[ClassUpdate]:
         with self._lock:
             rows = self._conn.execute(
-                "SELECT u.kind, u.posted, u.url, c.html FROM updates u"
+                "SELECT u.post_id, u.kind, u.posted, u.url, c.html FROM updates u"
                 " LEFT JOIN class_changes c ON c.post_id = u.post_id AND c.class = ?"
                 # Only updates with class notes at all; a general-only post is not "no changes" news.
                 " WHERE EXISTS (SELECT 1 FROM class_changes x WHERE x.post_id = u.post_id)"
                 " ORDER BY u.posted DESC, u.post_id DESC",
                 (cls,),
             ).fetchall()
-        return [ClassUpdate(r["kind"], datetime.fromisoformat(r["posted"]), r["url"], r["html"]) for r in rows]
+        return [_row_to_update(r) for r in rows]
 
-    def all_class_changes(self) -> list[tuple[str, ClassUpdate]]:
-        """Every class's changes from every update, newest first."""
+    def notes(self, post_id: int | None = None) -> list[Notes]:
+        """One forum notes post with its edits (newest first), or every one when `post_id` is None."""
+        where, params = ("WHERE post_id = ?", (post_id,)) if post_id is not None else ("", ())
         with self._lock:
             rows = self._conn.execute(
-                "SELECT c.class, u.kind, u.posted, u.url, c.html FROM class_changes c"
-                " JOIN updates u ON u.post_id = c.post_id ORDER BY u.posted DESC, u.post_id DESC, c.class"
-            ).fetchall()
-        return [(r["class"], ClassUpdate(r["kind"], datetime.fromisoformat(r["posted"]), r["url"], r["html"]))
-                for r in rows]
+                f"SELECT post_id, kind, title, summary, url, posted, html FROM updates {where}"
+                " ORDER BY posted DESC, post_id DESC", params).fetchall()
+            edits = self._conn.execute(
+                f"SELECT post_id, seen, added, removed FROM update_edits {where} ORDER BY seen DESC, rowid DESC",
+                params).fetchall()
+        by_post: dict[int, list[Edit]] = {}
+        for e in edits:
+            by_post.setdefault(e["post_id"], []).append(
+                Edit(datetime.fromisoformat(e["seen"]), json.loads(e["added"]), json.loads(e["removed"])))
+        return [Notes(r["post_id"], r["kind"], r["title"], r["summary"], r["url"], datetime.fromisoformat(r["posted"]),
+                      r["html"], by_post.get(r["post_id"], [])) for r in rows]
+
+    def unannounced(self) -> list[StoredPost] | None:
+        """Feed posts not yet announced on Discord, oldest first; None if nothing was ever announced."""
+        with self._lock:
+            if self._conn.execute("SELECT 1 FROM announced LIMIT 1").fetchone() is None:
+                return None
+        return self._select("WHERE url NOT IN (SELECT url FROM announced)", order="published ASC")
+
+    def mark_announced(self, urls: Iterable[str]) -> None:
+        with self._lock, self._conn:
+            self._conn.executemany("INSERT OR IGNORE INTO announced (url) VALUES (?)", [(u,) for u in urls])
 
     def note_topics(self) -> dict[int, str]:
         with self._lock:
@@ -219,4 +298,5 @@ class Store:
             stale = [r[0] for r in self._conn.execute(
                 "SELECT post_id FROM updates WHERE topic_id = ?", (topic_id,)) if r[0] not in keep]
             self._conn.executemany("DELETE FROM class_changes WHERE post_id = ?", [(i,) for i in stale])
+            self._conn.executemany("DELETE FROM update_edits WHERE post_id = ?", [(i,) for i in stale])
             self._conn.executemany("DELETE FROM updates WHERE post_id = ?", [(i,) for i in stale])

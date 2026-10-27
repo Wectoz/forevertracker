@@ -52,6 +52,7 @@
     <div class="plate" data-launch="{{ launch_iso }}" role="timer" aria-label="{{ banner }}">
       {% if left %}
       <p class="plate-label">Launches November 4 · 3:00 p.m. PST</p>
+      <p class="plate-local" hidden></p>
       <div class="digits" aria-hidden="true">
         <span><b data-unit="days">{{ "%02d" % left[0] }}</b><small>Days</small></span>
         <span><b data-unit="hours">{{ "%02d" % left[1] }}</b><small>Hrs</small></span>

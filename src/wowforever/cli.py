@@ -1,7 +1,8 @@
-"""Command line: wowforever fetch | backfill | serve."""
+"""Command line: wowforever fetch | backfill | serve | build | announce."""
 
 import argparse
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -30,6 +31,7 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument("--base-path", default="", help='URL prefix the site is served under, e.g. "/wow-forever-news"')
     build.add_argument("--site-url", help='full site address, e.g. "https://wectoz.github.io/wow-forever-news";'
                                           " sets the base path and adds absolute preview URLs and a sitemap")
+    commands.add_parser("announce", help="post new WoW Forever posts to the Discord webhook in $DISCORD_WEBHOOK_URL")
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -47,6 +49,21 @@ def main(argv: list[str] | None = None) -> int:
 
         pages = build_site(store, Path(args.out), base_path=args.base_path, site_url=args.site_url)
         print(f"Built {pages} pages into {args.out}.")
+        return 0
+
+    if args.command == "announce":
+        from wowforever.discord import announce, webhook_sender
+
+        url = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
+        if not url:
+            print("DISCORD_WEBHOOK_URL is not set; nothing announced.")
+            return 0
+        try:
+            posted = announce(store, webhook_sender(url))
+        except (FetchError, ValueError) as err:
+            print(f"Could not announce on Discord: {err}", file=sys.stderr)
+            return 1
+        print(f"Announced {posted} new posts on Discord.")
         return 0
 
     status = 0

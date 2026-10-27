@@ -106,3 +106,18 @@ def test_class_colors_are_readable_on_the_dark_backgrounds():
         for name, color in CLASS_COLORS.items():
             light, dark = sorted([_luminance(color), _luminance(background)], reverse=True)
             assert (light + 0.05) / (dark + 0.05) >= 4.5, (name, background)
+
+
+def test_clean_html_keeps_structure_and_drops_quotes_scripts_and_images():
+    from wowforever.classnotes import clean_html
+
+    cooked = ('<h1>Big</h1><h2><a name="x" href="#x"></a>Change Log</h2><aside class="quote">quoted</aside>'
+              '<script>bad()</script><p>Hi <img src="e.png"><a href="/t/1">thread</a></p><h6>small</h6>')
+    assert clean_html(cooked) == ('<h2>Big</h2><h2>Change Log</h2><p>Hi <a href="https://us.forums.blizzard.com/t/1"'
+                                  ' target="_blank" rel="noopener nofollow">thread</a></p><h4>small</h4>')
+
+
+def test_text_lines_one_per_block():
+    from wowforever.classnotes import text_lines
+
+    assert text_lines("<p>a &amp; <b>b</b></p><h2>T</h2><ul><li>x<ul><li>y</li></ul></li></ul>") == ["a & b", "T", "x", "y"]

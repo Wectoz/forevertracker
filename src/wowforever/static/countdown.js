@@ -9,6 +9,15 @@
     minutes: plate.querySelector('[data-unit="minutes"]'),
   };
   if (!units.days) return;
+
+  // The launch time in the reader's own time zone, unless that is Pacific time anyway.
+  const local = plate.querySelector(".plate-local");
+  const when = { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" };
+  const inZone = (timeZone) => new Intl.DateTimeFormat(undefined, { ...when, timeZone }).format(launch);
+  if (local && inZone(undefined) !== inZone("America/Los_Angeles")) {
+    local.textContent = `Your time: ${new Intl.DateTimeFormat(undefined, { ...when, timeZoneName: "short" }).format(launch)}`;
+    local.hidden = false;
+  }
   const pad = (n) => String(n).padStart(2, "0");
   const tick = () => {
     const minutes = Math.max(0, Math.floor((launch - Date.now()) / 60000));
@@ -19,6 +28,7 @@
       // Launched: the static page may be up to an hour old, so switch the plate here.
       plate.querySelector(".plate-label").textContent = "Live now · Day 1";
       plate.querySelector(".digits").remove();
+      if (local) local.remove();
       plate.setAttribute("aria-label", "Live now · Day 1");
       return false;
     }
