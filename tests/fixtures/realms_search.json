@@ -1,0 +1,188 @@
+{
+  "page": 1,
+  "pageSize": 100,
+  "maxPageSize": 100,
+  "pageCount": 1,
+  "results": [
+    {
+      "key": {
+        "href": "https://us.api.blizzard.com/data/wow/connected-realm/5001?namespace=dynamic-classic-us"
+      },
+      "data": {
+        "id": 5001,
+        "has_queue": false,
+        "status": {
+          "type": "UP",
+          "name": {
+            "en_US": "Up",
+            "en_GB": "Up",
+            "de_DE": "Up"
+          }
+        },
+        "population": {
+          "type": "FULL",
+          "name": {
+            "en_US": "Full",
+            "en_GB": "Full",
+            "de_DE": "Full"
+          }
+        },
+        "realms": [
+          {
+            "id": 5001,
+            "name": {
+              "en_US": "Zandalar",
+              "en_GB": "Zandalar",
+              "de_DE": "Zandalar"
+            },
+            "category": {
+              "en_US": "WoW Forever",
+              "en_GB": "WoW Forever",
+              "de_DE": "WoW Forever"
+            },
+            "type": {
+              "type": "PVP",
+              "name": {
+                "en_US": "PvP",
+                "en_GB": "PvP",
+                "de_DE": "PvP"
+              }
+            },
+            "slug": "zandalar",
+            "timezone": "America/Los_Angeles",
+            "locale": "enUS",
+            "is_tournament": false,
+            "region": {
+              "id": 1,
+              "name": {
+                "en_US": "US",
+                "en_GB": "US",
+                "de_DE": "US"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "key": {
+        "href": "https://us.api.blizzard.com/data/wow/connected-realm/4372?namespace=dynamic-classic-us"
+      },
+      "data": {
+        "id": 4372,
+        "has_queue": false,
+        "status": {
+          "type": "UP",
+          "name": {
+            "en_US": "Up",
+            "en_GB": "Up",
+            "de_DE": "Up"
+          }
+        },
+        "population": {
+          "type": "HIGH",
+          "name": {
+            "en_US": "High",
+            "en_GB": "High",
+            "de_DE": "High"
+          }
+        },
+        "realms": [
+          {
+            "id": 4372,
+            "name": {
+              "en_US": "Atiesh",
+              "en_GB": "Atiesh",
+              "de_DE": "Atiesh"
+            },
+            "category": {
+              "en_US": "United States",
+              "en_GB": "United States",
+              "de_DE": "United States"
+            },
+            "type": {
+              "type": "NORMAL",
+              "name": {
+                "en_US": "Normal",
+                "en_GB": "Normal",
+                "de_DE": "Normal"
+              }
+            },
+            "slug": "atiesh",
+            "timezone": "America/Los_Angeles",
+            "locale": "enUS",
+            "is_tournament": false,
+            "region": {
+              "id": 1,
+              "name": {
+                "en_US": "US",
+                "en_GB": "US",
+                "de_DE": "US"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "key": {
+        "href": "https://us.api.blizzard.com/data/wow/connected-realm/5002?namespace=dynamic-classic-us"
+      },
+      "data": {
+        "id": 5002,
+        "has_queue": false,
+        "status": {
+          "type": "DOWN",
+          "name": {
+            "en_US": "Down",
+            "en_GB": "Down",
+            "de_DE": "Down"
+          }
+        },
+        "population": {
+          "type": "LOW",
+          "name": {
+            "en_US": "Low",
+            "en_GB": "Low",
+            "de_DE": "Low"
+          }
+        },
+        "realms": [
+          {
+            "id": 5002,
+            "name": {
+              "en_US": "Ashenvale",
+              "en_GB": "Ashenvale",
+              "de_DE": "Ashenvale"
+            },
+            "category": {
+              "en_US": "WoW Forever",
+              "en_GB": "WoW Forever",
+              "de_DE": "WoW Forever"
+            },
+            "type": {
+              "type": "RP",
+              "name": {
+                "en_US": "RP",
+                "en_GB": "RP",
+                "de_DE": "RP"
+              }
+            },
+            "slug": "ashenvale",
+            "timezone": "America/Los_Angeles",
+            "locale": "enUS",
+            "is_tournament": false,
+            "region": {
+              "id": 1,
+              "name": {
+                "en_US": "US",
+                "en_GB": "US",
+                "de_DE": "US"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

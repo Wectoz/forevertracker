@@ -11,6 +11,7 @@ from pathlib import Path
 from wowforever.classnotes import text_lines
 from wowforever.forum import FORUM_URL, ForumPost, StaffPost
 from wowforever.posts import Post
+from wowforever.realms import REGIONS, Realm
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS posts (
@@ -61,6 +62,18 @@ CREATE TABLE IF NOT EXISTS blue_posts (
     announced INTEGER NOT NULL DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS blue_posts_posted ON blue_posts (posted);
+CREATE TABLE IF NOT EXISTS realms (
+    region TEXT NOT NULL,
+    name TEXT NOT NULL,
+    type TEXT NOT NULL,
+    up INTEGER NOT NULL,
+    population TEXT NOT NULL,
+    PRIMARY KEY (region, name)
+);
+CREATE TABLE IF NOT EXISTS realm_checks (
+    region TEXT PRIMARY KEY,
+    checked TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS class_changes (
     post_id INTEGER NOT NULL,
     class TEXT NOT NULL,
@@ -368,3 +381,28 @@ class Store:
     def mark_blue_announced(self, ids: Iterable[int]) -> None:
         with self._lock, self._conn:
             self._conn.executemany("UPDATE blue_posts SET announced = 1 WHERE id = ?", [(i,) for i in ids])
+
+    def save_realms(self, region: str, realms: list[Realm], now: datetime | None = None) -> None:
+        """Replace a region's realms with a fresh snapshot; an empty one keeps the previous snapshot."""
+        if not realms:
+            return
+        with self._lock, self._conn:
+            self._conn.execute("DELETE FROM realms WHERE region = ?", (region,))
+            self._conn.executemany(
+                "INSERT OR REPLACE INTO realms (region, name, type, up, population) VALUES (?, ?, ?, ?, ?)",
+                [(region, r.name, r.type, int(r.up), r.population) for r in realms])
+            self._conn.execute(
+                "INSERT OR REPLACE INTO realm_checks (region, checked) VALUES (?, ?)",
+                (region, (now or datetime.now(UTC)).isoformat()))
+
+    def realms(self) -> dict[str, tuple[datetime, list[Realm]]]:
+        """Each region's last checked time and realms, in REGIONS order; regions never saved are left out."""
+        with self._lock:
+            checks = dict(self._conn.execute("SELECT region, checked FROM realm_checks").fetchall())
+            rows = self._conn.execute("SELECT * FROM realms ORDER BY name").fetchall()
+        return {
+            region: (datetime.fromisoformat(checks[region]),
+                     [Realm(r["region"], r["name"], r["type"], bool(r["up"]), r["population"])
+                      for r in rows if r["region"] == region])
+            for region in REGIONS if region in checks
+        }

@@ -1,4 +1,4 @@
-"""Command line: wowforever fetch | backfill | serve | build | announce."""
+"""Command line: wowforever fetch | backfill | serve | build | announce | realms."""
 
 import argparse
 import logging
@@ -32,6 +32,7 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument("--site-url", help='full site address, e.g. "https://wectoz.github.io/wow-forever-news";'
                                           " sets the base path and adds absolute preview URLs and a sitemap")
     commands.add_parser("announce", help="post new WoW Forever posts to the Discord webhook in $DISCORD_WEBHOOK_URL")
+    commands.add_parser("realms", help="read WoW Forever realm status using $BLIZZARD_CLIENT_ID and $BLIZZARD_CLIENT_SECRET")
     args = parser.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -65,6 +66,26 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         print(f"Announced {posted} new posts on Discord.")
         return 0
+
+    if args.command == "realms":
+        from wowforever import realms
+
+        client_id = os.environ.get("BLIZZARD_CLIENT_ID", "").strip()
+        client_secret = os.environ.get("BLIZZARD_CLIENT_SECRET", "").strip()
+        if not client_id or not client_secret:
+            print("BLIZZARD_CLIENT_ID/BLIZZARD_CLIENT_SECRET not set; realm status skipped.")
+            return 0
+        failed = 0
+        for region in realms.REGIONS:
+            try:
+                found = realms.forever_realms(region, realms.token(client_id, client_secret))
+            except (FetchError, ParseError) as err:
+                print(f"Could not read {region.upper()} realms: {err}", file=sys.stderr)
+                failed += 1
+                continue
+            store.save_realms(region, found)
+            print(f"Saved {len(found)} {region.upper()} realms.")
+        return 1 if failed == len(realms.REGIONS) else 0
 
     status = 0
     try:
