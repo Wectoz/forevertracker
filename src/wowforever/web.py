@@ -4,7 +4,7 @@ from datetime import UTC, date, datetime, timedelta
 
 from flask import Flask, abort, jsonify, render_template, request, url_for
 
-from wowforever import gamedata
+from wowforever import gamediff, gamedata
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
 from wowforever.guides import ADDONS_UPDATED, CATEGORIES, GENERAL_MACROS, MACROS, TRENDING
@@ -62,6 +62,7 @@ def create_app(store: Store) -> Flask:
     app.jinja_env.filters["month_day"] = _month_day
     app.jinja_env.filters["checked_time"] = _checked_time
     app.jinja_env.filters["slugify"] = gamedata.slugify
+    app.jinja_env.filters["word_diff"] = gamediff.word_diff
     game = gamedata.load()
 
     @app.context_processor
@@ -216,6 +217,16 @@ def create_app(store: Store) -> Flask:
             page_title=f"WoW Forever {found} Recipes · WoW Forever Tracker",
             description=f"All {len(game['professions'][found])} World of Warcraft: Forever {found} recipes, "
                         "where they come from and their skill-ups.",
+        )
+
+    @app.get("/game-changes")
+    def game_changes():
+        return render_template(
+            "game_changes.html", updates=[{**u, "date": date.fromisoformat(u["date"]), "sections": gamediff.by_section(u["changes"])}
+                                          for u in gamediff.load()], build=game["build"],
+            page_title="WoW Forever Game Data Changes · WoW Forever Tracker",
+            description="Every change to World of Warcraft: Forever abilities, talents, racials and recipes found in the "
+                        "game files, including the ones the patch notes leave out.",
         )
 
     @app.get("/notes/<int:post_id>")

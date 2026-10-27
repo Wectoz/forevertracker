@@ -15,6 +15,7 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Races**: every race's racial abilities, Skyborne included.
 - **Professions**: every recipe of every profession, where it comes from and the skill at which it turns yellow and grey.
 - **Full patch notes**: every Blizzard forum notes post on its own page, not just the class parts. When Blizzard edits one, the page lists what was added and removed.
+- **Game data changes**: what changed in the game files from one client update to the next, word by word, including what the patch notes leave out. Linked from the Patches page.
 - **Blue posts**: what Blizzard staff say about WoW Forever on the official forums, newest first, with its own RSS feed.
 - **Known Issues**: a link next to the launch countdown on every page, straight to Blizzard's Known Issues thread.
 - **Realms**: whether each WoW Forever realm is up, and its population. This page appears once realm data is available.
@@ -73,6 +74,7 @@ Abilities, talents, racials and recipes are read from the WoW Forever game clien
    dotnet TACTTool.dll -p wowf -r eu -d "/mnt/c/Program Files (x86)/World of Warcraft" -m list -i db2/icons.txt -o blp
    uv run --group gamedata wowforever icons blp
    ```
+   When the client build differs from the one in `gamedata.json`, step 3 also records what changed (abilities, talents, racials, recipes, items) in `gamechanges.json`, shown on the Game data changes page. Add `--record` to record a refresh of the same build too (a hotfix); leave it off when only this code changed.
 5. Check the pages with `uv run wowforever serve`, and commit `gamedata.json` and `src/wowforever/static/icons/`.
 
 Season of Discovery spells are still in the client files; they are left out by spell ID range (see `gamedata.py`).

@@ -414,3 +414,15 @@ table.realms thead th { color: var(--heading); }
   .game-table td, .game-table th { padding: 6px 4px; }
   .spell-tiles { grid-template-columns: 1fr; }
 }
+
+/* Game data changes: what changed between two client builds, word by word. */
+.data-section { margin: 10px 0; }
+.data-section > summary { cursor: pointer; font-family: Cinzel, serif; color: var(--heading); }
+.data-changes { margin: 6px 0 12px; padding-left: 18px; }
+.data-changes li { margin: 6px 0; }
+.change-added, .change-removed, .change-changed { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+.change-added { color: #6cc47e; } .change-removed { color: #d77; } .change-changed { color: var(--bronze-light); }
+.change-detail { margin: 2px 0 0 4px; font-size: .9rem; }
+.change-field { color: var(--muted); }
+.change-detail ins { background: #1e3a24; color: #b6f0c0; text-decoration: none; }
+.change-detail del { background: #3a1e1e; color: #f0b6b6; }
