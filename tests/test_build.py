@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 from wowforever.build import build_site
 from wowforever.store import Store
 
-from .test_store import make_post
+from .test_store import make_post, make_staff
 
 
 def filled_store():
@@ -90,3 +90,11 @@ def test_build_writes_feeds_and_search_index_as_files(tmp_path):
     assert (tmp_path / "search/index.html").is_file()
     sitemap = (tmp_path / "sitemap.xml").read_text()
     assert "feed.xml" not in sitemap and "search.json" not in sitemap
+
+
+def test_build_writes_blue_page_and_feed(tmp_path):
+    store = filled_store()
+    store.add_blue_posts([make_staff()])
+    build_site(store, tmp_path, base_path="/wow-forever-news")
+    assert (tmp_path / "blue/index.html").is_file()
+    assert (tmp_path / "blue/feed.xml").is_file()

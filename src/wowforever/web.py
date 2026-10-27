@@ -99,6 +99,25 @@ def create_app(store: Store) -> Flask:
         return feed("news", "news", page, "WoW Forever news", "WoW Forever News · WoW Forever Tracker",
                     "World of Warcraft: Forever announcements and news, gathered from Blizzard.")
 
+    @app.get("/blue")
+    def blue():
+        return blue_page(1)
+
+    @app.get("/blue/page/<int:page>/")
+    def blue_page(page: int):
+        if page == 1 and request.endpoint == "blue_page":
+            abort(404)
+        total = store.count_blue_posts()
+        if page < 1 or (page > 1 and (page - 1) * PAGE_SIZE >= total):
+            abort(404)
+        return render_template(
+            "blue.html", posts=store.list_blue_posts(limit=PAGE_SIZE, offset=(page - 1) * PAGE_SIZE),
+            newer_url=page_url("blue", page - 1) if page > 1 else None,
+            older_url=page_url("blue", page + 1) if page * PAGE_SIZE < total else None,
+            page_title="WoW Forever Blue Posts · WoW Forever Tracker",
+            description="What Blizzard staff are saying about World of Warcraft: Forever on the official forums.",
+        )
+
     @app.get("/patches")
     def patches():
         return render_template(
@@ -181,6 +200,13 @@ def create_app(store: Store) -> Flask:
                     "updated": p.edited_at or p.published, "summary": p.summary, "html": None}
                    for p in store.list_posts(limit=FEED_SIZE)]
         return atom("WoW Forever Tracker", url_for("home"), entries)
+
+    @app.get("/blue/feed.xml")
+    def blue_feed():
+        entries = [{"id": p.url, "title": f"{p.author}: {p.thread_title}", "url": p.url, "published": p.posted,
+                    "updated": p.posted, "summary": p.excerpt, "html": None}
+                   for p in store.list_blue_posts(limit=FEED_SIZE)]
+        return atom("WoW Forever Blue Posts · WoW Forever Tracker", url_for("blue"), entries)
 
     @app.get("/classes/<name>/feed.xml")
     def class_feed(name: str):

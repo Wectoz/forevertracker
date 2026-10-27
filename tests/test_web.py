@@ -5,7 +5,7 @@ import pytest
 from wowforever.store import Store
 from wowforever.web import create_app
 
-from .test_store import make_forum_post, make_post
+from .test_store import make_forum_post, make_post, make_staff
 
 EMPTY = "No WoW Forever posts gathered yet"
 FOOTER = "Unofficial fan site. Not affiliated with Blizzard Entertainment."
@@ -207,7 +207,7 @@ def test_news_card_shows_small_lazy_thumbnail():
 
 def test_news_card_without_thumbnail_has_no_image():
     html = client_for(make_post()).get("/news").text
-    assert 'class="thumb"' not in html and "Blue post" not in html
+    assert 'class="thumb"' not in html and "blue-tag" not in html
 
 
 def test_blue_post_card_is_tinted_with_tag_and_tile():
@@ -396,3 +396,51 @@ def test_notes_page_for_known_issues():
     store.save_update(make_forum_post(id=5, topic_id=11), "known", {}, title="Known Issues", html="<p>Bug</p>")
     response = create_app(store).test_client().get("/notes/5")
     assert response.status_code == 200 and "Known Issues" in response.text
+
+
+def blue_client(*staff):
+    store = Store(":memory:")
+    store.add_blue_posts(staff)
+    return create_app(store).test_client()
+
+
+def test_blue_page_lists_posts_newest_first():
+    old = make_staff(id=1, thread_title="Older thread", excerpt="Old words", url="https://f/1",
+                     posted=datetime(2026, 10, 1, 12, tzinfo=UTC))
+    new = make_staff(id=2, thread_title="Newer thread", excerpt="New words", url="https://f/2",
+                     posted=datetime(2026, 10, 5, 12, tzinfo=UTC))
+    html = blue_client(old, new).get("/blue").text
+    assert "WoW Forever Blue Posts · WoW Forever Tracker" in html
+    assert html.index("Newer thread") < html.index("Older thread")
+    assert "Kaivax" in html and "Community Manager" in html
+    assert "New words" in html and "Oct 5, 2026" in html
+    assert 'href="https://f/2"' in html and "Read on the forums" in html
+    assert 'href="/blue/feed.xml"' in html
+
+
+def test_blue_page_empty():
+    response = blue_client().get("/blue")
+    assert response.status_code == 200
+    assert EMPTY in response.text
+
+
+def test_blue_pagination_404_past_end():
+    posts = [make_staff(id=i, url=f"https://f/{i}", posted=datetime(2026, 10, 1, tzinfo=UTC) + timedelta(hours=i))
+             for i in range(1, 22)]
+    client = blue_client(*posts)
+    assert '"/blue/page/2/"' in client.get("/blue").text
+    assert client.get("/blue/page/2/").status_code == 200
+    assert client.get("/blue/page/3/").status_code == 404
+    assert client.get("/blue/page/1/").status_code == 404
+    assert blue_client().get("/blue/page/2/").status_code == 404
+
+
+def test_blue_feed_is_atom():
+    response = blue_client(make_staff(thread_title="A <b> thread", url="https://f/1")).get("/blue/feed.xml")
+    assert response.mimetype == "application/atom+xml"
+    assert "<id>https://f/1</id>" in response.text
+    assert "Kaivax: A &lt;b&gt; thread" in response.text
+
+
+def test_nav_has_blue_posts():
+    assert 'href="/blue">Blue posts</a>' in client_for().get("/").text
