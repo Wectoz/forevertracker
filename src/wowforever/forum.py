@@ -151,4 +151,4 @@ def tracker_page(fetch: FetchJson, before: int | None = None) -> list[StaffPost]
         ]
     except (KeyError, TypeError, ValueError, AttributeError) as err:
         raise ParseError(f"unexpected forum tracker page: {err!r}") from err
-    return sorted(posts, key=lambda p: p.posted, reverse=True)
+    return posts
