@@ -17,9 +17,9 @@
     units.minutes.textContent = pad(minutes % 60);
     if (minutes === 0) {
       // Launched: the static page may be up to an hour old, so switch the plate here.
-      plate.querySelector(".plate-label").textContent = "Live since Nov 4";
+      plate.querySelector(".plate-label").textContent = "Live now · Day 1";
       plate.querySelector(".digits").remove();
-      plate.setAttribute("aria-label", "Live since Nov 4");
+      plate.setAttribute("aria-label", "Live now · Day 1");
       return false;
     }
     return true;

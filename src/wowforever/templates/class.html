@@ -1,11 +1,28 @@
 {% extends "base.html" %}
+{% block head %}<link rel="alternate" type="application/atom+xml" title="{{ cls }} patch notes" href="{{ url_for('class_feed', name=slug) }}">{% endblock %}
 {% block content %}
 <h1 class="class-title" style="color: {{ color }}">
   <img src="{{ url_for('static', filename='classes/' ~ slug ~ '.jpg') }}" alt="" width="36" height="36">{{ cls }} patch notes
 </h1>
+<div class="class-tools">
+  <button type="button" class="my-class-toggle" data-class="{{ slug }}" data-name="{{ cls }}" aria-pressed="false" hidden>☆ Make {{ cls }} my class</button>
+  {% set with_changes = updates | selectattr("html") | list %}
+  {% if with_changes | length > 1 %}
+  <label class="since" hidden>Show changes since
+    <select>
+      <option value="">All updates</option>
+      {% for update in with_changes[:-1] %}
+      <option value="{{ update.posted.isoformat() }}">{{ labels[update.kind] }} · {{ update.posted | month_day }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% endif %}
+  <a class="feed-link" href="{{ url_for('class_feed', name=slug) }}">RSS feed</a>
+</div>
+<p class="since-status" role="status" aria-live="polite"></p>
 {% for update in updates %}
 <article class="entry class-update{% if not update.html %} class-dim{% endif %}">
-  <p class="meta">{{ labels[update.kind] }} · {{ update.posted | month_day }}</p>
+  <p class="meta">{{ labels[update.kind] }} · <time datetime="{{ update.posted.isoformat() }}">{{ update.posted | month_day }}</time></p>
   {% if update.html %}
   <div class="changes">{{ update.html | safe }}</div>
   <a class="source" href="{{ update.url }}" target="_blank" rel="noopener">Full notes on the Blizzard forums →</a>
@@ -17,3 +34,4 @@
 <p class="empty">No {{ cls }} patch notes gathered yet. They will appear here as soon as Blizzard posts them.</p>
 {% endfor %}
 {% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='since.js') }}" defer></script>{% endblock %}

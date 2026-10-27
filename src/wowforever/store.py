@@ -47,16 +47,20 @@ _ADDED_COLUMNS = {
     "posts": {"thumbnail": "TEXT"},
     "updates": {"title": "TEXT NOT NULL DEFAULT ''", "summary": "TEXT NOT NULL DEFAULT ''"},
 }
-# The feed: news-site posts plus every forum notes post (shown as patch posts without a version).
+# The feed: news-site posts plus every forum notes post (shown as patch posts without a version),
+# each forum post with the comma-separated classes it has changes for.
+_FEED_COLUMNS = _COLUMNS + ", classes"
 _FEED = (
-    f"(SELECT {_COLUMNS} FROM posts UNION ALL"
-    " SELECT post_id, title, url, summary, 'patch', NULL, posted, posted, NULL, NULL FROM updates)"
+    f"(SELECT {_COLUMNS}, NULL AS classes FROM posts UNION ALL"
+    " SELECT post_id, title, url, summary, 'patch', NULL, posted, posted, NULL, NULL,"
+    " (SELECT group_concat(class) FROM class_changes c WHERE c.post_id = updates.post_id) FROM updates)"
 )
 
 
 @dataclass(frozen=True)
 class StoredPost(Post):
     edited_at: datetime | None
+    classes: tuple[str, ...] = ()  # classes a forum notes post has changes for
 
     @property
     def on_forums(self) -> bool:
@@ -85,6 +89,7 @@ def _row_to_post(row: sqlite3.Row) -> StoredPost:
         updated=datetime.fromisoformat(row["updated"]),
         edited_at=datetime.fromisoformat(row["edited_at"]) if row["edited_at"] else None,
         thumbnail=row["thumbnail"],
+        classes=tuple(sorted(row["classes"].split(","))) if row["classes"] else (),
     )
 
 
@@ -131,7 +136,7 @@ class Store:
 
     def _select(self, where: str = "", params: tuple = (), order: str = "published DESC",
                 limit: int = -1, offset: int = 0) -> list[StoredPost]:
-        sql = f"SELECT {_COLUMNS} FROM {_FEED} {where} ORDER BY {order}, id LIMIT ? OFFSET ?"
+        sql = f"SELECT {_FEED_COLUMNS} FROM {_FEED} {where} ORDER BY {order}, id LIMIT ? OFFSET ?"
         with self._lock:
             rows = self._conn.execute(sql, (*params, limit, offset)).fetchall()
         return [_row_to_post(r) for r in rows]
@@ -192,6 +197,16 @@ class Store:
                 (cls,),
             ).fetchall()
         return [ClassUpdate(r["kind"], datetime.fromisoformat(r["posted"]), r["url"], r["html"]) for r in rows]
+
+    def all_class_changes(self) -> list[tuple[str, ClassUpdate]]:
+        """Every class's changes from every update, newest first."""
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT c.class, u.kind, u.posted, u.url, c.html FROM class_changes c"
+                " JOIN updates u ON u.post_id = c.post_id ORDER BY u.posted DESC, u.post_id DESC, c.class"
+            ).fetchall()
+        return [(r["class"], ClassUpdate(r["kind"], datetime.fromisoformat(r["posted"]), r["url"], r["html"]))
+                for r in rows]
 
     def note_topics(self) -> dict[int, str]:
         with self._lock:
