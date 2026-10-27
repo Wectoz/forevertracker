@@ -25,6 +25,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <link rel="alternate" type="application/atom+xml" title="WoW Forever Tracker" href="{{ url_for('feed_xml') }}">
+  {% if gamelinks %}<link rel="preload" href="{{ url_for('tooltips_json') }}" as="fetch" crossorigin>{% endif %}
   {% block head %}{% endblock %}
 </head>
 <body>
@@ -90,6 +91,9 @@
   <script src="{{ url_for('static', filename='menu.js') }}" defer></script>
   <script src="{{ url_for('static', filename='visits.js') }}" defer></script>
   <script src="{{ url_for('static', filename='myclass.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='tooltips.js') }}" defer></script>
+  {% if gamelinks %}<script src="{{ url_for('static', filename='gamelinks.js') }}" data-tips="{{ url_for('tooltips_json') }}"
+    data-icons="{{ url_for('static', filename='icons/') }}" defer></script>{% endif %}
   {% block scripts %}{% endblock %}
 </body>
 </html>

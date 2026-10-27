@@ -15,6 +15,7 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Races**: every race's racial abilities, Skyborne included.
 - **Professions**: every recipe of every profession, where it comes from and the skill at which it turns yellow and grey.
 - **Full patch notes**: every Blizzard forum notes post on its own page, not just the class parts. When Blizzard edits one, the page lists what was added and removed.
+- **Tooltips in the notes**: ability, talent, racial and item names in patch notes, class changes and blue posts show their in-game tooltip on hover or tap.
 - **Blue posts**: what Blizzard staff say about WoW Forever on the official forums, newest first, with its own RSS feed.
 - **Known Issues**: a link next to the launch countdown on every page, straight to Blizzard's Known Issues thread.
 - **Realms**: whether each WoW Forever realm is up, and its population. This page appears once realm data is available.
