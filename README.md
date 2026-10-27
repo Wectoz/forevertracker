@@ -16,10 +16,12 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Professions**: every recipe of every profession, where it comes from and the skill at which it turns yellow and grey.
 - **Full patch notes**: every Blizzard forum notes post on its own page, not just the class parts. When Blizzard edits one, the page lists what was added and removed.
 - **Game data changes**: what changed in the game files from one client update to the next, word by word, including what the patch notes leave out. Linked from the Patches page.
+- **Tooltips in the notes**: ability, talent, racial and item names in patch notes, class changes and blue posts show their in-game tooltip on hover or tap.
 - **Blue posts**: what Blizzard staff say about WoW Forever on the official forums, newest first, with its own RSS feed.
 - **Known Issues**: a link next to the launch countdown on every page, straight to Blizzard's Known Issues thread.
 - **Realms**: whether each WoW Forever realm is up, and its population. This page appears once realm data is available.
-- **Guides** menu: Races, Professions, Addons and Macros.
+- **Guides** menu: Races, Professions, Items, Addons and Macros.
+- **Items**: every weapon, armor piece and bag in the game client, with its in-game tooltip. Filter by slot, type, quality, the level you can use it at and the profession that crafts it.
 - **Addons**: the essential addons and the new Forever ones people are trying, each linked to its CurseForge page.
 - **Macros**: ready-to-copy macros for all nine classes, with a Copy button on each.
 - **Search**: find any post or class change, e.g. every note that mentions Sunder Armor.
@@ -63,7 +65,7 @@ Abilities, talents, racials and recipes are read from the WoW Forever game clien
 1. Get the tools once: [.NET 10](https://dotnet.microsoft.com), `git clone https://github.com/wowdev/TACTSharp` (build `TACTTool` with `dotnet build -c Release`), `git clone https://github.com/wowdev/WoWDBDefs`, and the [community listfile](https://github.com/wowdev/wow-listfile) saved as `listfile.csv`, which maps table names to file IDs.
 2. Extract the tables (from WSL; adjust the game folder):
    ```sh
-   for t in chrclasses chrraces skillline skilllineability skillraceclassinfo spellname spell spelllevels spelleffect spellmisc spellduration spellradius talent talenttab itemsparse itemeffect itemxitemeffect item spellauraoptions spelltargetrestrictions spellrange; do
+   for t in chrclasses chrraces skillline skilllineability skillraceclassinfo spellname spell spelllevels spelleffect spellmisc spellduration spellradius talent talenttab itemsparse itemeffect itemxitemeffect item spellauraoptions spelltargetrestrictions spellrange spellreagents randproppoints itemarmorquality itemarmortotal armorlocation itemarmorshield itemdamageonehand itemdamagetwohand itemdamageranged itemdamagewand uitextureatlasmember uitextureatlas itemmodifiedappearance itemappearance; do
      id=$(grep -i ";dbfilesclient/$t.db2$" listfile.csv | cut -d';' -f1)
      dotnet TACTTool.dll -p wowf -r eu -d "/mnt/c/Program Files (x86)/World of Warcraft" -m fdid -i $id -o db2/$t.db2
    done

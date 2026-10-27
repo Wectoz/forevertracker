@@ -14,7 +14,7 @@
 </details>
 {% endfor %}
 {% if post.html %}
-<article class="notes">{{ post.html | safe }}</article>
+<article class="notes">{{ post.html | gamelinks }}</article>
 {% else %}
 <p class="note">{{ post.summary }} The full notes will appear here after the next hourly check;
   until then, read them on the <a href="{{ post.url }}" target="_blank" rel="noopener">Blizzard forums</a>.</p>

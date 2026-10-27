@@ -5,6 +5,7 @@ from datetime import UTC, date, datetime, timedelta
 from flask import Flask, abort, jsonify, render_template, request, url_for
 
 from wowforever import gamediff, gamedata
+from wowforever import gamedata, gamelinks
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
 from wowforever.guides import ADDONS_UPDATED, CATEGORIES, GENERAL_MACROS, MACROS, TRENDING
@@ -15,6 +16,10 @@ PAGE_SIZE = 20
 FEED_SIZE = 50
 STALE_AFTER = timedelta(minutes=30)
 REGION_NAMES = {"us": "Americas", "eu": "Europe"}
+# The Items page's slot filter, in the order of the character sheet.
+ITEM_SLOTS = ("Head", "Neck", "Shoulder", "Back", "Chest", "Shirt", "Tabard", "Wrist", "Hands", "Waist", "Legs", "Feet",
+              "Finger", "Trinket", "Main Hand", "One-Hand", "Two-Hand", "Off Hand", "Held In Off-hand", "Ranged",
+              "Thrown", "Relic", "Bag")
 UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix", "known": "Known Issues"}
 
 
@@ -64,6 +69,8 @@ def create_app(store: Store) -> Flask:
     app.jinja_env.filters["slugify"] = gamedata.slugify
     app.jinja_env.filters["word_diff"] = gamediff.word_diff
     game = gamedata.load()
+    linker = gamelinks.Linker(game)
+    app.jinja_env.filters["gamelinks"] = linker.link
 
     @app.context_processor
     def banner():
@@ -131,7 +138,7 @@ def create_app(store: Store) -> Flask:
         if page < 1 or (page > 1 and (page - 1) * PAGE_SIZE >= total):
             abort(404)
         return render_template(
-            "blue.html", posts=store.list_blue_posts(limit=PAGE_SIZE, offset=(page - 1) * PAGE_SIZE),
+            "blue.html", gamelinks=True, posts=store.list_blue_posts(limit=PAGE_SIZE, offset=(page - 1) * PAGE_SIZE),
             newer_url=page_url("blue", page - 1) if page > 1 else None,
             older_url=page_url("blue", page + 1) if page * PAGE_SIZE < total else None,
             page_title="WoW Forever Blue Posts · WoW Forever Tracker",
@@ -184,7 +191,7 @@ def create_app(store: Store) -> Flask:
         cls = class_or_404(name)
         updates = store.class_updates(cls)
         return render_template(
-            "class.html", cls=cls, slug=name, current_class=name, color=CLASS_COLORS[cls], updates=updates,
+            "class.html", gamelinks=True, cls=cls, slug=name, current_class=name, color=CLASS_COLORS[cls], updates=updates,
             anchors=_anchors(updates), labels=UPDATE_LABELS, data=game["classes"][cls], macros=MACROS[cls],
             page_title=f"{cls} Abilities, Talents & Patch Notes · WoW Forever Tracker",
             description=f"Every World of Warcraft: Forever {cls} ability by level, the talent trees, macros "
@@ -229,6 +236,22 @@ def create_app(store: Store) -> Flask:
                         "game files, including the ones the patch notes leave out.",
         )
 
+    @app.get("/items")
+    def items():
+        present = {i["slot"] for i in game["items"]}
+        return render_template(
+            "items.html", count=len(game["items"]), slots=[s for s in ITEM_SLOTS if s in present],
+            types=sorted({i["type"] for i in game["items"] if i["type"]}),
+            professions=sorted({i["crafted"] for i in game["items"] if i["crafted"]}),
+            page_title="WoW Forever Items · WoW Forever Tracker",
+            description=f"Search all {len(game['items'])} World of Warcraft: Forever weapons, armor and bags by slot, "
+                        "type, quality and level, with their in-game tooltips.",
+        )
+
+    @app.get("/items.json")
+    def items_json():
+        return jsonify(game["items"])
+
     @app.get("/notes/<int:post_id>")
     def notes(post_id: int):
         found = store.notes(post_id)
@@ -237,7 +260,7 @@ def create_app(store: Store) -> Flask:
         post = found[0]
         title = post.title or f"{UPDATE_LABELS[post.kind]}, {_short_date(post.posted)}"
         return render_template(
-            "notes.html", post=post, title=title, label=UPDATE_LABELS[post.kind],
+            "notes.html", gamelinks=True, post=post, title=title, label=UPDATE_LABELS[post.kind],
             page_title=f"{title} · WoW Forever Tracker",
             description=post.summary or f"World of Warcraft: Forever {UPDATE_LABELS[post.kind].lower()}.",
         )
@@ -288,6 +311,14 @@ def create_app(store: Store) -> Flask:
                     "url": u.url, "published": u.posted, "updated": u.posted, "summary": None, "html": u.html}
                    for u in store.class_updates(cls) if u.html][:FEED_SIZE]
         return atom(f"{cls} patch notes · WoW Forever Tracker", url_for("class_page", name=name), entries)
+
+    @app.get("/tooltips.json")
+    def tooltips_json():
+        # Only the tooltips some page links to: every crafted item's would be most of a megabyte.
+        texts = [(u.html, cls) for cls in CLASSES for u in store.class_updates(cls)]
+        texts += [(n.html, None) for n in store.notes()] + [(p.excerpt, None) for p in store.list_blue_posts(limit=-1)]
+        used = {key for text, section in texts for key in gamelinks.keys_in(linker.link(text, section))}
+        return jsonify({key: tip for key, tip in linker.tips.items() if key in used})
 
     @app.get("/search")
     def search():
