@@ -15,7 +15,7 @@ from wowforever.posts import make_summary
 
 FORUM_URL = "https://us.forums.blizzard.com/en/wow"
 CATEGORY_ID = 349  # WoW Forever
-_NOTES_TITLE_RE = re.compile(r"(?i)\b(notes|hotfix(es)?)\b")
+_NOTES_TITLE_RE = re.compile(r"(?i)\b(notes|hotfix(es)?|known issues)\b")
 _BATCH = 20
 # "WoW Forever Beta Development Notes – Updated October 15" → "WoW Forever Beta Development Notes"
 _TITLE_DATE_RE = re.compile(r"\s*[–—-]\s*(?:updated\s+)?[a-z]+\.?\s+\d{1,2}(?:,?\s+\d{4})?\s*$", re.I)
@@ -54,6 +54,8 @@ def fetch_json(path: str) -> dict:
 
 def topic_kind(title: str) -> str:
     lowered = title.lower()
+    if "known issues" in lowered:
+        return "known"
     if "hotfix" in lowered:
         return "hotfix"
     if "beta" in lowered:

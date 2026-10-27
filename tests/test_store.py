@@ -254,3 +254,29 @@ def test_announced_posts():
     assert [p.url for p in store.unannounced()] == ["https://b"]
     store.mark_announced(["https://b", "https://b"])
     assert store.unannounced() == []
+
+
+def test_known_issues_stay_out_of_feed():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(id=1, topic_id=10), "beta", {}, title="Beta", summary="s")
+    store.save_update(make_forum_post(id=2, topic_id=11), "known", {}, title="Known Issues", summary="s")
+    store.mark_announced(["https://example.com/old"])
+    assert [p.id for p in store.list_posts()] == [1]
+    assert store.count_posts() == 1
+    assert [p.id for p in store.unversioned_patch_posts()] == [1]
+    assert [p.id for p in store.unannounced()] == [1]
+    assert {n.id for n in store.notes()} == {1, 2}
+
+
+def test_latest_known_issues_prefers_most_recent_change():
+    store = Store(":memory:")
+    assert store.latest_known_issues() is None
+    a = make_forum_post(id=1, topic_id=10, posted=datetime(2026, 10, 8, tzinfo=UTC))
+    b = make_forum_post(id=2, topic_id=11, posted=datetime(2026, 11, 4, tzinfo=UTC))
+    store.save_update(a, "known", {}, title="A", html="<p>one</p>", now=datetime(2026, 10, 8, tzinfo=UTC))
+    store.save_update(b, "known", {}, title="B", html="<p>x</p>", now=datetime(2026, 11, 4, tzinfo=UTC))
+    assert store.latest_known_issues().id == 2
+    store.save_update(a, "known", {}, title="A", html="<p>two</p>", now=datetime(2026, 11, 5, tzinfo=UTC))
+    latest = store.latest_known_issues()
+    assert latest.id == 1 and len(latest.edits) == 1
+    assert latest.edited_at == datetime(2026, 11, 5, tzinfo=UTC)

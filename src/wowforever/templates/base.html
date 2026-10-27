@@ -68,6 +68,9 @@
       {% endif %}
       {% endif %}
     </div>
+    {% if known_issues %}
+    <p class="known-issues"><a href="{{ url_for('notes', post_id=known_issues.id) }}">Known Issues</a> · updated {{ (known_issues.edited_at or known_issues.posted) | month_day }}</p>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
   <footer class="wrap site-footer">

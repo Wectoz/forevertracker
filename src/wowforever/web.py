@@ -12,7 +12,7 @@ from wowforever.store import ClassUpdate, Store
 
 PAGE_SIZE = 20
 FEED_SIZE = 50
-UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix"}
+UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix", "known": "Known Issues"}
 
 
 def _local(value: date | datetime) -> date | datetime:
@@ -52,6 +52,7 @@ def create_app(store: Store) -> Flask:
         latest_patch = store.list_posts("patch", limit=1) if now >= LAUNCH else []
         return {"banner": launch_banner(now), "left": time_left(now), "launch_iso": LAUNCH.isoformat(),
                 "latest_patch": latest_patch[0] if latest_patch else None,
+                "known_issues": store.latest_known_issues(),
                 "page_url": root + request.path, "site_root": root,
                 "classes": [(name, slug(name), CLASS_COLORS[name]) for name in CLASSES]}
 

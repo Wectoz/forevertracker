@@ -65,29 +65,36 @@ def gather_class_notes(store: Store, fetch: FetchJson | None = None) -> int:
     # Threads already stored keep being refreshed after they drop off the category's first page.
     topics = store.note_topics()
     topics.update({t.id: t.kind for t in note_topics(fetch(f"/c/{CATEGORY_ID}.json"))})
+    return sum(_gather_topic(store, topic_id, kind, fetch) for topic_id, kind in topics.items())
+
+
+def _gather_topic(store: Store, topic_id: int, kind: str, fetch: FetchJson) -> int:
+    """Read one notes thread and save its posts; returns how many had class sections.
+    A Known Issues thread keeps only its opening post, the list Blizzard keeps editing."""
+    try:
+        posts = thread_posts(topic_id, fetch)
+    except (FetchError, ParseError) as err:
+        # One missing or broken thread must not stop the others from being gathered.
+        logger.warning("Could not read notes thread %d: %s", topic_id, err)
+        return 0
+    if kind == "known":
+        posts = [p for p in posts if p.number == 1]
+    parsed = {post.id: split_classes(post.cooked) if kind != "known" else {} for post in posts}
+    # If no post in the thread parses, Blizzard probably changed its markup: keep the stored
+    # class notes rather than wipe them, and only refresh the feed entries.
+    any_parsed = any(parsed.values()) or kind == "known"
+    if posts and not any_parsed:
+        logger.warning("No class sections in any post of notes thread %d; kept stored class notes", topic_id)
     saved = 0
-    for topic_id, kind in topics.items():
-        try:
-            posts = thread_posts(topic_id, fetch)
-        except (FetchError, ParseError) as err:
-            # One missing or broken thread must not stop the others from being gathered.
-            logger.warning("Could not read notes thread %d: %s", topic_id, err)
-            continue
-        parsed = {post.id: split_classes(post.cooked) for post in posts}
-        # If no post in the thread parses, Blizzard probably changed its markup: keep the stored
-        # class notes rather than wipe them, and only refresh the feed entries.
-        any_parsed = any(parsed.values())
-        if posts and not any_parsed:
-            logger.warning("No class sections in any post of notes thread %d; kept stored class notes", topic_id)
-        for post in posts:
-            sections = parsed[post.id]
-            if any_parsed and not sections:
-                logger.info("No class sections in %s; shown in the feed only", post.url)
-            store.save_update(post, kind, sections if any_parsed else None,
-                              title=feed_title(post), summary=feed_summary(post.cooked), html=clean_html(post.cooked))
-            saved += bool(sections)
-        if posts:
-            store.prune_topic(topic_id, {post.id for post in posts})  # posts Blizzard deleted
+    for post in posts:
+        sections = parsed[post.id]
+        if any_parsed and not sections and kind != "known":
+            logger.info("No class sections in %s; shown in the feed only", post.url)
+        store.save_update(post, kind, sections if any_parsed else None,
+                          title=feed_title(post), summary=feed_summary(post.cooked), html=clean_html(post.cooked))
+        saved += bool(sections)
+    if posts:
+        store.prune_topic(topic_id, {post.id for post in posts})  # posts Blizzard deleted
     return saved
 
 

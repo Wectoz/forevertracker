@@ -63,12 +63,12 @@ _ADDED_COLUMNS = {
                 "html": "TEXT NOT NULL DEFAULT ''", "edited_at": "TEXT"},
 }
 # The feed: news-site posts plus every forum notes post (shown as patch posts without a version),
-# each forum post with the comma-separated classes it has changes for.
+# each forum post with the comma-separated classes it has changes for. Known Issues threads stay out.
 _FEED_COLUMNS = _COLUMNS + ", classes"
 _FEED = (
     f"(SELECT {_COLUMNS}, NULL AS classes FROM posts UNION ALL"
     " SELECT post_id, title, url, summary, 'patch', NULL, posted, posted, edited_at, NULL,"
-    " (SELECT group_concat(class) FROM class_changes c WHERE c.post_id = updates.post_id) FROM updates)"
+    " (SELECT group_concat(class) FROM class_changes c WHERE c.post_id = updates.post_id) FROM updates WHERE kind != 'known')"
 )
 
 
@@ -114,6 +114,7 @@ class Notes:
     posted: datetime
     html: str
     edits: list[Edit]
+    edited_at: datetime | None = None
 
 
 def _row_to_post(row: sqlite3.Row) -> StoredPost:
@@ -264,7 +265,7 @@ class Store:
         where, params = ("WHERE post_id = ?", (post_id,)) if post_id is not None else ("", ())
         with self._lock:
             rows = self._conn.execute(
-                f"SELECT post_id, kind, title, summary, url, posted, html FROM updates {where}"
+                f"SELECT post_id, kind, title, summary, url, posted, html, edited_at FROM updates {where}"
                 " ORDER BY posted DESC, post_id DESC", params).fetchall()
             edits = self._conn.execute(
                 f"SELECT post_id, seen, added, removed FROM update_edits {where} ORDER BY seen DESC, rowid DESC",
@@ -274,7 +275,16 @@ class Store:
             by_post.setdefault(e["post_id"], []).append(
                 Edit(datetime.fromisoformat(e["seen"]), json.loads(e["added"]), json.loads(e["removed"])))
         return [Notes(r["post_id"], r["kind"], r["title"], r["summary"], r["url"], datetime.fromisoformat(r["posted"]),
-                      r["html"], by_post.get(r["post_id"], [])) for r in rows]
+                      r["html"], by_post.get(r["post_id"], []),
+                      datetime.fromisoformat(r["edited_at"]) if r["edited_at"] else None) for r in rows]
+
+    def latest_known_issues(self) -> Notes | None:
+        """The Known Issues thread Blizzard posted or edited most recently, with its edits."""
+        with self._lock:
+            row = self._conn.execute(
+                "SELECT post_id FROM updates WHERE kind = 'known'"
+                " ORDER BY COALESCE(edited_at, posted) DESC, post_id DESC LIMIT 1").fetchone()
+        return self.notes(row["post_id"])[0] if row else None
 
     def unannounced(self) -> list[StoredPost] | None:
         """Feed posts not yet announced on Discord, oldest first; None if nothing was ever announced."""

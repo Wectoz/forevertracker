@@ -347,3 +347,11 @@ def test_gather_stores_full_notes():
     notes = store.notes()
     assert notes and all(n.html.startswith("<p>") for n in notes)
     assert all("<script" not in n.html for n in notes)
+
+
+def test_known_issues_thread_keeps_only_opening_post():
+    store = Store(":memory:")
+    assert gather._gather_topic(store, 2360696, "known", forum_fetch()) == 0
+    notes = store.notes()
+    assert [(n.kind, n.url.rsplit("/", 1)[1]) for n in notes] == [("known", "1")]
+    assert all(store.class_updates(cls) == [] for cls in ("Mage", "Druid", "Warrior"))

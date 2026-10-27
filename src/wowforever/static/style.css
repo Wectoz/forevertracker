@@ -197,6 +197,9 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 /* Countdown plate after launch: link to the latest patch notes. */
 .plate-latest { margin: 6px 0 0; font-size: .9rem; color: #1a0f05; }
 .plate-latest a { color: #1a0f05; font-weight: 700; }
+/* Known Issues link under the plate. */
+.known-issues { margin: 8px 0 0; font-size: .9rem; }
+.known-issues a { font-weight: 700; }
 
 /* "New since your last visit" and "your class" highlights. */
 .new-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #2f7a3e; color: #f2fff4; font-weight: 700; }  /* 5:1 contrast */

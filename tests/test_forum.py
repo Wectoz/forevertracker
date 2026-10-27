@@ -25,8 +25,8 @@ def fake_fetch(mapping):
 
 def test_note_topics_picks_staff_notes_threads_only():
     topics = note_topics(load("forum_category.json"))
-    # "Thank You For Testing" and "Known Issues" have no "notes"; the player thread is not staff.
-    assert [(t.id, t.kind) for t in topics] == [(2360696, "beta")]
+    # "Thank You For Testing" has no "notes"; the player thread is not staff.
+    assert [(t.id, t.kind) for t in topics] == [(2360696, "beta"), (2352687, "known")]
 
 
 def test_note_topics_ignores_notes_threads_started_by_players():
@@ -34,13 +34,15 @@ def test_note_topics_ignores_notes_threads_started_by_players():
     for topic in category["topic_list"]["topics"]:
         if topic["id"] == 2392000:
             topic["title"] = "My patch notes wishlist"
-    assert [t.id for t in note_topics(category)] == [2360696]
+    assert [t.id for t in note_topics(category)] == [2360696, 2352687]
 
 
 def test_topic_kind():
     assert topic_kind("WoW Forever Hotfixes – November 12") == "hotfix"
     assert topic_kind("WoW Forever Beta Development Notes") == "beta"
     assert topic_kind("WoW Forever 1.60 Patch Notes") == "patch"
+    assert topic_kind("WoW Forever Known Issues - November 4") == "known"
+    assert topic_kind("WoW Forever Beta Known Issues - October 8") == "known"
 
 
 def test_thread_posts_skips_empty_posts():

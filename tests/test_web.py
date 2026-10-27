@@ -381,3 +381,18 @@ def test_macros_page_has_a_section_per_class_with_escaped_macro_text():
         assert f'href="#{cls}"' in html
     assert "#showtooltip Hunter&#39;s Mark\n/petattack\n/cast Hunter&#39;s Mark" in html
     assert "macros.js" in html
+
+
+def test_home_links_latest_known_issues():
+    store = Store(":memory:")
+    assert "Known Issues" not in create_app(store).test_client().get("/").text
+    store.save_update(make_forum_post(id=5, topic_id=11), "known", {}, title="Known Issues", html="<p>Bug</p>")
+    html = create_app(store).test_client().get("/").text
+    assert "Known Issues" in html and 'href="/notes/5"' in html
+
+
+def test_notes_page_for_known_issues():
+    store = Store(":memory:")
+    store.save_update(make_forum_post(id=5, topic_id=11), "known", {}, title="Known Issues", html="<p>Bug</p>")
+    response = create_app(store).test_client().get("/notes/5")
+    assert response.status_code == 200 and "Known Issues" in response.text
