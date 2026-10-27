@@ -4,8 +4,7 @@ from datetime import UTC, date, datetime, timedelta
 
 from flask import Flask, abort, jsonify, render_template, request, url_for
 
-from wowforever import gamediff, gamedata
-from wowforever import gamedata, gamelinks
+from wowforever import gamediff, gamedata, gamelinks
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
 from wowforever.guides import ADDONS_UPDATED, CATEGORIES, GENERAL_MACROS, MACROS, TRENDING
