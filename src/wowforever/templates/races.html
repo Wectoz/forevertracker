@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>WoW Forever races</h1>
+<p class="guide-intro">Every playable race's racial abilities in World of Warcraft: Forever, including the October 2026
+  racial rework and the new Skyborne.</p>
+<nav class="class-tabs" aria-label="Races">
+  {% for race in races %}<a href="#{{ race | slugify }}">{{ race }}</a>{% endfor %}
+</nav>
+{% for race, racials in races.items() %}
+<section class="race" id="{{ race | slugify }}">
+  <h2>{{ race }}</h2>
+  <ul class="racials">
+    {% for racial in racials %}
+    <li><span class="spell">{{ racial.name }}</span>{% if racial.description %}<br><span class="desc">{{ racial.description }}</span>{% endif %}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endfor %}
+{% include "_gamedata_note.html" %}
+{% endblock %}

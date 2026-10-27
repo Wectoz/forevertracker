@@ -2,8 +2,16 @@
 {% block head %}<link rel="alternate" type="application/atom+xml" title="{{ cls }} patch notes" href="{{ url_for('class_feed', name=slug) }}">{% endblock %}
 {% block content %}
 <h1 class="class-title" style="color: {{ color }}">
-  <img src="{{ url_for('static', filename='classes/' ~ slug ~ '.jpg') }}" alt="" width="36" height="36">{{ cls }} patch notes
+  <img src="{{ url_for('static', filename='classes/' ~ slug ~ '.jpg') }}" alt="" width="36" height="36">{{ cls }}
 </h1>
+<nav class="class-tabs" aria-label="{{ cls }} sections">
+  <a href="#changes">Changes</a>
+  <a href="#abilities">Abilities</a>
+  <a href="#talents">Talents</a>
+  <a href="#macros">Macros</a>
+</nav>
+
+<section class="tab-panel" id="changes" aria-label="{{ cls }} patch notes">
 <div class="class-tools">
   <button type="button" class="my-class-toggle" data-class="{{ slug }}" data-name="{{ cls }}" aria-pressed="false" hidden>☆ Make {{ cls }} my class</button>
   {% set with_changes = updates | selectattr("html") | list %}
@@ -34,5 +42,54 @@
 {% else %}
 <p class="empty">No {{ cls }} patch notes gathered yet. They will appear here as soon as Blizzard posts them.</p>
 {% endfor %}
+</section>
+
+<section class="tab-panel" id="abilities" aria-label="{{ cls }} abilities">
+<table class="game-table">
+  <thead><tr><th scope="col">Level</th><th scope="col">Ability</th><th scope="col">Later ranks</th></tr></thead>
+  <tbody>
+  {% for ability in data.abilities %}
+  <tr>
+    <td class="num">{{ ability.level }}</td>
+    <td><span class="spell">{{ ability.name }}</span>
+      {%- if ability.talent %} <span class="tag">Talent</span>{% endif %}
+      {%- if ability.races %} <span class="tag">{{ ability.races | join(", ") }} only</span>{% endif %}
+      {%- if ability.description %}<br><span class="desc">{{ ability.description }}</span>{% endif %}</td>
+    <td class="ranks">{{ ability.ranks | join(", ") }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% include "_gamedata_note.html" %}
+</section>
+
+<section class="tab-panel" id="talents" aria-label="{{ cls }} talents">
+{% for tree in data.talents %}
+<h2 class="tree">{{ tree.name }}</h2>
+<table class="game-table">
+  <thead><tr><th scope="col">Level</th><th scope="col">Talent</th><th scope="col">Ranks</th></tr></thead>
+  <tbody>
+  {% for talent in tree.talents %}
+  <tr>
+    <td class="num">{{ talent.level }}</td>
+    <td><span class="spell">{{ talent.name }}</span>
+      {%- if talent.description %}<br><span class="desc">{% if talent.ranks > 1 %}Rank 1: {% endif %}{{ talent.description }}</span>{% endif %}</td>
+    <td class="num">{{ talent.ranks }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endfor %}
+<p class="game-note">Level is the earliest you can reach that row of the tree: 5 talent points per row, one point per level from 10.</p>
+{% include "_gamedata_note.html" %}
+</section>
+
+<section class="tab-panel macro-class" id="macros" aria-label="{{ cls }} macros">
+  {% for macro in macros %}{% include "_macro.html" %}{% endfor %}
+  <p class="game-note">Paste with <code>/macro</code> → <strong>New</strong> in game. More on the <a href="{{ url_for('macros') }}">Macros page</a>.</p>
+</section>
 {% endblock %}
-{% block scripts %}<script src="{{ url_for('static', filename='classpage.js') }}" defer></script>{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='tabs.js') }}" defer></script>
+<script src="{{ url_for('static', filename='classpage.js') }}" defer></script>
+{% endblock %}

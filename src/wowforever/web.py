@@ -1,9 +1,10 @@
-"""Flask website: news feed, news, patches, class patch notes, addons, macros, Atom feeds and search."""
+"""Flask website: news feed, news, patches, class pages, races, professions, addons, macros, Atom feeds and search."""
 
 from datetime import UTC, date, datetime, timedelta
 
 from flask import Flask, abort, jsonify, render_template, request, url_for
 
+from wowforever import gamedata
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
 from wowforever.guides import ADDONS_UPDATED, CATEGORIES, GENERAL_MACROS, MACROS, TRENDING
@@ -55,11 +56,17 @@ def _anchors(updates: list[ClassUpdate]) -> dict[int, str]:
     return anchors
 
 
+def _slugify(name: str) -> str:
+    return name.lower().replace(" ", "-")
+
+
 def create_app(store: Store) -> Flask:
     app = Flask(__name__)
     app.jinja_env.filters["short_date"] = _short_date
     app.jinja_env.filters["month_day"] = _month_day
     app.jinja_env.filters["checked_time"] = _checked_time
+    app.jinja_env.filters["slugify"] = _slugify
+    game = gamedata.load()
 
     @app.context_processor
     def banner():
@@ -69,7 +76,7 @@ def create_app(store: Store) -> Flask:
         return {"banner": launch_banner(now), "left": time_left(now), "launch_iso": LAUNCH.isoformat(),
                 "latest_patch": latest_patch[0] if latest_patch else None,
                 "known_issues": store.latest_known_issues(), "has_realms": bool(store.realms()),
-                "page_url": root + request.path, "site_root": root,
+                "page_url": root + request.path, "site_root": root, "game_build": game["build"],
                 "classes": [(name, slug(name), CLASS_COLORS[name]) for name in CLASSES]}
 
     def page_url(endpoint: str, page: int) -> str:
@@ -181,10 +188,37 @@ def create_app(store: Store) -> Flask:
         updates = store.class_updates(cls)
         return render_template(
             "class.html", cls=cls, slug=name, current_class=name, color=CLASS_COLORS[cls], updates=updates,
-            anchors=_anchors(updates), labels=UPDATE_LABELS,
-            page_title=f"{cls} Patch Notes · WoW Forever Tracker",
-            description=f"Every World of Warcraft: Forever change for the {cls} class, "
-                        "from beta builds, patches and hotfixes.",
+            anchors=_anchors(updates), labels=UPDATE_LABELS, data=game["classes"][cls], macros=MACROS[cls],
+            page_title=f"{cls} Abilities, Talents & Patch Notes · WoW Forever Tracker",
+            description=f"Every World of Warcraft: Forever {cls} ability by level, the talent trees, macros "
+                        "and every change from beta builds, patches and hotfixes.",
+        )
+
+    @app.get("/races")
+    def races():
+        return render_template(
+            "races.html", races=game["races"], page_title="WoW Forever Races & Racials · WoW Forever Tracker",
+            description="The racial abilities of every World of Warcraft: Forever race, Skyborne included.",
+        )
+
+    @app.get("/professions")
+    def professions():
+        return render_template(
+            "professions.html", professions=game["professions"],
+            page_title="WoW Forever Professions · WoW Forever Tracker",
+            description="Every World of Warcraft: Forever profession recipe, where it comes from and its skill-ups.",
+        )
+
+    @app.get("/professions/<name>")
+    def profession(name: str):
+        found = next((p for p in game["professions"] if _slugify(p) == name), None)
+        if found is None:
+            abort(404)
+        return render_template(
+            "profession.html", name=found, recipes=game["professions"][found],
+            page_title=f"WoW Forever {found} Recipes · WoW Forever Tracker",
+            description=f"All {len(game['professions'][found])} World of Warcraft: Forever {found} recipes, "
+                        "where they come from and their skill-ups.",
         )
 
     @app.get("/notes/<int:post_id>")
