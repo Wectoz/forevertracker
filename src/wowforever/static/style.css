@@ -297,3 +297,14 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   margin: 8px 0 0; padding: 8px 10px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere;
   font-size: .8rem; line-height: 1.45; color: var(--gold-text); background: var(--stone); border: 1px solid var(--stone-edge); border-radius: 3px;
 }
+
+.realm-warning { padding: 10px 14px; border: 1px solid var(--bronze); border-radius: 3px; background: #33281d; }
+.table-wrap { overflow-x: auto; }
+table.realms { width: 100%; border-collapse: collapse; }
+table.realms th, table.realms td { padding: 8px 12px; border-bottom: 1px solid var(--bronze); text-align: left; white-space: nowrap; }
+table.realms thead th { color: var(--heading); }
+.realm-status { font-weight: 700; }
+.realm-status::before { content: "● "; }
+.realm-status.up { color: #7fd48a; }
+.realm-status.down { color: #ff8a80; }
+.realm-status.down::before { content: "✕ "; }

@@ -2,6 +2,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from wowforever.realms import Realm
 from wowforever.store import Store
 from wowforever.web import create_app
 
@@ -444,3 +445,37 @@ def test_blue_feed_is_atom():
 
 def test_nav_has_blue_posts():
     assert 'href="/blue">Blue posts</a>' in client_for().get("/").text
+
+
+def realm_client(us_checked=None, eu_checked=None):
+    store = Store(":memory:")
+    store.save_realms("us", [Realm("us", "Zeta", "PvE", False, "Low"), Realm("us", "Alpha", "PvP", True, "High")],
+                      now=us_checked)
+    store.save_realms("eu", [Realm("eu", "Beta", "RP", True, "Full")], now=eu_checked)
+    return create_app(store).test_client()
+
+
+def test_realms_page_lists_regions_and_status():
+    response = realm_client().get("/realms")
+    html = response.text
+    assert response.status_code == 200
+    assert "<title>WoW Forever Realm Status · WoW Forever Tracker</title>" in html
+    assert "Americas" in html and "Europe" in html
+    assert html.index("Alpha") < html.index("Zeta")
+    assert ">Up<" in html and ">Down<" in html
+    assert "Checked" in html and "<time datetime=" in html
+    assert ">Realms</a>" in html
+    assert "isn't answering" not in html
+
+
+def test_realms_page_404_and_no_nav_without_data():
+    client = client_for()
+    assert client.get("/realms").status_code == 404
+    assert ">Realms</a>" not in client.get("/").text
+
+
+def test_realms_page_warns_when_stale():
+    html = realm_client(us_checked=datetime.now(UTC) - timedelta(hours=2)).get("/realms").text
+    assert "Last checked 2 hours ago; Blizzard's API isn't answering right now." in html
+    html = realm_client(us_checked=datetime.now(UTC) - timedelta(minutes=45)).get("/realms").text
+    assert "Last checked 45 minutes ago" in html

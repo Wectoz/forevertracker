@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>WoW Forever realm status</h1>
+{% if stale %}<p class="realm-warning" role="status">Last checked {{ stale }} ago; Blizzard's API isn't answering right now.</p>{% endif %}
+{% for section in sections %}
+<section class="realm-region">
+  <h2>{{ section.name }}</h2>
+  <p class="meta">Checked <time datetime="{{ section.checked.isoformat() }}">{{ section.checked | checked_time }}</time></p>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="{{ section.name }} realms">
+    <table class="realms">
+      <thead><tr><th scope="col">Realm</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Population</th></tr></thead>
+      <tbody>
+      {% for realm in section.realms %}
+        <tr><th scope="row">{{ realm.name }}</th><td>{{ realm.type }}</td>
+          <td><span class="realm-status {{ 'up' if realm.up else 'down' }}">{{ 'Up' if realm.up else 'Down' }}</span></td>
+          <td>{{ realm.population }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endfor %}
+{% endblock %}

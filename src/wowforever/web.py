@@ -1,6 +1,6 @@
 """Flask website: news feed, news, patches, class patch notes, addons, macros, Atom feeds and search."""
 
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 
 from flask import Flask, abort, jsonify, render_template, request, url_for
 
@@ -12,6 +12,8 @@ from wowforever.store import ClassUpdate, Store
 
 PAGE_SIZE = 20
 FEED_SIZE = 50
+STALE_AFTER = timedelta(minutes=30)
+REGION_NAMES = {"us": "Americas", "eu": "Europe"}
 UPDATE_LABELS = {"beta": "Beta build", "patch": "Patch notes", "hotfix": "Hotfix", "known": "Known Issues"}
 
 
@@ -30,6 +32,19 @@ def _month_day(value: date | datetime) -> str:
     return f"{value:%b} {value.day}"
 
 
+def _checked_time(value: datetime) -> str:
+    value = _local(value)
+    hour = value.hour % 12 or 12
+    return f"{value:%b} {value.day}, {hour}:{value:%M} {'a.m.' if value.hour < 12 else 'p.m.'} PT"
+
+
+def _ago(delta: timedelta) -> str:
+    minutes = max(int(delta.total_seconds() // 60), 0)
+    if minutes < 120:
+        return f"{minutes} minute{'s' if minutes != 1 else ''}"
+    return f"{minutes // 60} hours"
+
+
 def _anchors(updates: list[ClassUpdate]) -> dict[int, str]:
     """A readable, stable anchor per update, e.g. "hotfix-2026-11-06". Assigned oldest first, so a later
     update on the same day gets the suffixed anchor and links already shared keep working."""
@@ -44,6 +59,7 @@ def create_app(store: Store) -> Flask:
     app = Flask(__name__)
     app.jinja_env.filters["short_date"] = _short_date
     app.jinja_env.filters["month_day"] = _month_day
+    app.jinja_env.filters["checked_time"] = _checked_time
 
     @app.context_processor
     def banner():
@@ -52,7 +68,7 @@ def create_app(store: Store) -> Flask:
         latest_patch = store.list_posts("patch", limit=1) if now >= LAUNCH else []
         return {"banner": launch_banner(now), "left": time_left(now), "launch_iso": LAUNCH.isoformat(),
                 "latest_patch": latest_patch[0] if latest_patch else None,
-                "known_issues": store.latest_known_issues(),
+                "known_issues": store.latest_known_issues(), "has_realms": bool(store.realms()),
                 "page_url": root + request.path, "site_root": root,
                 "classes": [(name, slug(name), CLASS_COLORS[name]) for name in CLASSES]}
 
@@ -116,6 +132,21 @@ def create_app(store: Store) -> Flask:
             older_url=page_url("blue", page + 1) if page * PAGE_SIZE < total else None,
             page_title="WoW Forever Blue Posts · WoW Forever Tracker",
             description="What Blizzard staff are saying about World of Warcraft: Forever on the official forums.",
+        )
+
+    @app.get("/realms")
+    def realms():
+        data = store.realms()
+        if not data:
+            abort(404)
+        now = datetime.now(UTC)
+        sections = [{"name": REGION_NAMES[region], "checked": checked, "realms": rows} for region, (checked, rows) in data.items()]
+        oldest = min(checked for checked, _ in data.values())
+        stale = _ago(now - oldest) if now - oldest > STALE_AFTER else None
+        return render_template(
+            "realms.html", sections=sections, stale=stale,
+            page_title="WoW Forever Realm Status · WoW Forever Tracker",
+            description="Which World of Warcraft: Forever realms are up, and how busy they are.",
         )
 
     @app.get("/patches")

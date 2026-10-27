@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 from wowforever.build import build_site
+from wowforever.realms import Realm
 from wowforever.store import Store
 
 from .test_store import make_post, make_staff
@@ -98,3 +99,12 @@ def test_build_writes_blue_page_and_feed(tmp_path):
     build_site(store, tmp_path, base_path="/wow-forever-news")
     assert (tmp_path / "blue/index.html").is_file()
     assert (tmp_path / "blue/feed.xml").is_file()
+
+
+def test_build_writes_realms_page_only_with_realm_data(tmp_path):
+    store = filled_store()
+    build_site(store, tmp_path / "empty", base_path="/wow-forever-news")
+    assert not (tmp_path / "empty/realms").exists()
+    store.save_realms("us", [Realm("us", "Alpha", "PvP", True, "High")])
+    build_site(store, tmp_path / "full", base_path="/wow-forever-news")
+    assert (tmp_path / "full/realms/index.html").is_file()
