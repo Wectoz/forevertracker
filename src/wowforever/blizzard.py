@@ -4,6 +4,7 @@ import http.client
 import json
 import re
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 
@@ -44,13 +45,33 @@ def parse_listing(html: str) -> ListingPage:
 
 
 MAX_IMAGE_BYTES = 2_000_000
+# Blizzard's news image servers (bnetcmsus-a, bnetcmseu-a, …). Images are only fetched from these, redirects included,
+# so a URL in the listing can never send a request anywhere else. A new image host just means no card images until added.
+_IMAGE_HOST_RE = re.compile(r"bnetcms[a-z]{2}-a\.akamaihd\.net")
+
+
+def _image_host_allowed(url: str) -> bool:
+    parts = urllib.parse.urlsplit(url)
+    return parts.scheme == "https" and _IMAGE_HOST_RE.fullmatch(parts.hostname or "") is not None
+
+
+class _ImageRedirects(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if not _image_host_allowed(newurl):
+            raise urllib.error.URLError(f"redirect to {newurl} refused")
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+_image_opener = urllib.request.build_opener(_ImageRedirects)
 
 
 def fetch_image(url: str) -> tuple[str, bytes]:
-    """A news card image, as (type, bytes); anything that is not a small image is refused."""
+    """A news card image, as (type, bytes); anything that is not a small image from Blizzard is refused."""
+    if not _image_host_allowed(url):
+        raise FetchError(f"{url}: not a Blizzard image server")
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     try:
-        with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+        with _image_opener.open(request, timeout=TIMEOUT) as response:
             mimetype = response.headers.get_content_type()
             data = response.read(MAX_IMAGE_BYTES + 1)
     except (urllib.error.URLError, http.client.HTTPException, TimeoutError, OSError) as err:
