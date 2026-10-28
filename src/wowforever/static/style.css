@@ -115,17 +115,17 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .thumb { flex: none; width: 180px; height: 101px; margin-top: 4px; border: 1px solid var(--stone-edge); border-radius: 3px; object-fit: cover; background: #1c140d; }
 .blue-tile {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  background: linear-gradient(180deg, #3d6fb0 0%, #2c5591 45%, #1b355c 100%); border-color: #3d6fb0; color: #e8f1ff;
+  background: linear-gradient(180deg, #3e5677 0%, #2e425e 45%, #1d2a3d 100%); border-color: #3e5677; color: #e3eaf3;
   font-family: Cinzel, Georgia, serif; font-weight: 800; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
 }
 .blue-tile svg { width: 56px; height: 56px; filter: drop-shadow(0 2px 0 #0006); }
 
 /* Blue posts: Blizzard staff posts on the forums. */
-.entry.blue-post { background: #171c26; border-color: #2b3e5c; box-shadow: inset 0 1px 0 #1f2a3b; }
-.entry.blue-post::before { background: linear-gradient(90deg, #1f3d6b, #5fa8ff, #1f3d6b); }
-.entry.blue-post:hover { border-color: #3d6fb0; }
-.entry.blue-post .source { color: #7fb8ff; }
-.blue-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #2b4f86; color: #e8f1ff; font-weight: 700; }
+.entry.blue-post { background: #16171b; border-color: #2c3340; box-shadow: inset 0 1px 0 #22262e; }
+.entry.blue-post::before { background: linear-gradient(90deg, #2a3a52, #7a9cc6, #2a3a52); }
+.entry.blue-post:hover { border-color: #4a6488; }
+.entry.blue-post .source { color: #9dbbe0; }
+.blue-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #34496a; color: #e8eef6; font-weight: 700; }
 
 @media (max-width: 480px) {
   .entry:has(> .thumb) { gap: 10px; padding: 12px; }
@@ -241,7 +241,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 
 /* Secondary link next to the main one, e.g. the original forum post. */
 .source.secondary { margin-left: 14px; font-weight: 400; color: var(--muted); }
-.entry.blue-post .source.secondary { color: #8fa6c4; }
+.entry.blue-post .source.secondary { color: #97a3b4; }
 
 /* Class page: link to one update. */
 .copy-link {
@@ -466,3 +466,4 @@ table.realms thead th { color: var(--heading); }
 }
 .items td { padding: 3px 8px; vertical-align: middle; }  /* compact rows, as in an item database */
 .items .icon { width: 22px; height: 22px; }
+.class-menu ul a { white-space: nowrap; }

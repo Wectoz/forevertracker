@@ -35,9 +35,15 @@
       <nav aria-label="Main">
         <a href="{{ url_for('home') }}">Home</a>
         {% if has_realms %}<a href="{{ url_for('realms') }}">Realms</a>{% endif %}
-        <a href="{{ url_for('news') }}">News</a>
-        <a href="{{ url_for('patches') }}">Patches</a>
-        <a href="{{ url_for('blue') }}">Blue posts</a>
+        <details class="class-menu">
+          <summary>News ▾</summary>
+          <ul>
+            <li><a href="{{ url_for('news') }}">News</a></li>
+            <li><a href="{{ url_for('patches') }}">Patches</a></li>
+            <li><a href="{{ url_for('blue') }}">Blue posts</a></li>
+            <li><a href="{{ url_for('game_changes') }}">Game data changes</a></li>
+          </ul>
+        </details>
         <details class="class-menu">
           <summary>Guides ▾</summary>
           <ul>
