@@ -14,7 +14,7 @@
       <span class="blue-tag">Blue post</span>
     </p>
     <h2>{{ post.thread_title }}</h2>
-    {% if post.excerpt %}<p class="summary">{{ post.excerpt }}</p>{% endif %}
+    {% if post.excerpt %}<p class="summary">{{ post.excerpt | e | gamelinks }}</p>{% endif %}
     <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">Read on the forums ↗</a>
   </div>
 </article>

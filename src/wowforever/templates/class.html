@@ -33,7 +33,7 @@
 <article class="entry class-update{% if not update.html %} class-dim{% endif %}" id="{{ anchors[update.post_id] }}">
   <p class="meta">{{ labels[update.kind] }} · <time datetime="{{ update.posted.isoformat() }}">{{ update.posted | month_day }}</time></p>
   {% if update.html %}
-  <div class="changes">{{ update.html | safe }}</div>
+  <div class="changes">{{ update.html | gamelinks(cls) }}</div>
   <a class="source" href="{{ url_for('notes', post_id=update.post_id) }}">Full notes →</a>
   <a class="source secondary" href="{{ update.url }}" target="_blank" rel="noopener">Blizzard forums ↗</a>
   {% else %}
@@ -123,7 +123,6 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='tabs.js') }}" defer></script>
-<script src="{{ url_for('static', filename='tooltips.js') }}" defer></script>
 <script src="{{ url_for('static', filename='talents.js') }}" defer></script>
 <script src="{{ url_for('static', filename='classpage.js') }}" defer></script>
 {% endblock %}

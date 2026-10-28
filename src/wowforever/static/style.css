@@ -378,6 +378,11 @@ table.realms thead th { color: var(--heading); }
 .tip .desc { display: block; margin-top: 6px; }
 .tip .next { color: var(--muted); }
 
+/* Names in patch notes and blue posts with an in-game tooltip (gamelinks.js). */
+.gl { border-bottom: 1px dotted var(--bronze-mid); cursor: help; }
+.gl.has-tip:hover, .gl.has-tip:focus-visible { color: var(--gold-text); }
+.gl .tip { font-style: normal; font-size: .9rem; line-height: 1.4; color: var(--text); }
+
 /* Talent calculator: the class's three trees side by side. */
 .talent-summary { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 12px 0; }
 .talent-summary b { color: var(--gold-text); font-variant-numeric: tabular-nums; }
