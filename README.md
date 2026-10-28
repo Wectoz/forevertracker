@@ -19,7 +19,7 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Tooltips in the notes**: ability, talent, racial and item names in patch notes, class changes and blue posts show their in-game tooltip on hover or tap.
 - **Blue posts**: what Blizzard staff say about WoW Forever on the official forums, newest first, with its own RSS feed.
 - **Known Issues**: a link next to the launch countdown on every page, straight to Blizzard's Known Issues thread.
-- **Realms**: whether each WoW Forever realm is up, and its population. This page appears once realm data is available.
+- **Realms**: whether each WoW Forever realm is up, and its population, with a chart of each realm's last 7 days in two-hour blocks (busier is brighter, red is down). This page appears once realm data is available.
 - **Guides** menu: Races, Professions, Items, Addons and Macros.
 - **Items**: every weapon, armor piece and bag in the game client, with its in-game tooltip. Filter by slot, type, quality, the level you can use it at and the profession that crafts it.
 - **Addons**: the essential addons and the new Forever ones people are trying, each linked to its CurseForge page.

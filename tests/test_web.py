@@ -526,3 +526,32 @@ def test_profession_pages():
     assert '>Bolt of Linen Cloth</span>' in html and 'id="apprentice"' in html and 'role="tooltip"' in html
     assert "the game files don't say what skill a trainer asks" in html
     assert client.get("/professions/underwater-basket-weaving").status_code == 404
+
+
+def test_realm_history_is_kept_30_days_and_drawn_as_a_week_of_blocks():
+    from wowforever.web import _population_strip
+
+    store = Store(":memory:")
+    start = datetime(2026, 11, 1, tzinfo=UTC)
+    for hours, up, population in [(0, True, "Low"), (1, True, "High"), (24 * 31, True, "Medium"),
+                                   (24 * 31 + 1, False, "Medium"), (24 * 31 + 2, True, "Full")]:
+        store.save_realms("us", [Realm("us", "Alpha", "PvP", up, population)], now=start + timedelta(hours=hours))
+    now = start + timedelta(hours=24 * 31 + 3)
+    history = store.realm_history(start)[("us", "Alpha")]
+    assert [p for _, _, p in history] == ["Medium", "Medium", "Full"]  # the first day's checks are over 30 days old
+
+    strip = _population_strip(history, now)
+    blocks = strip["blocks"]
+    assert len(blocks) == 84 and blocks[-1]["css"] == "full"
+    assert blocks[-2]["css"] == "down"  # 00:00-02:00: down at one check
+    assert blocks[-2]["title"] == "Wed Dec 2, 00:00–02:00 UTC: Down"
+    assert blocks[0]["css"] == "none" and blocks[0]["title"].endswith("UTC: not checked")
+    assert strip["summary"] == "last 7 days in two-hour blocks: mostly Full, down in 1 of them"
+
+
+def test_realms_page_draws_each_realms_week():
+    store = Store(":memory:")
+    store.save_realms("us", [Realm("us", "Alpha", "PvP", True, "High")])
+    html = create_app(store).test_client().get("/realms").text
+    assert html.count('class="pop-high"') >= 2  # the legend and the latest block
+    assert 'aria-label="Alpha, last 7 days in two-hour blocks: mostly High"' in html

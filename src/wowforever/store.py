@@ -5,13 +5,15 @@ import sqlite3
 import threading
 from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 from wowforever.classnotes import text_lines
 from wowforever.forum import FORUM_URL, ForumPost, StaffPost
 from wowforever.posts import Post
 from wowforever.realms import REGIONS, Realm
+
+REALM_HISTORY = timedelta(days=30)  # how long realm checks are kept for the population charts
 
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS posts (
@@ -74,6 +76,14 @@ CREATE TABLE IF NOT EXISTS realm_checks (
     region TEXT PRIMARY KEY,
     checked TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS realm_history (
+    region TEXT NOT NULL,
+    name TEXT NOT NULL,
+    checked TEXT NOT NULL,
+    up INTEGER NOT NULL,
+    population TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS realm_history_checked ON realm_history (checked);
 CREATE TABLE IF NOT EXISTS class_changes (
     post_id INTEGER NOT NULL,
     class TEXT NOT NULL,
@@ -390,17 +400,34 @@ class Store:
             self._conn.executemany("UPDATE blue_posts SET announced = 1 WHERE id = ?", [(i,) for i in ids])
 
     def save_realms(self, region: str, realms: list[Realm], now: datetime | None = None) -> None:
-        """Replace a region's realms with a fresh snapshot; an empty one keeps the previous snapshot."""
+        """Replace a region's realms with a fresh snapshot, and add it to their history; an empty one keeps the
+        previous snapshot."""
         if not realms:
             return
+        now = now or datetime.now(UTC)
         with self._lock, self._conn:
+            self._conn.executemany(
+                "INSERT INTO realm_history (region, name, checked, up, population) VALUES (?, ?, ?, ?, ?)",
+                [(region, r.name, now.isoformat(), int(r.up), r.population) for r in realms])
+            self._conn.execute("DELETE FROM realm_history WHERE checked < ?", ((now - REALM_HISTORY).isoformat(),))
             self._conn.execute("DELETE FROM realms WHERE region = ?", (region,))
             self._conn.executemany(
                 "INSERT OR REPLACE INTO realms (region, name, type, up, population) VALUES (?, ?, ?, ?, ?)",
                 [(region, r.name, r.type, int(r.up), r.population) for r in realms])
             self._conn.execute(
                 "INSERT OR REPLACE INTO realm_checks (region, checked) VALUES (?, ?)",
-                (region, (now or datetime.now(UTC)).isoformat()))
+                (region, now.isoformat()))
+
+    def realm_history(self, since: datetime) -> dict[tuple[str, str], list[tuple[datetime, bool, str]]]:
+        """Each realm's checks since `since`, oldest first: (checked, up, population), by (region, name)."""
+        with self._lock:
+            rows = self._conn.execute("SELECT * FROM realm_history WHERE checked >= ? ORDER BY checked",
+                                      (since.isoformat(),)).fetchall()
+        out: dict[tuple[str, str], list[tuple[datetime, bool, str]]] = {}
+        for r in rows:
+            out.setdefault((r["region"], r["name"]), []).append(
+                (datetime.fromisoformat(r["checked"]), bool(r["up"]), r["population"]))
+        return out
 
     def realms(self) -> dict[str, tuple[datetime, list[Realm]]]:
         """Each region's last checked time and realms, in REGIONS order; regions never saved are left out."""

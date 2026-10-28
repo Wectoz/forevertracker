@@ -2,18 +2,26 @@
 {% block content %}
 <h1>WoW Forever realm status</h1>
 {% if stale %}<p class="realm-warning" role="status">Last checked {{ stale }} ago; Blizzard's API isn't answering right now.</p>{% endif %}
+<p class="pop-legend" aria-hidden="true">Last 7 days, in two-hour blocks:
+  {% for css, label in [("low", "Low"), ("medium", "Medium"), ("high", "High"), ("full", "Full"), ("down", "Down"), ("none", "Not checked")] %}
+  <span><svg width="10" height="10"><rect width="10" height="10" rx="2" class="pop-{{ css }}"/></svg> {{ label }}</span>{% endfor %}</p>
 {% for section in sections %}
 <section class="realm-region">
   <h2>{{ section.name }}</h2>
   <p class="meta">Checked <time datetime="{{ section.checked.isoformat() }}">{{ section.checked | checked_time }}</time></p>
   <div class="table-wrap" tabindex="0" role="region" aria-label="{{ section.name }} realms">
     <table class="realms">
-      <thead><tr><th scope="col">Realm</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Population</th></tr></thead>
+      <thead><tr><th scope="col">Realm</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Population</th><th scope="col">Last 7 days</th></tr></thead>
       <tbody>
       {% for realm in section.realms %}
         <tr><th scope="row">{{ realm.name }}</th><td>{{ realm.type }}</td>
           <td><span class="realm-status {{ 'up' if realm.up else 'down' }}">{{ 'Up' if realm.up else 'Down' }}</span></td>
-          <td>{{ realm.population }}</td></tr>
+          <td>{{ realm.population }}</td>
+          {% set strip = section.strips[realm.name] %}
+          <td><svg class="pop-strip" viewBox="0 0 {{ strip.blocks | length * 4 }} 18" width="{{ strip.blocks | length * 4 }}" height="18"
+            role="img" aria-label="{{ realm.name }}, {{ strip.summary }}">
+            {%- for block in strip.blocks %}<rect x="{{ loop.index0 * 4 }}" width="3" height="18" rx="1" class="pop-{{ block.css }}"><title>{{ block.title }}</title></rect>{% endfor -%}
+          </svg></td></tr>
       {% endfor %}
       </tbody>
     </table>
