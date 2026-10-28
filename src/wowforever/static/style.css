@@ -467,3 +467,11 @@ table.realms thead th { color: var(--heading); }
 .items td { padding: 3px 8px; vertical-align: middle; }  /* compact rows, as in an item database */
 .items .icon { width: 22px; height: 22px; }
 .class-menu ul a { white-space: nowrap; }
+
+/* Search box in the top menu: sends the words to the Search page. */
+.nav-search { display: inline-flex; margin-left: 16px; vertical-align: middle; }
+.nav-search input { width: 13rem; max-width: 100%; padding: 5px 10px 5px 28px; font: inherit; font-size: .9rem; color: var(--text);
+  background: var(--stone) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23a8875e' stroke-width='2'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cpath d='m9.5 9.5 3.5 3.5'/%3E%3C/svg%3E") no-repeat 9px center;
+  border: 1px solid var(--stone-edge); border-radius: 3px; }
+.nav-search input:focus { border-color: var(--bronze-light); outline: none; }
+@media (max-width: 600px) { .nav-search { display: flex; width: 100%; margin: 6px 0 0; } .nav-search input { width: 100%; } }

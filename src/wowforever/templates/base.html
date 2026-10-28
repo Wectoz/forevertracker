@@ -54,7 +54,6 @@
             <li><a href="{{ url_for('macros') }}">Macros</a></li>
           </ul>
         </details>
-        <a href="{{ url_for('search') }}">Search</a>
         <details class="class-menu" id="classes">
           <summary>Classes ▾</summary>
           <ul>
@@ -64,6 +63,9 @@
             {% endfor %}
           </ul>
         </details>
+        <form class="nav-search" role="search" action="{{ url_for('search') }}">
+          <input type="search" name="q" placeholder="Search…" aria-label="Search news and class changes" autocomplete="off">
+        </form>
       </nav>
     </div>
   </header>
