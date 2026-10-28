@@ -1,5 +1,5 @@
 // Search page: filters the site's search index (posts, class changes, abilities, talents, racials, recipes, items,
-// macros and addons) in the browser. Names that match come first: "Charge" finds the ability before the notes.
+// macros and addons) in the browser, with findInSearch from suggest.js.
 (() => {
   const form = document.querySelector("form.search");
   if (!form) return;
@@ -24,15 +24,7 @@
       return;
     }
     const words = query.toLowerCase().split(/\s+/);
-    const phrase = words.join(" ");
-    const rank = (item) => {
-      const title = item.title.toLowerCase();
-      return title === phrase ? 0 : title.startsWith(phrase) ? 1 : words.every((word) => title.includes(word)) ? 2 : 3;
-    };
-    const hits = items.filter((item) => {
-      const haystack = `${item.title} ${item.label} ${item.text}`.toLowerCase();
-      return words.every((word) => haystack.includes(word));
-    }).map((item) => [rank(item), item]).sort((a, b) => a[0] - b[0]).map(([, item]) => item);  // stable: newest first within a rank
+    const hits = window.findInSearch(items, query);
     status.textContent = hits.length
       ? `${hits.length} result${hits.length === 1 ? "" : "s"}${hits.length > LIMIT ? `, showing the first ${LIMIT}` : ""}.`
       : `No results for “${query}”.`;

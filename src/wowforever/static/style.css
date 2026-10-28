@@ -1,7 +1,10 @@
 :root {
   --stone: #0c0a08;
   --stone-raised: #16120e;
-  --stone-edge: #3c2c1e;
+  --stone-edge: #ecbd6338;   /* hairline gold: borders read as light catching an edge, not a bronze frame */
+  --line-strong: #ecbd636b;
+  --surface: #1a1510b3;      /* translucent, so the glow and gold dust show through cards */
+  --gold: #ecbd63;
   --text: #e8dcc4;
   --muted: #a8875e;
   --bronze-dark: #5a3a1c;
@@ -10,32 +13,52 @@
   --bronze-light: #d9a35b;
   --gold-text: #ffe2a8;
   --heading: #f1d9a8;
+  --font-display: Spectral, Georgia, serif;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: var(--stone);
+  min-height: 100vh;
+  background-color: var(--stone);
+  /* a warm gold glow from above over the near-black stone */
+  background-image:
+    radial-gradient(120% 80% at 50% -8%, #ffd27a29, transparent 46%),
+    linear-gradient(180deg, var(--stone-raised), var(--stone) 60%);
   color: var(--text);
-  font: 16px/1.55 Inter, system-ui, sans-serif;
+  font: 16px/1.55 "Hanken Grotesk", system-ui, sans-serif;
 }
+
+/* Gold dust drifting up the page; motes.js scatters the specks. Behind content, and skipped for reduced motion. */
+.motes { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.mote {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 50%;
+  background: var(--gold-text);
+  box-shadow: 0 0 6px #ffd27a99;
+  opacity: 0;
+  animation: rise linear infinite;
+}
+@keyframes rise {
+  10% { opacity: .5; }
+  90% { opacity: .35; }
+  100% { transform: translate(var(--drift), -104vh); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .motes { display: none; } }
 
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
 
 a { color: var(--bronze-light); }
 a:focus-visible { outline: 2px solid var(--gold-text); outline-offset: 2px; border-radius: 2px; }
 
-h1, h2, .brand { font-family: Cinzel, Georgia, serif; letter-spacing: .04em; color: var(--heading); }
-h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
+h1, h2, .brand { font-family: var(--font-display); letter-spacing: .01em; color: var(--heading); }
+h1 { font-size: 1.9rem; margin: 1.5rem 0 1rem; }
 
-.site-header {
-  background: linear-gradient(180deg, #2a1e13 0%, #1c140d 55%, #120d09 100%);
-  border-bottom: 3px solid var(--bronze);
-  box-shadow: inset 0 1px 0 #6b4a2a, 0 2px 0 #0008;
-}
+.site-header { background: #0c0a08e6; border-bottom: 1px solid var(--stone-edge); }
 .nav { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; padding-top: 14px; padding-bottom: 14px; }
-.brand { color: #e9b56a; font-weight: 800; text-decoration: none; font-size: 1.15rem; text-shadow: 0 1px 0 #000, 0 -1px 0 #7a5530; }
+.brand { color: var(--gold); font-weight: 700; text-decoration: none; font-size: 1.05rem; letter-spacing: .16em; }
 .nav nav a { color: #c9b48f; text-decoration: none; margin-left: 16px; font-size: .95rem; }
 .nav nav a:first-child { margin-left: 0; }
 .nav nav a:hover { color: var(--gold-text); }
@@ -51,37 +74,38 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   opacity: .65;
   height: clamp(260px, 35vw, 640px);  /* 35vw is the art's own aspect, so wide screens show the whole scene */
   background: url("mulgore.svg") 50% 100% / cover no-repeat;
+  /* a long fade instead of the art's own dark foot, so the scene dissolves into the page with no visible edge */
+  mask-image: linear-gradient(180deg, #000 40%, transparent 98%);
 }
 
-/* Countdown: a polished bronze plate with sunken, engraved digits. */
+/* Countdown: a dark glass panel edged in gold, the digits set in sunken wells. */
 .plate {
   margin: 20px 0 0;
-  padding: 16px 16px 14px;
+  padding: 18px 16px 16px;
   text-align: center;
   border-radius: 4px;
-  background: linear-gradient(180deg, #b5813f 0%, #ad7a3b 45%, #6b431f 100%);
-  border: 1px solid #e0a95e;
-  box-shadow: inset 0 1px 0 #f3c886, inset 0 -2px 0 #4a2e14, 0 3px 0 #0007;
+  background: #0c0a08b3;
+  border: 1px solid var(--line-strong);
+  box-shadow: inset 0 1px 0 #ecbd6322, 0 18px 40px #0009;
+  backdrop-filter: blur(4px);
 }
 .plate-label {
   margin: 0;
-  font-family: Cinzel, Georgia, serif;
-  font-weight: 800;
-  font-size: .85rem;
-  letter-spacing: .18em;
+  font-weight: 700;
+  font-size: .78rem;
+  letter-spacing: .3em;
   text-transform: uppercase;
-  color: #1a0f05;  /* at least 5:1 on the plate's upper half */
-  text-shadow: 0 1px 0 #e0a95e;
+  color: var(--gold);
 }
-.digits { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+.digits { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
 .digits span {
   min-width: 68px;
   padding: 6px 10px 4px;
-  background: #1d150e;
+  background: #0c0a08;
+  border: 1px solid var(--stone-edge);
   border-radius: 3px;
-  box-shadow: inset 0 2px 4px #000, 0 1px 0 #d9a35b;
 }
-.digits b { display: block; font-family: Cinzel, Georgia, serif; font-weight: 800; font-size: 1.9rem; line-height: 1.1; color: var(--gold-text); font-variant-numeric: tabular-nums; }
+.digits b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.9rem; line-height: 1.1; color: var(--gold-text); font-variant-numeric: tabular-nums; }
 .digits small { display: block; font-size: .65rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 
 /* News and blue posts: cards side by side on wide screens. */
@@ -92,16 +116,16 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   position: relative;
   margin: 14px 0;
   padding: 16px 18px 14px;
-  background: #15110d;
-  border: 1px solid #33261a;
+  background: var(--surface);
+  border: 1px solid var(--stone-edge);
   border-radius: 4px;
   box-shadow: inset 0 1px 0 #2e241a;
   overflow: hidden;
   transition: border-color .15s ease;
 }
-.entry::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, #6b431f, var(--bronze-light), #6b431f); }
-.entry:hover { border-color: var(--bronze); }  /* no transform: it would anchor the fixed tooltips inside to the card */
-.entry h2 { font-family: Cinzel, Georgia, serif; font-weight: 700; letter-spacing: .02em; font-size: 1.15rem; line-height: 1.3; margin: 6px 0 8px; color: var(--heading); }
+.entry::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.entry:hover { border-color: var(--line-strong); }  /* no transform: it would anchor the fixed tooltips inside to the card */
+.entry h2 { font-family: var(--font-display); font-weight: 700; letter-spacing: .02em; font-size: 1.15rem; line-height: 1.3; margin: 6px 0 8px; color: var(--heading); }
 .entry .summary { color: #d8cbb1; }
 .entry .summary { margin: 0 0 8px; }
 .meta { margin: 0; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
@@ -116,13 +140,13 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .blue-tile {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   background: linear-gradient(180deg, #3e5677 0%, #2e425e 45%, #1d2a3d 100%); border-color: #3e5677; color: #e3eaf3;
-  font-family: Cinzel, Georgia, serif; font-weight: 800; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+  font-family: var(--font-display); font-weight: 800; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
 }
 .blue-tile svg { width: 56px; height: 56px; filter: drop-shadow(0 2px 0 #0006); }
 
 /* Blue posts: Blizzard staff posts on the forums. */
 .entry.blue-post { background: #16171b; border-color: #2c3340; box-shadow: inset 0 1px 0 #22262e; }
-.entry.blue-post::before { background: linear-gradient(90deg, #2a3a52, #7a9cc6, #2a3a52); }
+.entry.blue-post::before { background: linear-gradient(90deg, transparent, #7a9cc6, transparent); }
 .entry.blue-post:hover { border-color: #4a6488; }
 .entry.blue-post .source { color: #9dbbe0; }
 .blue-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #34496a; color: #e8eef6; font-weight: 700; }
@@ -136,12 +160,12 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 }
 
 .empty, .note { padding: 16px; background: var(--stone-raised); border: 1px dashed var(--stone-edge); border-radius: 6px; }
-.section-title { font-size: 1.2rem; margin: 2rem 0 .5rem; }
+.section-title { font-size: 1.6rem; margin: 2.4rem 0 .8rem; }
 
 .patch-list { list-style: none; padding: 0; margin: 0; }
-.patch-list li { position: relative; margin: 12px 0; padding: 14px 16px 12px; background: #15110d; border: 1px solid #33261a; border-radius: 4px; overflow: hidden; }
-.patch-list li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, #6b431f, var(--bronze-light), #6b431f); }
-.patch-list a { font-family: Cinzel, Georgia, serif; font-weight: 600; font-size: 1.1rem; text-decoration: none; margin-right: 10px; }
+.patch-list li { position: relative; margin: 12px 0; padding: 14px 16px 12px; background: var(--surface); border: 1px solid var(--stone-edge); border-radius: 4px; overflow: hidden; }
+.patch-list li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.patch-list a { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; text-decoration: none; margin-right: 10px; }
 
 /* Classes dropdown in the top menu. */
 .class-menu { display: inline-block; position: relative; margin-left: 16px; }
@@ -162,17 +186,18 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 /* Home call to action: pick your class. */
 .cta { margin: 18px 0 0; text-align: center; }
 .cta a {
-  display: inline-block; padding: 10px 20px; border-radius: 3px; text-decoration: none;
-  font-family: Cinzel, Georgia, serif; font-weight: 700; letter-spacing: .04em; color: var(--gold-text);
-  background: #221a13; border: 1px solid var(--bronze); box-shadow: inset 0 1px 0 #4a3725;
+  display: inline-block; padding: 12px 24px; border-radius: 3px; text-decoration: none;
+  font-weight: 700; font-size: .85rem; letter-spacing: .14em; text-transform: uppercase; color: #1a0f05;
+  background: linear-gradient(180deg, var(--gold-text), var(--gold) 52%, var(--bronze-mid));
+  box-shadow: inset 0 1px 0 #fff6, 0 10px 24px #0008;
 }
-.cta a:hover { border-color: var(--bronze-light); background: #2a2018; }
+.cta a:hover { filter: brightness(1.08); }
 
 /* Class page. */
 /* Sits over the banner's grass, where class colours like warrior tan lose contrast, so it gets a solid panel. */
 .class-title {
   display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px; background: #15110d; border: 1px solid #33261a; border-radius: 4px; box-shadow: 0 3px 0 #0007;
+  padding: 10px 14px; background: var(--surface); border: 1px solid var(--stone-edge); border-radius: 4px; box-shadow: 0 3px 0 #0007;
 }
 .class-title img { border: 1px solid var(--bronze); border-radius: 3px; }
 .class-update .changes ul { margin: 6px 0 10px; padding-left: 20px; }
@@ -199,8 +224,8 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 }
 
 /* Countdown plate after launch: link to the latest patch notes. */
-.plate-latest { margin: 6px 0 0; font-size: .9rem; color: #1a0f05; }
-.plate-latest a { color: #1a0f05; font-weight: 700; }
+.plate-latest { margin: 6px 0 0; font-size: .9rem; }
+.plate-latest a { font-weight: 700; }
 /* Known Issues link under the plate. */
 .known-issues { margin: 8px 0 0; font-size: .9rem; text-shadow: 0 1px 2px #000, 0 0 10px #000; }  /* over the banner */
 .known-issues a { font-weight: 700; }
@@ -237,7 +262,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Launch time in the reader's own time zone. */
-.plate-local { margin: 8px 0 0; font-size: .85rem; font-weight: 600; color: #1a0f05; }
+.plate-local { margin: 8px 0 0; font-size: .85rem; font-weight: 600; }
 
 /* Secondary link next to the main one, e.g. the original forum post. */
 .source.secondary { margin-left: 14px; font-weight: 400; color: var(--muted); }
@@ -256,7 +281,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 /* Full notes page. */
 .notes { margin-top: 16px; }
 .notes h2 { font-size: 1.25rem; margin: 1.6rem 0 .5rem; }
-.notes h3, .notes h4 { font-family: Cinzel, Georgia, serif; color: var(--heading); margin: 1.2rem 0 .4rem; }
+.notes h3, .notes h4 { font-family: var(--font-display); color: var(--heading); margin: 1.2rem 0 .4rem; }
 .notes ul { padding-left: 22px; }
 .notes li { margin: 3px 0; }
 .notes strong { color: var(--bronze-light); }
@@ -273,7 +298,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .guide-intro .meta { display: block; margin-top: 4px; }
 .guide-intro code, .macro code { font-family: ui-monospace, Consolas, monospace; }
 .addon-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 8px; }
-.addon, .macro { background: #15110d; border: 1px solid #33261a; border-radius: 4px; }
+.addon, .macro { background: var(--surface); border: 1px solid var(--stone-edge); border-radius: 4px; }
 .addon { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; }
 .addon:hover { border-color: var(--bronze); }
 .addon img { flex: none; object-fit: contain; background: #0d0b08; border: 1px solid var(--stone-edge); border-radius: 3px; }
@@ -413,11 +438,11 @@ table.realms thead th { color: var(--heading); }
 .talent-arrow.side { align-self: center; height: 4px; margin: 0 calc(var(--t) / 2); }
 .talent-arrow.met { background: var(--bronze-light); }
 .profession-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: 10px; margin: 0 0 18px; padding: 0; list-style: none; }
-.profession-card { display: flex; gap: 12px; align-items: center; padding: 10px 12px; background: #15110d; border: 1px solid #33261a;
+.profession-card { display: flex; gap: 12px; align-items: center; padding: 10px 12px; background: var(--surface); border: 1px solid var(--stone-edge);
   border-radius: 4px; text-decoration: none; transition: border-color .15s ease; }
 .profession-card:hover { border-color: var(--bronze); }
 .profession-card .icon { border: 1px solid var(--stone-edge); border-radius: 4px; }
-.profession-name { display: block; font-family: Cinzel, Georgia, serif; font-weight: 700; font-size: 1.05rem; color: var(--heading); }
+.profession-name { display: block; font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; color: var(--heading); }
 .crumb { margin: 16px 0 0; font-size: .85rem; }
 .skill-yellow { color: #ffd200; }
 .skill-grey { color: #9d9d9d; }
@@ -436,7 +461,7 @@ table.realms thead th { color: var(--heading); }
 .pop-legend span { display: inline-flex; gap: 5px; align-items: center; }
 /* Game data changes: what changed between two client builds, word by word. */
 .data-section { margin: 10px 0; }
-.data-section > summary { cursor: pointer; font-family: Cinzel, serif; color: var(--heading); }
+.data-section > summary { cursor: pointer; font-family: var(--font-display); color: var(--heading); }
 .data-changes { margin: 6px 0 12px; padding-left: 18px; }
 .data-changes li { margin: 6px 0; }
 .change-added, .change-removed, .change-changed { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
@@ -456,7 +481,7 @@ table.realms thead th { color: var(--heading); }
 /* Wide screens: a page's main column with a sidebar beside it, as on Wowhead. */
 .with-sidebar { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 24px; align-items: start; }
 .sidebar { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; margin-top: 14px; padding: 12px 14px;
-  background: #15110d; border: 1px solid #33261a; border-radius: 4px; font-size: .88rem; }
+  background: var(--surface); border: 1px solid var(--stone-edge); border-radius: 4px; font-size: .88rem; }
 .sidebar h2 { margin: 0 0 8px; font-size: 1rem; }
 .sidebar ul { margin: 0; padding: 0; list-style: none; }
 .sidebar li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px solid #221a13; }
@@ -479,6 +504,16 @@ table.realms thead th { color: var(--heading); }
 .nav-search input:focus { border-color: var(--bronze-light); outline: none; }
 @media (max-width: 600px) { .nav-search { display: flex; width: 100%; margin: 6px 0 0; } .nav-search input { width: 100%; } }
 
+/* Suggestions under the menu's search box. */
+.nav-search { position: relative; }
+.suggestions { position: absolute; top: calc(100% + 4px); right: 0; z-index: 30; width: max(100%, 22rem); max-width: calc(100vw - 32px);
+  margin: 0; padding: 4px 0; list-style: none; background: #0c0a08f2; border: 1px solid var(--line-strong); border-radius: 3px;
+  box-shadow: 0 14px 32px #000a; }
+.nav nav .suggestions a { display: flex; justify-content: space-between; gap: 12px; margin: 0; padding: 6px 12px; color: var(--text); font-size: .9rem; }
+.suggestions small { flex: none; color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+.nav nav .suggestions a:hover, .nav nav .suggestions a[aria-selected="true"] { background: #221a13; color: var(--gold-text); }
+.nav nav .suggestions .see-all { border-top: 1px solid var(--stone-edge); color: var(--gold); }
+
 /* Search results: compact cards, two columns on wide screens. */
 .results { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 10px 18px; }
 .results > .entry { margin: 0; padding: 10px 14px 8px; }
@@ -487,7 +522,7 @@ table.realms thead th { color: var(--heading); }
 
 /* Game data changes: each class, race, profession and Items as a card, side by side; long lists scroll inside. */
 .data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 12px; align-items: start; }
-.data-grid .data-section { margin: 0; padding: 8px 12px; background: #15110d; border: 1px solid #33261a; border-radius: 4px; }
+.data-grid .data-section { margin: 0; padding: 8px 12px; background: var(--surface); border: 1px solid var(--stone-edge); border-radius: 4px; }
 .data-grid .data-changes { max-height: 420px; overflow-y: auto; margin: 6px 0 2px; padding-left: 16px; font-size: .9rem; }
 .data-grid .data-changes li { margin: 3px 0; }
 .data-grid .change-detail { font-size: .82rem; }
