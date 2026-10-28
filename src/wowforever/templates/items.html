@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block head %}<link rel="preload" href="{{ url_for('items_json') }}" as="fetch" crossorigin>{% endblock %}
 {% block content %}
+<section class="item-page" hidden aria-live="polite"></section>
+<div class="item-list">
 <h1>Items</h1>
 <p>All {{ count }} weapons, armor pieces and bags in the WoW Forever game client, common quality and up.</p>
 <form class="recipe-tools item-tools" onsubmit="return false" data-items="{{ url_for('items_json') }}"
@@ -39,6 +41,7 @@
   <span class="it-page"></span>
   <button type="button" class="tc-reset it-next">Next →</button>
 </nav>
+</div>
 {% include "_gamedata_note.html" %}
 <noscript><p class="note">The item list needs JavaScript.</p></noscript>
 {% endblock %}

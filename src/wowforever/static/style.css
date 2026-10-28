@@ -97,10 +97,10 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   border-radius: 4px;
   box-shadow: inset 0 1px 0 #2e241a;
   overflow: hidden;
-  transition: border-color .15s ease, transform .15s ease;
+  transition: border-color .15s ease;
 }
 .entry::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, #6b431f, var(--bronze-light), #6b431f); }
-.entry:hover { border-color: var(--bronze); transform: translateY(-1px); }
+.entry:hover { border-color: var(--bronze); }  /* no transform: it would anchor the fixed tooltips inside to the card */
 .entry h2 { font-family: Cinzel, Georgia, serif; font-weight: 700; letter-spacing: .02em; font-size: 1.15rem; line-height: 1.3; margin: 6px 0 8px; color: var(--heading); }
 .entry .summary { color: #d8cbb1; }
 .entry .summary { margin: 0 0 8px; }
@@ -340,7 +340,7 @@ table.realms thead th { color: var(--heading); }
 
 /* Item quality colors, as in the game. */
 .q0 { color: #9d9d9d; } .q1 { color: #fff; } .q2 { color: #1eff00; } .q3 { color: #3d9bff; } .q4 { color: #b469ff; } .q5 { color: #ff8000; }
-.recipes .has-tip { cursor: help; border-radius: 3px; }
+.recipes .has-tip { border-radius: 3px; }
 .recipes .has-tip:hover > .spell, .recipes .has-tip:focus-visible > .spell { text-decoration: underline; }
 .recipes .source { color: #cdbfa3; }
 .recipe-tools { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: end; margin: 12px 0 4px; font-size: .8rem; color: var(--muted); }
@@ -364,7 +364,7 @@ table.realms thead th { color: var(--heading); }
 .spell-level { display: grid; grid-template-columns: 2.2rem 1fr; gap: 8px; padding: 4px 0; border-bottom: 1px solid #221a13; }
 .spell-level .lvl { padding-top: 9px; color: var(--bronze-light); font-variant-numeric: tabular-nums; }
 .spell-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2px 8px; margin: 0; padding: 0; list-style: none; }
-.spell-tile { display: flex; gap: 8px; align-items: center; min-width: 0; padding: 3px; border-radius: 4px; cursor: help; }
+.spell-tile { display: flex; gap: 8px; align-items: center; min-width: 0; padding: 3px; border-radius: 4px; }
 .spell-tile > .spell { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: .9rem; }
 .spell-tile:hover, .spell-tile:focus-visible { background: var(--stone-raised); }
 
@@ -372,7 +372,7 @@ table.realms thead th { color: var(--heading); }
 .has-tip { position: relative; }
 .tip { display: none; position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; width: 300px; max-width: calc(100vw - 32px);
   padding: 8px 10px; border: 1px solid var(--stone-edge); border-radius: 4px; background: #070605; box-shadow: 0 4px 14px #000a;
-  text-align: left; font-weight: 400; cursor: auto; }
+  text-align: left; font-weight: 400; pointer-events: none; }  /* it follows the pointer, so it must never catch it */
 .has-tip:hover > .tip, .has-tip:focus > .tip { display: block; }
 .tip .spell { font-size: .95rem; }
 .tip .tag { margin-left: 4px; }
@@ -382,10 +382,9 @@ table.realms thead th { color: var(--heading); }
 .tip .next { color: var(--muted); }
 
 /* Names in patch notes and blue posts with an in-game tooltip (gamelinks.js). */
-.gl { border-bottom: 1px dotted var(--bronze-mid); cursor: help; white-space: nowrap; }  /* one line, so its tooltip sits under it */
+.gl { border-bottom: 1px dotted var(--bronze-mid); white-space: nowrap; }  /* one line, so a tapped name has its tooltip under it */
 .gl.has-tip:hover, .gl.has-tip:focus-visible { color: var(--gold-text); }
-.gl .tip { font-style: normal; font-size: .9rem; line-height: 1.4; color: var(--text); white-space: normal;
-  pointer-events: none; }  /* gone as soon as the pointer leaves the name, so it never covers the next lines */
+.gl .tip { font-style: normal; font-size: .9rem; line-height: 1.4; color: var(--text); white-space: normal; }
 
 /* Talent calculator: the class's three trees side by side. */
 .talent-summary { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 12px 0; }
@@ -399,7 +398,6 @@ table.realms thead th { color: var(--heading); }
 .talent-calc { --t: 64px; }  /* talent icon size; the icons are exported at 56 px, so this upscales them a little */
 .talent-grid { display: grid; grid-template-columns: repeat(4, var(--t)); grid-auto-rows: var(--t); grid-template-rows: repeat(7, var(--t)); gap: 18px; }
 .talent { position: relative; z-index: 1; width: var(--t); height: var(--t); padding: 0; border: 0; border-radius: 4px; background: none; color: inherit; font: inherit; cursor: pointer; }
-.talent .tip { pointer-events: none; }  /* a click on it would learn a rank */
 .talent:hover, .talent:focus { z-index: 2; }  /* its tooltip above the other talents */
 .talent .icon { width: var(--t); height: var(--t); border: 2px solid #4d4d4d; border-radius: 4px; filter: grayscale(1) brightness(.55); }
 .talent.open .icon, .talent.learned .icon { filter: none; }
@@ -494,3 +492,14 @@ table.realms thead th { color: var(--heading); }
 .data-grid .data-changes li { margin: 3px 0; }
 .data-grid .change-detail { font-size: .82rem; }
 @media (max-width: 480px) { .talent-calc { --t: 52px; } .talent-grid { gap: 12px; } }
+
+/* An item's own page (Items page, ?id=): its tooltip beside its facts. */
+.item-page h1 { gap: 12px; }
+.item-page h1 .icon { border: 1px solid var(--stone-edge); border-radius: 4px; }
+.item-page-body { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.tip.tip-static { display: block; position: static; width: 320px; pointer-events: auto; }
+.item-facts { display: grid; grid-template-columns: auto auto; gap: 6px 18px; margin: 0; }
+.item-facts dt { color: var(--muted); }
+.item-facts dd { margin: 0; }
+.items a.has-tip { text-decoration: none; }
+.items a.has-tip:hover > .spell { text-decoration: underline; }

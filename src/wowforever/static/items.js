@@ -1,5 +1,5 @@
 // Items page: search and filter every item, each with its tooltip, a page at a time. The filters are kept in the
-// address, to share.
+// address, to share. An item's name links to its own page, ?id=<item ID>, which this script shows instead of the list.
 (() => {
   const form = document.querySelector(".item-tools");
   if (!form) return;
@@ -26,9 +26,9 @@
 
   const row = (item) => {
     const tr = document.createElement("tr");
-    const name = document.createElement("span");
+    const name = document.createElement("a");
     name.className = "with-icon has-tip";
-    name.tabIndex = 0;
+    name.href = `?id=${item.id}`;
     const img = Object.assign(document.createElement("img"), {
       className: "icon", src: `${form.dataset.icons}${item.icon}.jpg`, alt: "", width: 24, height: 24, loading: "lazy" });
     const label = Object.assign(document.createElement("span"), { className: `spell q${item.quality}`, textContent: item.name });
@@ -81,10 +81,39 @@
     history.replaceState(null, "", params.size ? `?${params}` : location.pathname);
   };
 
+  const QUALITIES = ["Poor", "Common", "Uncommon", "Rare", "Epic", "Legendary"];
+  const itemPage = (item) => {
+    const section = document.querySelector(".item-page");
+    const el = (tag, props, ...children) => {
+      const node = Object.assign(document.createElement(tag), props);
+      node.append(...children);
+      return node;
+    };
+    const tip = gameTip(item, "item-tip", form.dataset.icons);
+    tip.classList.add("tip-static");
+    const facts = [["Item level", item.level], ["Requires level", item.required || "None"], ["Slot", item.slot],
+      ["Type", item.type], ["Quality", QUALITIES[item.quality]], ["Item ID", item.id]];
+    const list = el("dl", { className: "item-facts" }, ...facts.filter(([, v]) => v).flatMap(([k, v]) => [el("dt", {}, k), el("dd", {}, String(v))]));
+    if (item.crafted) {
+      list.append(el("dt", {}, "Crafted by"), el("dd", {}, el("a", {
+        href: form.dataset.professions + item.crafted.toLowerCase().replaceAll(" ", "-"), textContent: item.crafted })));
+    }
+    const icon = el("img", { className: "icon", src: `${form.dataset.icons}${item.icon}.jpg`, alt: "", width: 48, height: 48 });
+    section.replaceChildren(
+      el("p", { className: "crumb" }, el("a", { href: location.pathname, textContent: "← All items" })),
+      el("h1", { className: "with-icon" }, icon, el("span", { className: `q${item.quality}`, textContent: item.name })),
+      el("div", { className: "item-page-body" }, tip, list));
+    section.hidden = false;
+    document.querySelector(".item-list").hidden = true;
+    document.title = `${item.name} · WoW Forever Tracker`;
+  };
+
   const params = new URLSearchParams(location.search);
   for (const field of fields) if (params.has(field.name)) field.value = params.get(field.name);
   fetch(form.dataset.items).then((response) => response.json()).then((data) => {
     items = data;
+    const shown = params.has("id") && items.find((item) => String(item.id) === params.get("id"));
+    if (shown) return itemPage(shown);
     update();
     for (const field of fields) field.addEventListener("input", update);
     for (const pager of pagers) {

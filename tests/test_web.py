@@ -564,7 +564,7 @@ def test_search_index_covers_the_game_data_and_guides():
     assert found("Mortal Strike", "Warrior talent · Arms")["url"] == "/classes/warrior#talents"
     assert found("Shadowmeld", "Night Elf racial")["url"] == "/races#night-elf"
     assert found("Linen Bandage", "First Aid recipe")["url"] == "/professions/first-aid?q=Linen%20Bandage"
-    assert found("Wolfshead Helm", "Item") == {"title": "Wolfshead Helm", "url": "/items?q=Wolfshead%20Helm", "label": "Item",
+    assert found("Wolfshead Helm", "Item") == {"title": "Wolfshead Helm", "url": "/items?id=8345", "label": "Item",
                                                "date": "", "text": "Head · Leather · item level 45", "external": False}
     assert found("Questie", "Addon")["external"] is True
     assert sum(i["title"] == "Atiesh, Greatstaff of the Guardian" for i in items) == 1  # four class versions, one result

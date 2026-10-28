@@ -1,19 +1,28 @@
-// Tooltips (.has-tip > .tip) show on hover and focus in CSS; this keeps them inside the window and lets a tap show one.
+// Tooltips (.has-tip > .tip) show on hover and focus in CSS. This places them against the window (position: fixed),
+// so scrolling tables and cards can't cut them off: beside the pointer as it moves (as on Wowhead), under the item
+// when it has keyboard focus or was tapped, and always inside the window.
 (() => {
+  const GAP = 16;
+  const MARGIN = 8;
   const place = (event) => {
-    const tip = event.target.closest?.(".has-tip")?.querySelector(":scope > .tip");
+    const host = event.target.closest?.(".has-tip");
+    const tip = host?.querySelector(":scope > .tip");
     if (!tip) return;
-    tip.style.translate = "";
+    const area = host.getBoundingClientRect();
+    const pointer = event.type === "mousemove";
+    const put = (x, y) => Object.assign(tip.style, { position: "fixed", left: `${x}px`, top: `${y}px` });
+    let x = pointer ? event.clientX + GAP : area.left;
+    let y = pointer ? event.clientY + GAP : area.bottom + 4;
+    put(x, y);
     const box = tip.getBoundingClientRect();
-    const margin = 8;
-    let dx = 0;
-    if (box.right > innerWidth - margin) dx = innerWidth - margin - box.right;
-    if (box.left + dx < margin) dx = margin - box.left;
-    // open above when there is no room below
-    const dy = box.bottom > innerHeight - margin && box.height + margin < box.top ? -(box.height + tip.parentElement.offsetHeight + 8) : 0;
-    tip.style.translate = `${dx}px ${dy}px`;
+    if (box.right > innerWidth - MARGIN) x = pointer ? event.clientX - GAP - box.width : innerWidth - MARGIN - box.width;
+    if (box.bottom > innerHeight - MARGIN) {  // no room below: above the pointer or the item, if that fits
+      const above = (pointer ? event.clientY - GAP : area.top - 4) - box.height;
+      y = above >= MARGIN ? above : Math.max(MARGIN, innerHeight - MARGIN - box.height);
+    }
+    put(Math.max(MARGIN, x), y);
   };
-  addEventListener("mouseover", place);
+  addEventListener("mousemove", place);
   addEventListener("focusin", place);
   // touch screens: a tap focuses the item, which shows its tooltip
   addEventListener("click", (event) => event.target.closest?.(".has-tip[tabindex]")?.focus());

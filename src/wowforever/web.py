@@ -388,7 +388,7 @@ def create_app(store: Store) -> Flask:
             page = url_for("profession", name=gamedata.slugify(profession))
             out += [entry(r["name"], f"{page}?q={quote(r['name'])}", f"{profession} recipe", f"Learned from {r['source']}")
                     for r in recipes]
-        out += [entry(i["name"], f"{url_for('items')}?q={quote(i['name'])}", "Item",
+        out += [entry(i["name"], f"{url_for('items')}?id={i['id']}", "Item",
                       " · ".join(filter(None, [i["slot"], i["type"], f"item level {i['level']}"])))
                 for i in {i["name"]: i for i in game["items"]}.values()]  # one result per name
         for name, macros in [("General", GENERAL_MACROS), *((cls, MACROS[cls]) for cls in CLASSES)]:
