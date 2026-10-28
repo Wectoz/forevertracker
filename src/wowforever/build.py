@@ -10,7 +10,7 @@ from xml.sax.saxutils import escape
 from wowforever.store import Store
 from wowforever.web import create_app
 
-_HREF_RE = re.compile(r'href="([^"#?]+)')
+_HREF_RE = re.compile(r'(?:href|action)="([^"#?]+)')  # links, and forms such as the menu's search box
 
 
 def build_site(store: Store, out: Path, base_path: str = "", site_url: str | None = None) -> int:

@@ -111,10 +111,10 @@ def by_section(found: list[dict]) -> dict[str, list[dict]]:
 
 def word_diff(before, after) -> Markup:
     """`after`, with the words that are new marked <ins> and the ones that are gone <del>; tooltip lines (lists)
-    are compared line by line."""
+    are compared line by line and shown on one line, " · " apart."""
     lines = isinstance(before, list) or isinstance(after, list)
     split = (lambda x: list(x or [])) if lines else (lambda x: str(x).split(" ") if x not in (None, "") else [])
-    joiner = "<br>" if lines else " "
+    joiner = " · " if lines else " "
     show = lambda part: joiner.join(map(escape, part))
     a, b = split(before), split(after)
     out = []

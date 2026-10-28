@@ -4,7 +4,8 @@
 <p class="cta"><a href="#classes" data-open-classes>Patch notes for your class →</a></p>
 {% endif %}
 <h1>{{ heading }}</h1>
-{% for post in posts %}{% include "_entry.html" %}{% else %}{% include "_empty.html" %}{% endfor %}
+{% if posts %}<div class="feed-grid">{% for post in posts %}{% include "_entry.html" %}{% endfor %}</div>
+{% else %}{% include "_empty.html" %}{% endif %}
 {% if newer_url or older_url %}
 <nav class="pager" aria-label="Pages">
   {% if newer_url %}<a href="{{ newer_url }}">← Newer posts</a>{% endif %}

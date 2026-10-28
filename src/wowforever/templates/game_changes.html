@@ -7,8 +7,9 @@
 {% for update in updates %}
 <section class="game-update" id="build-{{ update.to }}">
   <h2><time datetime="{{ update.date.isoformat() }}">{{ update.date | short_date }}</time> · build {{ update.from }} → {{ update.to }}</h2>
+  <div class="data-grid">
   {% for section, changes in update.sections.items() %}
-  <details class="data-section"{% if changes | length <= 30 %} open{% endif %}>
+  <details class="data-section" open>
     <summary>{{ section }} <span class="tab-count">{{ changes | length }}</span></summary>
     <ul class="data-changes">
       {% for change in changes %}
@@ -22,6 +23,7 @@
     </ul>
   </details>
   {% endfor %}
+  </div>
 </section>
 {% else %}
 <p class="note">No changes recorded yet. The first ones will appear here when Blizzard updates the game client.</p>

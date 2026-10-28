@@ -67,7 +67,7 @@ def test_record_adds_the_newest_update_first(changes_file):
 def test_word_diff_marks_new_and_gone_words():
     assert gamediff.word_diff("Deals 10 damage.", "Deals 12 fire damage.") == \
         "Deals <del>10</del> <ins>12 fire</ins> damage."
-    assert gamediff.word_diff(["Waist"], ["Waist", "+2 <Stamina>"]) == "Waist<br><ins>+2 &lt;Stamina&gt;</ins>"
+    assert gamediff.word_diff(["Waist"], ["Waist", "+2 <Stamina>"]) == "Waist · <ins>+2 &lt;Stamina&gt;</ins>"
     assert gamediff.word_diff(None, "New text") == "<ins>New text</ins>"
 
 

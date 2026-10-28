@@ -484,6 +484,8 @@ def build(t: dict[str, dict[int, dict]], build_name: str) -> dict:
         "races": {name: race["racials"] for name, race in races.items()},
         "race_icons": _race_icons(t, races),
         "professions": professions,
+        "profession_icons": {v["DisplayName_lang"]: v["SpellIconFileID"] for v in t["SkillLine"].values()
+                             if v["DisplayName_lang"] in professions and v.get("SpellIconFileID")},
         "items": _items(t, ItemTooltip(t, describe), crafted, item_icons),
     }
 
@@ -496,7 +498,8 @@ def client_build(db2: Path) -> str:
 
 def icon_ids(data: dict) -> set[int]:
     """Every icon (as a client file ID) the pages show."""
-    spells = [*data["professions"].values(), *data["races"].values()]
+    spells = [*data["professions"].values(), *current_races(data).values()]
+    spells.append([{"icon": icon} for icon in data["profession_icons"].values()])
     spells.append([{"icon": icon} for recipes in data["professions"].values() for r in recipes for *_, icon in r["reagents"]])
     for cls in data["classes"].values():
         spells += [cls["abilities"], *(tree["talents"] for tree in cls["talents"])]
@@ -583,9 +586,10 @@ RACIAL_CHANGES = {  # name: (new description, or None to keep the client's; what
 }
 RACIALS_REMOVED = {"Earth Fury", "Savage"}
 RACIALS_ADDED = {
-    "Dwarf": [{"name": "Artisan's Precision", "icon": None,
+    "Dwarf": [{"name": "Artisan's Precision", "icon": QUESTION_MARK,  # not in the client yet
                "description": "Increases your chance to hit with spells and attacks by 1%.", "change": "New racial."}],
-    "Orc": [{"name": "Command", "icon": None, "description": "Damage dealt by Hunter and Warlock pets increased by 5%.",
+    # Command is not in the client yet: Classic's Command icon (War Cry)
+    "Orc": [{"name": "Command", "icon": 132351, "description": "Damage dealt by Hunter and Warlock pets increased by 5%.",
              "change": "Back as a racial."}],
 }
 

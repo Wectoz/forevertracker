@@ -5,7 +5,7 @@
 {% block content %}
 <h1>WoW Forever blue posts</h1>
 <p class="cta"><a href="{{ url_for('blue_feed') }}">Blue posts feed (RSS) →</a></p>
-{% for post in posts %}
+{% if posts %}<div class="feed-grid">{% for post in posts %}
 <article class="entry blue-post">
   <div class="entry-body">
     <p class="meta">
@@ -18,7 +18,8 @@
     <a class="source" href="{{ post.url }}" target="_blank" rel="noopener">Read on the forums ↗</a>
   </div>
 </article>
-{% else %}{% include "_empty.html" %}{% endfor %}
+{% endfor %}</div>
+{% else %}{% include "_empty.html" %}{% endif %}
 {% if newer_url or older_url %}
 <nav class="pager" aria-label="Pages">
   {% if newer_url %}<a href="{{ newer_url }}">← Newer posts</a>{% endif %}

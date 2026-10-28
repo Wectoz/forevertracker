@@ -24,7 +24,7 @@ WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW For
 - **Items**: every weapon, armor piece and bag in the game client, with its in-game tooltip. Filter by slot, type, quality, the level you can use it at and the profession that crafts it.
 - **Addons**: the essential addons and the new Forever ones people are trying, each linked to its CurseForge page.
 - **Macros**: ready-to-copy macros for all nine classes, with a Copy button on each.
-- **Search**: find any post or class change, e.g. every note that mentions Sunder Armor.
+- **Search**: the box in the top menu searches the whole site: news, patch notes, class changes, abilities, talents, racials, recipes, items, macros and addons. Names that match come first.
 - **Your class**: mark your class on its page and the site points out posts with changes for it. Class pages can also show only the changes since a given build, patch or hotfix.
 - **New since your last visit**: posts you haven't seen yet get a "New" badge.
 - **RSS feeds**: one for every post, and one per class (linked on each class page). They work in any feed reader or a Discord RSS bot.

@@ -3,8 +3,8 @@
 {% block content %}
 <h1>Search</h1>
 <form class="search" role="search" data-index="{{ url_for('search_index') }}">
-  <label for="q" class="visually-hidden">Search news and class changes</label>
-  <input id="q" name="q" type="search" placeholder="e.g. Mortal Strike, hotfix, Hunter pets" autocomplete="off">
+  <label for="q" class="visually-hidden">Search the site</label>
+  <input id="q" name="q" type="search" placeholder="e.g. Mortal Strike, Wolfshead Helm, Shadowmeld, hotfix" autocomplete="off">
   <button type="submit">Search</button>
 </form>
 <p class="search-status" role="status" aria-live="polite"></p>

@@ -21,7 +21,7 @@ body {
   font: 16px/1.55 Inter, system-ui, sans-serif;
 }
 
-.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
 
 a { color: var(--bronze-light); }
 a:focus-visible { outline: 2px solid var(--gold-text); outline-offset: 2px; border-radius: 2px; }
@@ -48,9 +48,9 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   left: 0;
   right: 0;
   z-index: -1;
-  opacity: .6;
-  height: clamp(140px, 22.5vw, 400px);  /* 22.5vw is the art's own aspect, so wide screens show the whole scene */
-  background: url("mulgore.svg") 62% 100% / cover no-repeat;
+  opacity: .65;
+  height: clamp(260px, 35vw, 640px);  /* 35vw is the art's own aspect, so wide screens show the whole scene */
+  background: url("mulgore.svg") 50% 100% / cover no-repeat;
 }
 
 /* Countdown: a polished bronze plate with sunken, engraved digits. */
@@ -84,6 +84,10 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .digits b { display: block; font-family: Cinzel, Georgia, serif; font-weight: 800; font-size: 1.9rem; line-height: 1.1; color: var(--gold-text); font-variant-numeric: tabular-nums; }
 .digits small { display: block; font-size: .65rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 
+/* News and blue posts: cards side by side on wide screens. */
+.feed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 14px 18px; margin: 14px 0; }
+.feed-grid > .entry { margin: 0; }
+
 .entry {
   position: relative;
   margin: 14px 0;
@@ -93,10 +97,10 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   border-radius: 4px;
   box-shadow: inset 0 1px 0 #2e241a;
   overflow: hidden;
-  transition: border-color .15s ease, transform .15s ease;
+  transition: border-color .15s ease;
 }
 .entry::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(90deg, #6b431f, var(--bronze-light), #6b431f); }
-.entry:hover { border-color: var(--bronze); transform: translateY(-1px); }
+.entry:hover { border-color: var(--bronze); }  /* no transform: it would anchor the fixed tooltips inside to the card */
 .entry h2 { font-family: Cinzel, Georgia, serif; font-weight: 700; letter-spacing: .02em; font-size: 1.15rem; line-height: 1.3; margin: 6px 0 8px; color: var(--heading); }
 .entry .summary { color: #d8cbb1; }
 .entry .summary { margin: 0 0 8px; }
@@ -111,17 +115,17 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .thumb { flex: none; width: 180px; height: 101px; margin-top: 4px; border: 1px solid var(--stone-edge); border-radius: 3px; object-fit: cover; background: #1c140d; }
 .blue-tile {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  background: linear-gradient(180deg, #3d6fb0 0%, #2c5591 45%, #1b355c 100%); border-color: #3d6fb0; color: #e8f1ff;
+  background: linear-gradient(180deg, #3e5677 0%, #2e425e 45%, #1d2a3d 100%); border-color: #3e5677; color: #e3eaf3;
   font-family: Cinzel, Georgia, serif; font-weight: 800; font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
 }
 .blue-tile svg { width: 56px; height: 56px; filter: drop-shadow(0 2px 0 #0006); }
 
 /* Blue posts: Blizzard staff posts on the forums. */
-.entry.blue-post { background: #171c26; border-color: #2b3e5c; box-shadow: inset 0 1px 0 #1f2a3b; }
-.entry.blue-post::before { background: linear-gradient(90deg, #1f3d6b, #5fa8ff, #1f3d6b); }
-.entry.blue-post:hover { border-color: #3d6fb0; }
-.entry.blue-post .source { color: #7fb8ff; }
-.blue-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #2b4f86; color: #e8f1ff; font-weight: 700; }
+.entry.blue-post { background: #16171b; border-color: #2c3340; box-shadow: inset 0 1px 0 #22262e; }
+.entry.blue-post::before { background: linear-gradient(90deg, #2a3a52, #7a9cc6, #2a3a52); }
+.entry.blue-post:hover { border-color: #4a6488; }
+.entry.blue-post .source { color: #9dbbe0; }
+.blue-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #34496a; color: #e8eef6; font-weight: 700; }
 
 @media (max-width: 480px) {
   .entry:has(> .thumb) { gap: 10px; padding: 12px; }
@@ -198,12 +202,11 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .plate-latest { margin: 6px 0 0; font-size: .9rem; color: #1a0f05; }
 .plate-latest a { color: #1a0f05; font-weight: 700; }
 /* Known Issues link under the plate. */
-.known-issues { margin: 8px 0 0; font-size: .9rem; }
+.known-issues { margin: 8px 0 0; font-size: .9rem; text-shadow: 0 1px 2px #000, 0 0 10px #000; }  /* over the banner */
 .known-issues a { font-weight: 700; }
 
 /* "New since your last visit" and "your class" highlights. */
 .new-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #2f7a3e; color: #f2fff4; font-weight: 700; }  /* 5:1 contrast */
-.entry.is-new { border-color: #3f8f4f; }
 .my-class-tag { display: inline-block; margin-left: 14px; font-weight: 700; font-size: .9rem; text-decoration: none; }
 .my-class-tag:hover { text-decoration: underline; }
 .entry.has-my-class { box-shadow: inset 3px 0 0 var(--my-class); }
@@ -238,7 +241,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 
 /* Secondary link next to the main one, e.g. the original forum post. */
 .source.secondary { margin-left: 14px; font-weight: 400; color: var(--muted); }
-.entry.blue-post .source.secondary { color: #8fa6c4; }
+.entry.blue-post .source.secondary { color: #97a3b4; }
 
 /* Class page: link to one update. */
 .copy-link {
@@ -289,7 +292,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .class-tabs a[aria-current="page"] { background: #221a13; border-color: currentColor; }
 .class-tabs img { border-radius: 2px; }
 .class-tabs .all-classes { padding-left: 10px; color: var(--heading); }
-.macro-class { display: grid; gap: 8px; }
+.macro-class { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 10px 14px; align-items: start; }
 .macro-class[hidden] { display: none; }
 .macro { padding: 10px 12px; }
 .macro-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
@@ -337,7 +340,7 @@ table.realms thead th { color: var(--heading); }
 
 /* Item quality colors, as in the game. */
 .q0 { color: #9d9d9d; } .q1 { color: #fff; } .q2 { color: #1eff00; } .q3 { color: #3d9bff; } .q4 { color: #b469ff; } .q5 { color: #ff8000; }
-.recipes .has-tip { cursor: help; border-radius: 3px; }
+.recipes .has-tip { border-radius: 3px; }
 .recipes .has-tip:hover > .spell, .recipes .has-tip:focus-visible > .spell { text-decoration: underline; }
 .recipes .source { color: #cdbfa3; }
 .recipe-tools { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: end; margin: 12px 0 4px; font-size: .8rem; color: var(--muted); }
@@ -361,7 +364,7 @@ table.realms thead th { color: var(--heading); }
 .spell-level { display: grid; grid-template-columns: 2.2rem 1fr; gap: 8px; padding: 4px 0; border-bottom: 1px solid #221a13; }
 .spell-level .lvl { padding-top: 9px; color: var(--bronze-light); font-variant-numeric: tabular-nums; }
 .spell-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2px 8px; margin: 0; padding: 0; list-style: none; }
-.spell-tile { display: flex; gap: 8px; align-items: center; min-width: 0; padding: 3px; border-radius: 4px; cursor: help; }
+.spell-tile { display: flex; gap: 8px; align-items: center; min-width: 0; padding: 3px; border-radius: 4px; }
 .spell-tile > .spell { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: .9rem; }
 .spell-tile:hover, .spell-tile:focus-visible { background: var(--stone-raised); }
 
@@ -369,7 +372,7 @@ table.realms thead th { color: var(--heading); }
 .has-tip { position: relative; }
 .tip { display: none; position: absolute; z-index: 30; top: calc(100% + 4px); left: 0; width: 300px; max-width: calc(100vw - 32px);
   padding: 8px 10px; border: 1px solid var(--stone-edge); border-radius: 4px; background: #070605; box-shadow: 0 4px 14px #000a;
-  text-align: left; font-weight: 400; cursor: auto; }
+  text-align: left; font-weight: 400; pointer-events: none; }  /* it follows the pointer, so it must never catch it */
 .has-tip:hover > .tip, .has-tip:focus > .tip { display: block; }
 .tip .spell { font-size: .95rem; }
 .tip .tag { margin-left: 4px; }
@@ -379,9 +382,9 @@ table.realms thead th { color: var(--heading); }
 .tip .next { color: var(--muted); }
 
 /* Names in patch notes and blue posts with an in-game tooltip (gamelinks.js). */
-.gl { border-bottom: 1px dotted var(--bronze-mid); cursor: help; }
+.gl { border-bottom: 1px dotted var(--bronze-mid); white-space: nowrap; }  /* one line, so a tapped name has its tooltip under it */
 .gl.has-tip:hover, .gl.has-tip:focus-visible { color: var(--gold-text); }
-.gl .tip { font-style: normal; font-size: .9rem; line-height: 1.4; color: var(--text); }
+.gl .tip { font-style: normal; font-size: .9rem; line-height: 1.4; color: var(--text); white-space: normal; }
 
 /* Talent calculator: the class's three trees side by side. */
 .talent-summary { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 12px 0; }
@@ -392,11 +395,11 @@ table.realms thead th { color: var(--heading); }
 .talent-tree { padding: 6px 8px 14px; border: 1px solid var(--stone-edge); border-radius: 6px; background: var(--stone-raised); }
 .talent-tree .tree { display: flex; justify-content: space-between; margin: 4px 0 10px; font-size: 1rem; }
 .tree-points { color: var(--gold-text); font-variant-numeric: tabular-nums; }
-.talent-grid { display: grid; grid-template-columns: repeat(4, 46px); grid-auto-rows: 46px; grid-template-rows: repeat(7, 46px); gap: 10px; }
-.talent { position: relative; z-index: 1; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 4px; background: none; color: inherit; font: inherit; cursor: pointer; }
-.talent .tip { pointer-events: none; }  /* a click on it would learn a rank */
+.talent-calc { --t: 64px; }  /* talent icon size; the icons are exported at 56 px, so this upscales them a little */
+.talent-grid { display: grid; grid-template-columns: repeat(4, var(--t)); grid-auto-rows: var(--t); grid-template-rows: repeat(7, var(--t)); gap: 18px; }
+.talent { position: relative; z-index: 1; width: var(--t); height: var(--t); padding: 0; border: 0; border-radius: 4px; background: none; color: inherit; font: inherit; cursor: pointer; }
 .talent:hover, .talent:focus { z-index: 2; }  /* its tooltip above the other talents */
-.talent .icon { width: 46px; height: 46px; border: 2px solid #4d4d4d; border-radius: 4px; filter: grayscale(1) brightness(.55); }
+.talent .icon { width: var(--t); height: var(--t); border: 2px solid #4d4d4d; border-radius: 4px; filter: grayscale(1) brightness(.55); }
 .talent.open .icon, .talent.learned .icon { filter: none; }
 .talent.open .icon { border-color: #2fa82f; }
 .talent.maxed .icon { border-color: var(--bronze-light); }
@@ -406,11 +409,15 @@ table.realms thead th { color: var(--heading); }
 .talent.open .talent-rank { color: #4fd34f; }
 .talent.maxed .talent-rank { color: var(--gold-text); }
 .talent-arrow { z-index: 0; background: #4d4d4d; }
-.talent-arrow.down { justify-self: center; width: 4px; margin: 23px 0; }
-.talent-arrow.side { align-self: center; height: 4px; margin: 0 23px; }
+.talent-arrow.down { justify-self: center; width: 4px; margin: calc(var(--t) / 2) 0; }
+.talent-arrow.side { align-self: center; height: 4px; margin: 0 calc(var(--t) / 2); }
 .talent-arrow.met { background: var(--bronze-light); }
-.profession-list { padding-left: 20px; }
-.profession-list li { margin: 6px 0; }
+.profession-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: 10px; margin: 0 0 18px; padding: 0; list-style: none; }
+.profession-card { display: flex; gap: 12px; align-items: center; padding: 10px 12px; background: #15110d; border: 1px solid #33261a;
+  border-radius: 4px; text-decoration: none; transition: border-color .15s ease; }
+.profession-card:hover { border-color: var(--bronze); }
+.profession-card .icon { border: 1px solid var(--stone-edge); border-radius: 4px; }
+.profession-name { display: block; font-family: Cinzel, Georgia, serif; font-weight: 700; font-size: 1.05rem; color: var(--heading); }
 .crumb { margin: 16px 0 0; font-size: .85rem; }
 .skill-yellow { color: #ffd200; }
 .skill-grey { color: #9d9d9d; }
@@ -442,3 +449,57 @@ table.realms thead th { color: var(--heading); }
 @media (max-width: 600px) {
   .items th:nth-child(3), .items td:nth-child(3), .items th:nth-child(6), .items td:nth-child(6) { display: none; }
 }
+
+.it-pager { display: flex; gap: 14px; align-items: center; justify-content: center; margin: 12px 0; color: var(--muted); }
+.it-pager button:disabled { opacity: .4; cursor: default; }
+
+/* Wide screens: a page's main column with a sidebar beside it, as on Wowhead. */
+.with-sidebar { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 24px; align-items: start; }
+.sidebar { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; margin-top: 14px; padding: 12px 14px;
+  background: #15110d; border: 1px solid #33261a; border-radius: 4px; font-size: .88rem; }
+.sidebar h2 { margin: 0 0 8px; font-size: 1rem; }
+.sidebar ul { margin: 0; padding: 0; list-style: none; }
+.sidebar li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px solid #221a13; }
+.sidebar li.class-dim a { color: var(--muted); }
+.sidebar time { color: var(--muted); white-space: nowrap; }
+.notes { max-width: 920px; }
+@media (max-width: 960px) {
+  .with-sidebar { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { display: none; }  /* the "changes since" picker does the same job on small screens */
+}
+.items td { padding: 3px 8px; vertical-align: middle; }  /* compact rows, as in an item database */
+.items .icon { width: 22px; height: 22px; }
+.class-menu ul a { white-space: nowrap; }
+
+/* Search box in the top menu: sends the words to the Search page. */
+.nav-search { display: inline-flex; margin-left: 16px; vertical-align: middle; }
+.nav-search input { width: 13rem; max-width: 100%; padding: 5px 10px 5px 28px; font: inherit; font-size: .9rem; color: var(--text);
+  background: var(--stone) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%23a8875e' stroke-width='2'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cpath d='m9.5 9.5 3.5 3.5'/%3E%3C/svg%3E") no-repeat 9px center;
+  border: 1px solid var(--stone-edge); border-radius: 3px; }
+.nav-search input:focus { border-color: var(--bronze-light); outline: none; }
+@media (max-width: 600px) { .nav-search { display: flex; width: 100%; margin: 6px 0 0; } .nav-search input { width: 100%; } }
+
+/* Search results: compact cards, two columns on wide screens. */
+.results { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 10px 18px; }
+.results > .entry { margin: 0; padding: 10px 14px 8px; }
+.results > .entry h2 { margin: 4px 0; font-size: 1.02rem; }
+.results > .entry .summary { margin: 0; font-size: .9rem; }
+
+/* Game data changes: each class, race, profession and Items as a card, side by side; long lists scroll inside. */
+.data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 12px; align-items: start; }
+.data-grid .data-section { margin: 0; padding: 8px 12px; background: #15110d; border: 1px solid #33261a; border-radius: 4px; }
+.data-grid .data-changes { max-height: 420px; overflow-y: auto; margin: 6px 0 2px; padding-left: 16px; font-size: .9rem; }
+.data-grid .data-changes li { margin: 3px 0; }
+.data-grid .change-detail { font-size: .82rem; }
+@media (max-width: 480px) { .talent-calc { --t: 52px; } .talent-grid { gap: 12px; } }
+
+/* An item's own page (Items page, ?id=): its tooltip beside its facts. */
+.item-page h1 { gap: 12px; }
+.item-page h1 .icon { border: 1px solid var(--stone-edge); border-radius: 4px; }
+.item-page-body { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.tip.tip-static { display: block; position: static; width: 320px; pointer-events: auto; }
+.item-facts { display: grid; grid-template-columns: auto auto; gap: 6px 18px; margin: 0; }
+.item-facts dt { color: var(--muted); }
+.item-facts dd { margin: 0; }
+.items a.has-tip { text-decoration: none; }
+.items a.has-tip:hover > .spell { text-decoration: underline; }

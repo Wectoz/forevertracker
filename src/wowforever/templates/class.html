@@ -29,6 +29,8 @@
   <a class="feed-link" href="{{ url_for('class_feed', name=slug) }}">RSS feed</a>
 </div>
 <p class="since-status" role="status" aria-live="polite"></p>
+<div class="with-sidebar">
+<div class="sidebar-main">
 {% for update in updates %}
 <article class="entry class-update{% if not update.html %} class-dim{% endif %}" id="{{ anchors[update.post_id] }}">
   <p class="meta">{{ labels[update.kind] }} · <time datetime="{{ update.posted.isoformat() }}">{{ update.posted | month_day }}</time></p>
@@ -43,6 +45,19 @@
 {% else %}
 <p class="empty">No {{ cls }} patch notes gathered yet. They will appear here as soon as Blizzard posts them.</p>
 {% endfor %}
+</div>
+{% if updates %}
+<nav class="sidebar" aria-label="{{ cls }} updates">
+  <h2>Updates</h2>
+  <ul>
+    {% for update in updates %}
+    <li{% if not update.html %} class="class-dim"{% endif %}><a href="#{{ anchors[update.post_id] }}">{{ labels[update.kind] }}</a>
+      <time datetime="{{ update.posted.isoformat() }}">{{ update.posted | month_day }}</time></li>
+    {% endfor %}
+  </ul>
+</nav>
+{% endif %}
+</div>
 </section>
 
 <section class="tab-panel" id="abilities" aria-label="{{ cls }} abilities">
