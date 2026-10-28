@@ -49,4 +49,10 @@
     if (mine) status.textContent += " Orange always gives a point, yellow usually, green rarely, grey never; faded recipes need more skill to learn.";
   };
   for (const input of [search, source, slot, skill]) input?.addEventListener("input", update);
+  // a search result links here with the recipe's name
+  const query = new URLSearchParams(location.search).get("q");
+  if (query) {
+    search.value = query;
+    update();
+  }
 })();

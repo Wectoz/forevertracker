@@ -475,3 +475,9 @@ table.realms thead th { color: var(--heading); }
   border: 1px solid var(--stone-edge); border-radius: 3px; }
 .nav-search input:focus { border-color: var(--bronze-light); outline: none; }
 @media (max-width: 600px) { .nav-search { display: flex; width: 100%; margin: 6px 0 0; } .nav-search input { width: 100%; } }
+
+/* Search results: compact cards, two columns on wide screens. */
+.results { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 10px 18px; }
+.results > .entry { margin: 0; padding: 10px 14px 8px; }
+.results > .entry h2 { margin: 4px 0; font-size: 1.02rem; }
+.results > .entry .summary { margin: 0; font-size: .9rem; }

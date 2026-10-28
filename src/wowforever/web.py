@@ -2,6 +2,7 @@
 
 from collections import Counter
 from datetime import UTC, date, datetime, timedelta
+from urllib.parse import quote
 
 from flask import Flask, abort, jsonify, render_template, request, url_for
 
@@ -349,7 +350,7 @@ def create_app(store: Store) -> Flask:
     @app.get("/search")
     def search():
         return render_template("search.html", page_title="Search · WoW Forever Tracker",
-                               description="Search every World of Warcraft: Forever news post and class change.")
+                               description="Search every World of Warcraft: Forever news post, class change, ability, talent, racial, recipe, item, macro and addon.")
 
     @app.get("/search.json")
     def search_index():
@@ -366,6 +367,33 @@ def create_app(store: Store) -> Flask:
                        "url": url_for("class_page", name=slug(cls), _anchor=anchors[u.post_id]),
                        "label": cls, "date": _short_date(u.posted), "text": plain_text(u.html), "external": False}
                       for u in updates if u.html]
-        return jsonify(items)
+        return jsonify(items + game_index())
+
+    def game_index() -> list[dict]:
+        """The game data for search: abilities, talents, racials, recipes, items, macros and addons."""
+        entry = lambda title, url, label, text="", external=False: {
+            "title": title, "url": url, "label": label, "date": "", "text": text or "", "external": external}
+        out = []
+        for cls in CLASSES:
+            data, page = game["classes"][cls], lambda tab: url_for("class_page", name=slug(cls), _anchor=tab)
+            out += [entry(a["name"], page("abilities"), f"{cls} ability", a["description"]) for a in data["abilities"]]
+            out += [entry(t["name"], page("talents"), f"{cls} talent · {tree['name']}", next(filter(None, t["ranks"]), ""))
+                    for tree in data["talents"] for t in tree["talents"]]
+        for race, racials in gamedata.current_races(game).items():
+            out += [entry(r["name"], url_for("races", _anchor=gamedata.slugify(race)), f"{race} racial", r["description"])
+                    for r in racials]
+        for profession, recipes in game["professions"].items():
+            page = url_for("profession", name=gamedata.slugify(profession))
+            out += [entry(r["name"], f"{page}?q={quote(r['name'])}", f"{profession} recipe", f"Learned from {r['source']}")
+                    for r in recipes]
+        out += [entry(i["name"], f"{url_for('items')}?q={quote(i['name'])}", "Item",
+                      " · ".join(filter(None, [i["slot"], i["type"], f"item level {i['level']}"])))
+                for i in {i["name"]: i for i in game["items"]}.values()]  # one result per name
+        for name, macros in [("General", GENERAL_MACROS), *((cls, MACROS[cls]) for cls in CLASSES)]:
+            out += [entry(m.name, url_for("macros", _anchor=slug(name) if name in CLASSES else "general"),
+                          f"{name} macro", m.blurb) for m in macros]
+        out += [entry(a.name, a.url, "Addon", a.blurb, external=True)
+                for _, addons in (("Trending", TRENDING), *CATEGORIES) for a in addons]
+        return out
 
     return app

@@ -317,7 +317,7 @@ def test_search_index_has_full_notes_once():
     store = Store(":memory:")
     store.save_update(make_forum_post(), "hotfix", {}, title="WoW Forever Hotfixes – Oct 16",
                       summary="Hotfixes.", html="<p>Hotfixes.</p><ul><li>Ragefire Chasm loot fixed</li></ul>")
-    items = create_app(store).test_client().get("/search.json").json
+    items = [i for i in create_app(store).test_client().get("/search.json").json if i["date"]]  # posts, not game data
     assert items == [{"title": "WoW Forever Hotfixes – Oct 16", "url": "/notes/1", "label": "Hotfix",
                       "date": "Oct 16, 2026", "text": "Hotfixes. Ragefire Chasm loot fixed", "external": False}]
 
@@ -555,3 +555,16 @@ def test_realms_page_draws_each_realms_week():
     html = create_app(store).test_client().get("/realms").text
     assert html.count('class="pop-high"') >= 2  # the legend and the latest block
     assert 'aria-label="Alpha, last 7 days in two-hour blocks: mostly High"' in html
+
+
+def test_search_index_covers_the_game_data_and_guides():
+    items = create_app(Store(":memory:")).test_client().get("/search.json").json
+    found = lambda title, label: next(i for i in items if i["title"] == title and i["label"] == label)
+    assert found("Charge", "Warrior ability")["url"] == "/classes/warrior#abilities"
+    assert found("Mortal Strike", "Warrior talent · Arms")["url"] == "/classes/warrior#talents"
+    assert found("Shadowmeld", "Night Elf racial")["url"] == "/races#night-elf"
+    assert found("Linen Bandage", "First Aid recipe")["url"] == "/professions/first-aid?q=Linen%20Bandage"
+    assert found("Wolfshead Helm", "Item") == {"title": "Wolfshead Helm", "url": "/items?q=Wolfshead%20Helm", "label": "Item",
+                                               "date": "", "text": "Head · Leather · item level 45", "external": False}
+    assert found("Questie", "Addon")["external"] is True
+    assert sum(i["title"] == "Atiesh, Greatstaff of the Guardian" for i in items) == 1  # four class versions, one result
