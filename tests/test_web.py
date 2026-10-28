@@ -200,10 +200,37 @@ def test_home_has_class_call_to_action():
     assert "Patch notes for your class →" not in client_for().get("/news").text
 
 
-def test_news_card_shows_small_lazy_thumbnail():
-    html = client_for(make_post(thumbnail="https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/x.png")).get("/").text
-    assert ('<img class="thumb" src="https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/x.png?imwidth=360"'
-            ' alt="" width="180" height="101" loading="lazy">') in html
+IMAGE = "https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/x.png"
+
+
+def test_news_card_shows_the_copied_thumbnail_served_from_the_site():
+    store = Store(":memory:")
+    store.upsert([make_post(thumbnail=IMAGE)])
+    store.save_thumbnail(1, IMAGE, "image/png", b"\x89PNG fake")
+    client = create_app(store).test_client()
+    html = client.get("/").text
+    assert '<img class="thumb" src="/thumbs/1.png" alt="" width="180" height="101" loading="lazy">' in html
+    image = client.get("/thumbs/1.png")
+    assert image.status_code == 200 and image.mimetype == "image/png" and image.data == b"\x89PNG fake"
+    assert client.get("/thumbs/1.jpg").status_code == 404 and client.get("/thumbs/2.png").status_code == 404
+
+
+def test_news_card_never_loads_an_image_from_blizzard():
+    html = client_for(make_post(thumbnail=IMAGE)).get("/").text  # not copied yet
+    assert 'class="thumb"' not in html and "akamaihd" not in html
+
+
+def test_pages_load_nothing_from_google_fonts():
+    html = client_for(make_post()).get("/").text
+    assert "googleapis" not in html and "gstatic" not in html
+    assert "/static/fonts/hanken-grotesk.woff2" in html
+
+
+def test_privacy_page_is_linked_from_every_page():
+    client = client_for(make_post())
+    assert 'href="/privacy">Privacy</a>' in client.get("/").text
+    page = client.get("/privacy")
+    assert page.status_code == 200 and "doesn't collect anything about you" in page.text
 
 
 def test_news_card_without_thumbnail_has_no_image():

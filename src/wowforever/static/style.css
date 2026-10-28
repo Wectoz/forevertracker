@@ -16,6 +16,12 @@
   --font-display: Spectral, Georgia, serif;
 }
 
+/* Fonts are served from this site, not Google Fonts, so no visitor's address reaches a third party (SIL OFL, see fonts/). */
+@font-face { font-family: Spectral; font-weight: 600; font-display: swap; src: url("fonts/spectral-600.woff2") format("woff2"); }
+@font-face { font-family: Spectral; font-weight: 700; font-display: swap; src: url("fonts/spectral-700.woff2") format("woff2"); }
+@font-face { font-family: Spectral; font-weight: 800; font-display: swap; src: url("fonts/spectral-800.woff2") format("woff2"); }
+@font-face { font-family: "Hanken Grotesk"; font-weight: 100 900; font-display: swap; src: url("fonts/hanken-grotesk.woff2") format("woff2"); }
+
 * { box-sizing: border-box; }
 
 body {

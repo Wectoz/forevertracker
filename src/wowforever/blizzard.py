@@ -43,6 +43,23 @@ def parse_listing(html: str) -> ListingPage:
     return ListingPage(blogs=blogs, has_next=has_next)
 
 
+MAX_IMAGE_BYTES = 2_000_000
+
+
+def fetch_image(url: str) -> tuple[str, bytes]:
+    """A news card image, as (type, bytes); anything that is not a small image is refused."""
+    request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    try:
+        with urllib.request.urlopen(request, timeout=TIMEOUT) as response:
+            mimetype = response.headers.get_content_type()
+            data = response.read(MAX_IMAGE_BYTES + 1)
+    except (urllib.error.URLError, http.client.HTTPException, TimeoutError, OSError) as err:
+        raise FetchError(f"{url}: {err}") from err
+    if not mimetype.startswith("image/") or len(data) > MAX_IMAGE_BYTES:
+        raise FetchError(f"{url}: not a small image ({mimetype}, {len(data)} bytes)")
+    return mimetype, data
+
+
 def fetch_listing(page: int) -> str:
     url = f"{BASE_URL}/news?page={page}"
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})

@@ -10,7 +10,7 @@ from xml.sax.saxutils import escape
 from wowforever.store import Store
 from wowforever.web import create_app
 
-_HREF_RE = re.compile(r'(?:href|action)="([^"#?]+)')  # links, and forms such as the menu's search box
+_HREF_RE = re.compile(r'(?:href|action|src)="([^"#?]+)')  # links, forms such as the menu's search box, and images
 
 
 def build_site(store: Store, out: Path, base_path: str = "", site_url: str | None = None) -> int:
@@ -38,13 +38,13 @@ def build_site(store: Store, out: Path, base_path: str = "", site_url: str | Non
         response = client.get(path, base_url=base_url)
         if response.status_code != 200:
             raise RuntimeError(f"{path} returned {response.status_code}")
-        body = response.get_data(as_text=True)
         if response.mimetype != "text/html":
-            # A data file (Atom feed, search index): written as is, and not a page to crawl or list.
+            # A data file (Atom feed, search index, a copied news image): written as is, not a page to crawl or list.
             target = out / path.strip("/")
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(body, encoding="utf-8")
+            target.write_bytes(response.get_data())
             continue
+        body = response.get_data(as_text=True)
         target = out / path.strip("/") / "index.html"
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(body, encoding="utf-8")

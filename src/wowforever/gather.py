@@ -6,7 +6,7 @@ import time
 from collections.abc import Callable
 from datetime import UTC, datetime
 
-from wowforever.blizzard import FetchError, ParseError, fetch_listing, parse_listing
+from wowforever.blizzard import FetchError, ParseError, fetch_image, fetch_listing, parse_listing
 from wowforever.classnotes import clean_html, split_classes
 from wowforever.forum import (CATEGORY_ID, FetchJson, feed_summary, feed_title, fetch_json, is_known_issues,
                               note_topics, thread_posts, tracker_page)
@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 BACKFILL_CUTOFF = datetime(2026, 8, 1, tzinfo=UTC)
 
 Fetch = Callable[[int], str]
+FetchImage = Callable[[str], tuple[str, bytes]]
 
 
 def _gather_page(store: Store, fetch: Fetch, page: int) -> tuple[int, int, bool, datetime | None]:
@@ -57,6 +58,22 @@ def backfill(store: Store, fetch: Fetch | None = None, cutoff: datetime = BACKFI
         if not has_next or oldest is None or oldest < cutoff:
             break
     return total_added, total_edited
+
+
+def gather_thumbnails(store: Store, fetch: FetchImage | None = None) -> int:
+    """Copy each post's card image into the store, so the site never sends visitors to Blizzard's image server.
+    One image failing skips only that card's image; returns how many were copied."""
+    fetch = fetch or fetch_image
+    copied = 0
+    for post_id, url in store.missing_thumbnails():
+        try:
+            mimetype, data = fetch(f"{url}?imwidth=360")
+            store.save_thumbnail(post_id, url, mimetype, data)
+        except (FetchError, ValueError) as err:
+            logger.warning("Skipping the image of post %d: %s", post_id, err)
+            continue
+        copied += 1
+    return copied
 
 
 def gather_class_notes(store: Store, fetch: FetchJson | None = None) -> int:
@@ -143,7 +160,7 @@ def _gather_topic(store: Store, topic_id: int, kind: str, fetch: FetchJson) -> i
 
 
 def start_hourly(store: Store, interval: float = 3600, fetch: Fetch | None = None,
-                 fetch_forum: FetchJson | None = None) -> threading.Thread:
+                 fetch_forum: FetchJson | None = None, fetch_images: FetchImage | None = None) -> threading.Thread:
     def run():
         while True:
             try:
@@ -154,6 +171,10 @@ def start_hourly(store: Store, interval: float = 3600, fetch: Fetch | None = Non
             except Exception:
                 # Keep the hourly check alive; stored posts are untouched by a failed run.
                 logger.exception("Gathering failed unexpectedly")
+            try:
+                logger.info("Gathered: copied %d post images", gather_thumbnails(store, fetch_images))
+            except Exception:
+                logger.exception("Copying post images failed unexpectedly")
             try:
                 saved = gather_class_notes(store, fetch_forum or fetch_json)
                 logger.info("Gathered: saved %d class patch-note updates", saved)
