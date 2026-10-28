@@ -70,7 +70,7 @@ Abilities, talents, racials and recipes are read from the WoW Forever game clien
      dotnet TACTTool.dll -p wowf -r eu -d "/mnt/c/Program Files (x86)/World of Warcraft" -m fdid -i $id -o db2/$t.db2
    done
    ```
-3. `uv run wowforever gamedata db2 WoWDBDefs/definitions`. This writes `gamedata.json` and `db2/icons.txt`, the icons the pages need.
+3. `uv run wowforever gamedata --hotfixes "/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Cache/ADB/enUS/DBCache.bin" db2 WoWDBDefs/definitions`. Blizzard ships most changes between client patches as hotfixes, which the game keeps in that cache file (log in once first so it is current); `--hotfixes` applies them, and the data then carries the cache's build number. This writes `gamedata.json` and `db2/icons.txt`, the icons the pages need.
 4. Extract and convert the icons:
    ```sh
    dotnet TACTTool.dll -p wowf -r eu -d "/mnt/c/Program Files (x86)/World of Warcraft" -m list -i db2/icons.txt -o blp

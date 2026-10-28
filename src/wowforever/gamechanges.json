@@ -1,0 +1,6226 @@
+[
+ {
+  "date": "2026-10-28",
+  "from": "1.60.1.70399",
+  "to": "1.60.1.70634",
+  "changes": [
+   {
+    "section": "Hunter",
+    "what": "ability",
+    "name": "Explosive Trap Effect",
+    "change": "removed",
+    "details": []
+   },
+   {
+    "section": "Paladin",
+    "what": "ability",
+    "name": "Righteous Fury",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Learned at level",
+      "before": 16,
+      "after": 10
+     }
+    ]
+   },
+   {
+    "section": "Cooking",
+    "what": "recipe",
+    "name": "Darkclaw Bisque",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Reagents",
+      "before": "Darkclaw Lobster, ?",
+      "after": "Darkclaw Lobster, Drinkable Stratholme Holy Water"
+     }
+    ]
+   },
+   {
+    "section": "Engineering",
+    "what": "recipe",
+    "name": "9-60 Battery Pack",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Requires Level 29"
+      ]
+     },
+     {
+      "field": "Item effects",
+      "before": [],
+      "after": [
+       "Use: Restore 3 charges to a Manual Crowd Pummeler device in your possession."
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Enchanting",
+    "what": "recipe",
+    "name": "Smoking Heart of the Mountain",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when picked up",
+       "Trinket",
+       "+7 Fire Resistance",
+       "+7 Nature Resistance",
+       "+7 Frost Resistance",
+       "+7 Shadow Resistance",
+       "Requires Level 50"
+      ]
+     },
+     {
+      "field": "Item effects",
+      "before": [],
+      "after": [
+       "Use: Increases armor by 520 for 20 sec."
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Boots of Conviction",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Cloth",
+       "65 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Demonheart Boots",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Cloth",
+       "65 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Demonheart Gloves",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Cloth",
+       "59 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Demonheart Leggings",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Cloth",
+       "83 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Demonheart Spaulders",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Cloth",
+       "71 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Gloves of Conviction",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Cloth",
+       "59 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Handguards of Conviction",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Cloth",
+       "59 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Leggings of Conviction",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Cloth",
+       "83 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Manaflare Boots",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Cloth",
+       "65 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Manaflare Gloves",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Cloth",
+       "59 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Manaflare Mantle",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Cloth",
+       "71 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Manaflare Pants",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Cloth",
+       "83 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Mantle of Conviction",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Cloth",
+       "71 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Pants of Conviction",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Cloth",
+       "83 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Pauldrons of Conviction",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Cloth",
+       "71 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Tailoring",
+    "what": "recipe",
+    "name": "Treads of Conviction",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Cloth",
+       "65 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grimstitch Boots",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Leather",
+       "129 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grimstitch Gloves",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Leather",
+       "117 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grimstitch Pants",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Leather",
+       "164 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grimstitch Spaulders",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Leather",
+       "140 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Boots",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Leather",
+       "129 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Gauntlets",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Leather",
+       "117 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Grips",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Leather",
+       "117 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Handguards",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Leather",
+       "117 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Kilt",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Leather",
+       "164 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Leggings",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Leather",
+       "164 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Legguards",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Leather",
+       "164 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Mantle",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Leather",
+       "140 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Mitts",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Leather",
+       "117 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Pauldrons",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Leather",
+       "140 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Sandals",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Leather",
+       "129 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Shoulderpads",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Leather",
+       "140 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Spaulders",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Leather",
+       "140 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Stompers",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Leather",
+       "129 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Treads",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Leather",
+       "129 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Grovekeeper Trousers",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Leather",
+       "164 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Spiritcaller Epaulets",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Mail",
+       "294 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Spiritcaller Gauntlets",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Mail",
+       "245 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Spiritcaller Greaves",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Mail",
+       "270 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Spiritcaller Grips",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Mail",
+       "245 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Spiritcaller Leggings",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Mail",
+       "344 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Spiritcaller Pants",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Mail",
+       "344 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Spiritcaller Spaulders",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Mail",
+       "294 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Spiritcaller Treads",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Mail",
+       "270 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Wildstalker's Gauntlets",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Mail",
+       "245 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Wildstalker's Greaves",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Mail",
+       "270 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Wildstalker's Legguards",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Mail",
+       "344 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Leatherworking",
+    "what": "recipe",
+    "name": "Wildstalker's Spaulders",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Mail",
+       "294 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Demon Forged Breastplate",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Chest · Plate",
+       "597 Armor",
+       "+12 Stamina",
+       "Requires Level 52"
+      ]
+     },
+     {
+      "field": "Item effects",
+      "before": [],
+      "after": [
+       "Equip: When struck has a 3% chance of stealing 240 life from the attacker over 4 sec."
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Gauntlets of Glory",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Plate",
+       "434 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Greaves of Glory",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Plate",
+       "478 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Handguards of Glory",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Plate",
+       "434 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Epaulets",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Plate",
+       "521 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Gauntlets",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Plate",
+       "434 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Gloves",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Plate",
+       "434 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Greaves",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Plate",
+       "478 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Handguards",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Hands · Plate",
+       "434 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Leggings",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Plate",
+       "608 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Legguards",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Plate",
+       "608 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Legplates",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Plate",
+       "608 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Pauldrons",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Plate",
+       "521 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Sabatons",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Plate",
+       "478 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Spaulders",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Plate",
+       "521 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Justice Treads",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Plate",
+       "478 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Legguards of Glory",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Plate",
+       "608 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Legplates of Glory",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Legs · Plate",
+       "608 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Pauldrons of Glory",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Plate",
+       "521 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Sabatons of Glory",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Feet · Plate",
+       "478 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Blacksmithing",
+    "what": "recipe",
+    "name": "Shoulders of Glory",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Item",
+      "before": [],
+      "after": [
+       "Binds when equipped",
+       "Shoulder · Plate",
+       "521 Armor",
+       "Requires Level 60"
+      ]
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Notched Shortsword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Stout Battlehammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Forester's Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gloom Reaper",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Leaden Mace",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Monk's Staff",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Staff of Jordan",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Murphstar",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Robes of the Shadowcaster",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Skullcrusher Mace",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritchaser Staff",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grinning Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Monstrous War Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ballast Maul",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ebonclaw Reaver",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Twisted Sabre",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dwarven Magestaff",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dwarven Hatchet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Priest's Mace",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Northern Shortsword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sergeant's Warhammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hillborne Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Carving Knife",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Kang the Decapitator",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Curved Dagger",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Antipodean Rod",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Journeyman's Vest",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Journeyman's Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Burnt Leather Vest",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Burnt Leather Breeches",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warrior's Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warrior's Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hunting Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Veteran Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Seer's Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Seer's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inscribed Leather Breastplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inscribed Leather Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Burnished Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Whipwood Recurve Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hunter's Muzzle Loader",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "BKP \"Sparrow\" Smallbore",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Forest Leather Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Forest Leather Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bright Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bright Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Acrobatic Staff",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Viking Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Short Bastard Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Oak Mallet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Edged Bastard Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Stonecutter Claymore",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Battering Hammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Battle Slayer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Barbarian War Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Forest Leather Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cavalier Two-hander",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Conk Hammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Brutal War Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sniper Rifle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bright Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hunting Buckler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Silver-thread Cuffs",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nightsky Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Aurora Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Aurora Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Emblazoned Hat",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imperial Leather Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imperial Leather Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Emblazoned Buckler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Jouster's Crest",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mail Combat Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Chief Brigadier Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blackforge Cowl",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blackforge Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadblade",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Scalping Tomahawk",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Severing Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiked Club",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sturdy Quarterstaff",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Merc Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Staunch Hammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "War Knife",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Light Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Burnished Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inscribed Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Glimmering Mail Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nightsky Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nightsky Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nightsky Sash",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Chief Brigadier Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blackforge Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imperial Leather Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Heart Ring",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Fire Wand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadow Wand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Opaque Wand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Scorching Wand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wand of Eventide",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ember Wand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Eye of Adaegus",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Disciple's Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Pioneer Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Pioneer Trousers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Infantry Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Seer's Cape",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inscribed Leather Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bright Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Forest Buckler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Glimmering Mail Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Glimmering Mail Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Silver-thread Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Silver-thread Amice",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Emblazoned Chestpiece",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Emblazoned Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nightsky Wristbands",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Insignia Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Chief Brigadier Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Aurora Robe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Aurora Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Glyphed Mitts",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blackforge Cape",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blackforge Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mistscape Wizard Hat",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imperial Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Journeyman's Robe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Disciple's Robe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Willow Robe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Willow Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Willow Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Willow Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Willow Cape",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Soldier's Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Soldier's Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Soldier's Wristguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bard's Trousers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bard's Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bard's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bard's Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Soldier's Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shimmering Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shimmering Robe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shimmering Sash",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Scouting Buckler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Defender Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Defender Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Defender Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Defender Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Scouting Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Scouting Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Battleforge Wristguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Battleforge Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Battleforge Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dervish Buckler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dervish Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dervish Cape",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sage's Cloth",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sage's Sash",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sage's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sage's Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sage's Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Infiltrator Buckler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Elder's Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Elder's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Elder's Sash",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Infiltrator Cord",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Infiltrator Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Infiltrator Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Infiltrator Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Phalanx Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Twilight Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Twilight Cowl",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Twilight Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Twilight Cape",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Twilight Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sentinel Breastplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sentinel Cap",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sentinel Shoulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sentinel Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Knight's Headguard",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Knight's Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Knight's Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Regal Wizard Hat",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Regal Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ranger Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ranger Shoulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Captain's Breastplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Captain's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Field Plate Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gossamer Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gossamer Headpiece",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gossamer Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gossamer Shoulderpads",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cabalist Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cabalist Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cabalist Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cabalist Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cabalist Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Champion's Wall Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Champion's Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Champion's Greaves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Falcon's Hook",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Aegis of the Scarlet Commander",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hibernal Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hibernal Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hibernal Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hibernal Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hibernal Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hibernal Cowl",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Heraldic Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Heraldic Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Heraldic Headpiece",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Myrmidon's Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Myrmidon's Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Chromite Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Chromite Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Chromite Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Training Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hunting Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Precision Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Firestarter",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dire Wand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ebon Scimitar",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Battlefield Destroyer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imperial Red Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Serpentskin Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Serpentskin Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Serpentskin Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Serpentskin Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Serpentskin Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Serpentskin Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ebonhold Wristguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ebonhold Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ebonhold Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ebonhold Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Valorous Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Arcane Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Arcane Pads",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Arcane Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Arcane Sash",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Arcane Cover",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Traveler's Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Traveler's Jerkin",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Traveler's Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Traveler's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Traveler's Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hero's Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hero's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hero's Band",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Alabaster Plate Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Field Plate Helmet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Manual Crowd Pummeler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Simple Britches",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Simple Blouse",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nomad Buckler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cadet Vest",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bandit Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bandit Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bandit Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Raider's Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Raider's Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Raider's Legguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ivycloth Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ivycloth Bracelets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ivycloth Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ivycloth Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ivycloth Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Superior Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Superior Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Superior Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Fortified Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Durable Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Scaled Leather Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Banded Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Conjurer's Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Conjurer's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Conjurer's Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Archer's Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Archer's Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Archer's Buckler",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Renegade Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Renegade Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Renegade Circlet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Renegade Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sorcerer Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sorcerer Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Huntsman's Bands",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Huntsman's Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Huntsman's Shoulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Jazeraint Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Jazeraint Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Royal Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Royal Amice",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Brigade Defender",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Headband",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Shoulderpads",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Brigade Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Brigade Circlet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Abjurer's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Abjurer's Bands",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Chieftain's Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warmonger's Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warmonger's Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Embossed Plate Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Embossed Plate Helmet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Duskwoven Sandals",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Duskwoven Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Duskwoven Cape",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Duskwoven Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Righteous Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Righteous Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lord's Armguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lord's Crest",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lord's Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lord's Crown",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lord's Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gothic Plate Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gothic Plate Helmet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Councillor's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Councillor's Circlet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wanderer's Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wanderer's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ornate Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "High Councillor's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "High Councillor's Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "High Councillor's Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mighty Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mighty Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mighty Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mighty Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mercurial Greaves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mercurial Guard",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mercurial Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mercurial Circlet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mercurial Legguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mercurial Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Templar Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Templar Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mystical Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mystical Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mystical Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Swashbuckler's Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Swashbuckler's Shoulderpads",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Crusader's Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Crusader's Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Crusader's Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Crusader's Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Crusader's Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Overlord's Chestplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Overlord's Legplates",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Elegant Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Elegant Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Elegant Robes",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Elegant Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Elegant Circlet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nightshade Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nightshade Cloak",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Engraved Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Engraved Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Heavy Lamellar Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Heavy Lamellar Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Heavy Lamellar Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Master's Vest",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Master's Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Master's Hat",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Master's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Master's Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Master's Robe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Adventurer's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Adventurer's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Adventurer's Legguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Adventurer's Shoulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Masterwork Breastplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Masterwork Cape",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Masterwork Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Masterwork Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Masterwork Legplates",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Emerald Breastplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imbued Plate Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imbued Plate Helmet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imbued Plate Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Commander's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Commander's Armor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Commander's Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Commander's Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hyperion Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hyperion Legplates",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Smoking Heart of the Mountain",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Amber Hoop",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Serpentine Loop",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lead Band",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Iridium Circle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Vanadium Loop",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Vermilion Band",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ivory Band",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Basalt Ring",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lodestone Hoop",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Onyx Ring",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Swamp Ring",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Jungle Ring",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Prismatic Band",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Greenstone Talisman",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Marble Necklace",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Granite Necklace",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Forest Pendant",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Stardust Band",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dragonscale Band",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Demon Forged Breastplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Prospector Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Stormbringer Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Skycaller",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Drakewing Bands",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Killmaim",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bludstone Hammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blade of the Titans",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blanchard's Stout",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bonechewer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Thunderwood",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Moccasins of the White Hare",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Winged Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Serpentine Sash",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shell Launcher Shotgun",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Buccaneer's Cape",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Buccaneer's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Buccaneer's Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Buccaneer's Robes",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Raider Shortsword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Fighter Broadsword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mercenary Blade",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Nobles Brand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Furious Falchion",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Rune Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Crystal Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dimensional Blade",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Battlefell Sabre",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Holy War Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Jagged Star",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sequoia Hammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Giant Club",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Diamond-Tip Bludgeon",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Smashing Star",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blesswind Hammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ridge Cleaver",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hacking Cleaver",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Greater Scythe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Crescent Edge",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Moon Cleaver",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Corpse Harvester",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warlord's Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Demon's Claw",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Honed Stiletto",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Deadly Kris",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Razor Blade",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Vorpal Dagger",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Demon Blade",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bloodstrike Dagger",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Polished Zweihander",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Glimmering Flamberge",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Headstriker Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tusker Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beheading Blade",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dark Espadon",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Massacre Sword",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shin Blade",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Divine Warblade",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Stone Hammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sequoia Branch",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Greater Maul",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Painbringer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Brutehammer",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Massive Battle Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gigantic War Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Razor Axe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Death Striker",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Diviner Long Staff",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Thaumaturgist Staff",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wizard's Hand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lunar Wand",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Long Battle Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Archer's Longbow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Blasthorn Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Archstrike Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Siege Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Quillfire Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hawkeye Bow",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Smoothbore Gun",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Percussion Shotgun",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sharpshooter Harquebus",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Imbued Shield",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Vest of Elements",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Coif of Elements",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Kilt of Elements",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Pauldrons of Elements",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Boots of Elements",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bindings of Elements",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gauntlets of Elements",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cord of Elements",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beaststalker's Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beaststalker's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beaststalker's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beaststalker's Cap",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beaststalker's Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beaststalker's Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beaststalker's Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Beaststalker's Bindings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Magister's Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Magister's Bindings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Magister's Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Magister's Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Magister's Crown",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Magister's Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Magister's Robes",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Magister's Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Devout Robe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Devout Sandals",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Devout Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Devout Crown",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Devout Skirt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Devout Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Devout Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Devout Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadmist Mask",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadmist Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadmist Robe",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadmist Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadmist Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadmist Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadmist Sandals",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Dreadmist Wraps",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildheart Vest",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadowcraft Cap",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadowcraft Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadowcraft Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadowcraft Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadowcraft Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadowcraft Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadowcraft Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildheart Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildheart Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildheart Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildheart Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildheart Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildheart Kilt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildheart Cowl",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shadowcraft Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lightforge Bracers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lightforge Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lightforge Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lightforge Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lightforge Breastplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lightforge Helm",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lightforge Legplates",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Lightforge Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Breastplate of Valor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Helm of Valor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Legplates of Valor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spaulders of Valor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Boots of Valor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Bracers of Valor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Belt of Valor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gauntlets of Valor",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Girdle of the Fallen Crusader",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Red Winter Hat",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Green Winter Hat",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tabard of Flame",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tabard of Frost",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Upperdeck Tabard #3",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Legguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Vambraces",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Belt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Shoulderplates",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Helmet",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Greaves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Breastplate",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Tunic",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Headpiece",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Handguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Wristguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Inquisition Girdle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Trousers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Grips",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Shoulderpads",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Stompers",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Kilt",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Mitts",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Sandals",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Legguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Handguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grovekeeper Treads",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildstalker's Legguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildstalker's Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildstalker's Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Wildstalker's Greaves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Manaflare Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Manaflare Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Manaflare Mantle",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Manaflare Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Greaves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Legplates",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Epaulets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Treads",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Legguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Handguards",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Pauldrons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Justice Sabatons",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Pants of Conviction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gloves of Conviction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Mantle of Conviction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Treads of Conviction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Leggings of Conviction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Handguards of Conviction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Pauldrons of Conviction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Boots of Conviction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grimstitch Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grimstitch Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grimstitch Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Grimstitch Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritcaller Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritcaller Grips",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritcaller Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritcaller Treads",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritcaller Pants",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritcaller Gauntlets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritcaller Epaulets",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Spiritcaller Greaves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Demonheart Leggings",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Demonheart Gloves",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Demonheart Spaulders",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Demonheart Boots",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Legplates of Glory",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Gauntlets of Glory",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Shoulders of Glory",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Greaves of Glory",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Legguards of Glory",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Handguards of Glory",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Pauldrons of Glory",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sabatons of Glory",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Initiate's Signet of Ferocity",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Ferocious Watcher's Signet",
+      "after": "Initiate's Signet of Ferocity"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Initiate's Signet of Brilliance",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Brilliant Watcher's Signet",
+      "after": "Initiate's Signet of Brilliance"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Initiate's Signet of Resolve",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Vigilant Watcher's Signet",
+      "after": "Initiate's Signet of Resolve"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Initiate's Signet of Vigilance",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Stalwart Watcher's Signet",
+      "after": "Initiate's Signet of Vigilance"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Signet of Ferocity",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Ferocious Watcher's Signet",
+      "after": "Tracker's Signet of Ferocity"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Signet of Brilliance",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Brilliant Watcher's Signet",
+      "after": "Tracker's Signet of Brilliance"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Signet of Resolve",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Vigilant Watcher's Signet",
+      "after": "Tracker's Signet of Resolve"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Tracker's Signet of Vigilance",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Stalwart Watcher's Signet",
+      "after": "Tracker's Signet of Vigilance"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Watcher's Signet of Ferocity",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Ferocious Watcher's Signet",
+      "after": "Watcher's Signet of Ferocity"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Watcher's Signet of Brilliance",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Brilliant Watcher's Signet",
+      "after": "Watcher's Signet of Brilliance"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Watcher's Signet of Resolve",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Vigilant Watcher's Signet",
+      "after": "Watcher's Signet of Resolve"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Watcher's Signet of Vigilance",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Stalwart Watcher's Signet",
+      "after": "Watcher's Signet of Vigilance"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warden's Signet of Ferocity",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Ferocious Watcher's Signet",
+      "after": "Warden's Signet of Ferocity"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warden's Signet of Brilliance",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Brilliant Watcher's Signet",
+      "after": "Warden's Signet of Brilliance"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warden's Signet of Resolve",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Vigilant Watcher's Signet",
+      "after": "Warden's Signet of Resolve"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Warden's Signet of Vigilance",
+    "change": "changed",
+    "details": [
+     {
+      "field": "Name",
+      "before": "Stalwart Watcher's Signet",
+      "after": "Warden's Signet of Vigilance"
+     }
+    ]
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Invisible Dagger",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Earthshaker",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Choker of the Fire Lord",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Quick Strike Ring",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Heavy Dark Iron Ring",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Band of Sulfuras",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Cauterizing Band",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Ring of Spell Power",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Hammer of Bestial Fury",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Thunderfury, Blessed Blade of the Windseeker",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Sulfuras, Hand of Ragnaros",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Benediction",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Anathema",
+    "change": "added",
+    "details": []
+   },
+   {
+    "section": "Items",
+    "what": "item",
+    "name": "Rhok'delar, Longbow of the Ancient Keepers",
+    "change": "added",
+    "details": []
+   }
+  ]
+ }
+]
