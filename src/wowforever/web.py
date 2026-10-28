@@ -4,14 +4,14 @@ from collections import Counter
 from datetime import UTC, date, datetime, timedelta
 from urllib.parse import quote
 
-from flask import Flask, abort, jsonify, render_template, request, url_for
+from flask import Flask, Response, abort, jsonify, render_template, request, url_for
 
 from wowforever import gamediff, gamedata, gamelinks
 from wowforever.classnotes import CLASS_COLORS, CLASSES, class_for_slug, slug
 from wowforever.countdown import LAUNCH, PACIFIC, launch_banner, time_left
 from wowforever.guides import ADDONS_UPDATED, CATEGORIES, GENERAL_MACROS, MACROS, TRENDING
 from wowforever.posts import plain_text
-from wowforever.store import ClassUpdate, Store
+from wowforever.store import THUMBNAIL_TYPES, ClassUpdate, Store
 
 PAGE_SIZE = 20
 FEED_SIZE = 50
@@ -105,7 +105,15 @@ def create_app(store: Store) -> Flask:
                 "latest_patch": latest_patch[0] if latest_patch else None,
                 "known_issues": store.latest_known_issues(), "has_realms": bool(store.realms()),
                 "page_url": root + request.path, "site_root": root, "game_build": game["build"],
-                "classes": [(name, slug(name), CLASS_COLORS[name]) for name in CLASSES]}
+                "classes": [(name, slug(name), CLASS_COLORS[name]) for name in CLASSES],
+                "thumbs": store.thumbnail_files()}
+
+    @app.get("/thumbs/<int:post_id>.<ext>")
+    def thumbnail(post_id: int, ext: str):
+        found = store.thumbnail(post_id)
+        if not found or THUMBNAIL_TYPES[found[0]] != ext:
+            abort(404)
+        return Response(found[1], mimetype=found[0])
 
     def page_url(endpoint: str, page: int) -> str:
         # Path-based pages ("/page/2/") so the site also works as plain static files.
@@ -311,6 +319,11 @@ def create_app(store: Store) -> Flask:
             page_title="WoW Forever Macros for Every Class · WoW Forever Tracker",
             description="Ready-to-copy World of Warcraft: Forever macros for all nine classes.",
         )
+
+    @app.get("/privacy")
+    def privacy():
+        return render_template("privacy.html", page_title="Privacy · WoW Forever Tracker",
+                               description="WoW Forever Tracker has no cookies, analytics or trackers, and loads nothing from other sites.")
 
     def atom(title: str, page: str, entries: list[dict]):
         root = request.url_root.rstrip("/")

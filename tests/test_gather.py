@@ -482,3 +482,25 @@ def test_known_issues_failed_read_is_not_stored(tmp_path):
     ok = tracker_fetch([_raw(9, 777, 4, title="WoW Forever Known Issues", day=26)], [])
     gather.gather_blue_posts(store, ok, delay=0)
     assert [n.kind for n in store.notes()] == ["known"]
+
+
+def test_gather_thumbnails_copies_each_missing_image_and_skips_failures():
+    from wowforever.gather import gather_thumbnails
+    from wowforever.store import Store
+
+    from .test_store import make_post
+
+    store = Store(":memory:")
+    store.upsert([make_post(id=1, thumbnail="https://x/a.png"), make_post(id=2, thumbnail="https://x/b.png")])
+    asked = []
+
+    def fetch(url):
+        asked.append(url)
+        if "b.png" in url:
+            raise FetchError("down")
+        return "image/png", b"png"
+
+    assert gather_thumbnails(store, fetch) == 1
+    assert asked == ["https://x/a.png?imwidth=360", "https://x/b.png?imwidth=360"]
+    assert store.thumbnail_files() == {1: "png"} and store.missing_thumbnails() == [(2, "https://x/b.png")]
+    assert gather_thumbnails(store, lambda url: ("text/html", b"<p>")) == 0  # not an image: skipped

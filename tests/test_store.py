@@ -312,3 +312,24 @@ def test_unannounced_blue_posts_oldest_first(tmp_path):
     assert [p.id for p in store.unannounced_blue_posts()] == [2, 3, 1]
     store.mark_blue_announced([2, 3])
     assert [p.id for p in store.unannounced_blue_posts()] == [1]
+
+
+def test_thumbnails_are_copied_once_and_again_when_the_image_changes():
+    store = Store(":memory:")
+    store.upsert([make_post(id=1, thumbnail="https://x/a.png"), make_post(id=2)])
+    assert store.missing_thumbnails() == [(1, "https://x/a.png")]
+    store.save_thumbnail(1, "https://x/a.png", "image/jpeg", b"jpg")
+    assert store.missing_thumbnails() == [] and store.thumbnail_files() == {1: "jpg"}
+    assert store.thumbnail(1) == ("image/jpeg", b"jpg")
+    store.upsert([make_post(id=1, thumbnail="https://x/b.png")])
+    assert store.missing_thumbnails() == [(1, "https://x/b.png")]
+    assert store.thumbnail_files() == {} and store.thumbnail(1) is None  # the old image is never shown
+
+
+def test_only_image_types_are_saved_as_thumbnails():
+    import pytest
+
+    store = Store(":memory:")
+    store.upsert([make_post(id=1, thumbnail="https://x/a.png")])
+    with pytest.raises(ValueError):
+        store.save_thumbnail(1, "https://x/a.png", "text/html", b"<script>")

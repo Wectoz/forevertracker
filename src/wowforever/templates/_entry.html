@@ -4,8 +4,8 @@
     <svg viewBox="0 0 48 48"><path d="M12 9h22a5 5 0 0 1 5 5v22a4 4 0 0 1-4 4H15a4 4 0 0 1-4-4V13" fill="#e8f1ff" stroke="#0f2340" stroke-width="2"/><path d="M8 13a4 4 0 0 1 8 0v4H8z" fill="#c9dcf7" stroke="#0f2340" stroke-width="2"/><path d="M18 19h15M18 25h15M18 31h10" stroke="#2c5591" stroke-width="2.5" stroke-linecap="round"/></svg>
     <span>Patch notes</span>
   </div>
-  {% elif post.thumbnail %}
-  <img class="thumb" src="{{ post.thumbnail }}?imwidth=360" alt="" width="180" height="101" loading="lazy">
+  {% elif post.id in thumbs %}
+  <img class="thumb" src="{{ url_for('thumbnail', post_id=post.id, ext=thumbs[post.id]) }}" alt="" width="180" height="101" loading="lazy">
   {% endif %}
   <div class="entry-body">
     <p class="meta">

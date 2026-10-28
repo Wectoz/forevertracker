@@ -138,6 +138,7 @@ def main(argv: list[str] | None = None) -> int:
         status = 1  # the forum is a separate site, so still gather from it below
     else:
         print(f"Added {added}, updated {edited} WoW Forever posts.")
+    print(f"Copied {gather.gather_thumbnails(store)} post images.")  # skips any image that fails, never raises
     try:
         saved = gather.gather_class_notes(store, gather.fetch_json)
     except (FetchError, ParseError) as err:

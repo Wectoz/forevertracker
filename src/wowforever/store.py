@@ -90,7 +90,15 @@ CREATE TABLE IF NOT EXISTS class_changes (
     html TEXT NOT NULL,
     PRIMARY KEY (post_id, class)
 );
+CREATE TABLE IF NOT EXISTS thumbnails (
+    post_id INTEGER PRIMARY KEY,
+    source TEXT NOT NULL,
+    type TEXT NOT NULL,
+    data BLOB NOT NULL
+);
 """
+# A news card's image is copied into the store and served from the site, so visitors never load it from Blizzard.
+THUMBNAIL_TYPES = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif"}
 _COLUMNS = "id, title, url, summary, kind, version, published, updated, edited_at, thumbnail"
 # Columns added after the tables first shipped; older databases get them on open.
 _ADDED_COLUMNS = {
@@ -226,6 +234,39 @@ class Store:
         with self._lock:
             rows = self._conn.execute(sql, (*params, limit, offset)).fetchall()
         return [_row_to_post(r) for r in rows]
+
+    def missing_thumbnails(self) -> list[tuple[int, str]]:
+        """(post id, image URL) for every post whose current image is not copied yet."""
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT p.id, p.thumbnail FROM posts p LEFT JOIN thumbnails t ON t.post_id = p.id"
+                " WHERE p.thumbnail IS NOT NULL AND (t.source IS NULL OR t.source != p.thumbnail)"
+            ).fetchall()
+        return [(row[0], row[1]) for row in rows]
+
+    def save_thumbnail(self, post_id: int, source: str, mimetype: str, data: bytes) -> None:
+        if mimetype not in THUMBNAIL_TYPES:
+            raise ValueError(f"not a thumbnail image type: {mimetype}")
+        with self._lock, self._conn:
+            self._conn.execute("INSERT OR REPLACE INTO thumbnails (post_id, source, type, data) VALUES (?, ?, ?, ?)",
+                               (post_id, source, mimetype, data))
+
+    def thumbnail_files(self) -> dict[int, str]:
+        """Post id → file extension, for posts whose current image is copied."""
+        with self._lock:
+            rows = self._conn.execute(
+                "SELECT t.post_id, t.type FROM thumbnails t JOIN posts p ON p.id = t.post_id AND p.thumbnail = t.source"
+            ).fetchall()
+        return {row[0]: THUMBNAIL_TYPES[row[1]] for row in rows}
+
+    def thumbnail(self, post_id: int) -> tuple[str, bytes] | None:
+        """The copied image's type and bytes, if it is the post's current image."""
+        with self._lock:
+            row = self._conn.execute(
+                "SELECT t.type, t.data FROM thumbnails t JOIN posts p ON p.id = t.post_id AND p.thumbnail = t.source"
+                " WHERE t.post_id = ?", (post_id,)
+            ).fetchone()
+        return (row[0], row[1]) if row else None
 
     def list_posts(self, kind: str | None = None, limit: int = 20, offset: int = 0) -> list[StoredPost]:
         if kind is None:

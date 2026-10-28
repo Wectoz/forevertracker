@@ -108,3 +108,14 @@ def test_build_writes_realms_page_only_with_realm_data(tmp_path):
     store.save_realms("us", [Realm("us", "Alpha", "PvP", True, "High")])
     build_site(store, tmp_path / "full", base_path="/wow-forever-news")
     assert (tmp_path / "full/realms/index.html").is_file()
+
+
+def test_build_copies_news_images_into_the_site(tmp_path):
+    store = filled_store()
+    store.upsert([make_post(id=300, title="Forever image news", published=datetime(2026, 10, 30, tzinfo=UTC),
+                            thumbnail="https://x/a.png")])
+    store.save_thumbnail(300, "https://x/a.png", "image/png", b"\x89PNG bytes")
+    build_site(store, tmp_path, base_path="/wow-forever-news")
+    assert 'src="/wow-forever-news/thumbs/300.png"' in (tmp_path / "index.html").read_text()
+    assert (tmp_path / "thumbs/300.png").read_bytes() == b"\x89PNG bytes"
+    assert (tmp_path / "privacy/index.html").is_file()
