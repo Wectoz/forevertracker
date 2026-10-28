@@ -2,7 +2,7 @@
 {% from "_icon.html" import icon %}
 {% block content %}
 <p class="crumb"><a href="{{ url_for('professions') }}">Professions</a> ›</p>
-<h1>{{ name }}</h1>
+<h1 class="with-icon">{{ icon(profession_icon, 40) }}{{ name }}</h1>
 {# by the skill at which a recipe turns yellow, the training ranks' ranges #}
 {% set brackets = [("apprentice", "Apprentice", 0, 75), ("journeyman", "Journeyman", 75, 150),
                    ("expert", "Expert", 150, 225), ("artisan", "Artisan", 225, 10000)] %}

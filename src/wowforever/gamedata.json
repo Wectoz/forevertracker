@@ -101929,6 +101929,20 @@
    }
   ]
  },
+ "profession_icons": {
+  "First Aid": 135966,
+  "Blacksmithing": 136241,
+  "Leatherworking": 136247,
+  "Alchemy": 136240,
+  "Herbalism": 136246,
+  "Cooking": 133971,
+  "Mining": 136248,
+  "Tailoring": 136249,
+  "Engineering": 136243,
+  "Enchanting": 136244,
+  "Fishing": 136245,
+  "Skinning": 134366
+ },
  "items": [
   {
    "id": 240024,

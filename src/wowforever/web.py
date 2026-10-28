@@ -236,7 +236,8 @@ def create_app(store: Store) -> Flask:
     @app.get("/professions")
     def professions():
         return render_template(
-            "professions.html", professions=game["professions"],
+            "professions.html", professions=game["professions"], icons=game["profession_icons"],
+            secondary_professions=gamedata.SECONDARY_PROFESSIONS,
             page_title="WoW Forever Professions · WoW Forever Tracker",
             description="Every World of Warcraft: Forever profession recipe, where it comes from and its skill-ups.",
         )
@@ -248,6 +249,7 @@ def create_app(store: Store) -> Flask:
             abort(404)
         return render_template(
             "profession.html", name=found, recipes=game["professions"][found],
+            profession_icon=game["profession_icons"].get(found),
             page_title=f"WoW Forever {found} Recipes · WoW Forever Tracker",
             description=f"All {len(game['professions'][found])} World of Warcraft: Forever {found} recipes, "
                         "where they come from and their skill-ups.",

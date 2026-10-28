@@ -292,7 +292,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .class-tabs a[aria-current="page"] { background: #221a13; border-color: currentColor; }
 .class-tabs img { border-radius: 2px; }
 .class-tabs .all-classes { padding-left: 10px; color: var(--heading); }
-.macro-class { display: grid; gap: 8px; }
+.macro-class { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 10px 14px; align-items: start; }
 .macro-class[hidden] { display: none; }
 .macro { padding: 10px 12px; }
 .macro-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
@@ -396,11 +396,12 @@ table.realms thead th { color: var(--heading); }
 .talent-tree { padding: 6px 8px 14px; border: 1px solid var(--stone-edge); border-radius: 6px; background: var(--stone-raised); }
 .talent-tree .tree { display: flex; justify-content: space-between; margin: 4px 0 10px; font-size: 1rem; }
 .tree-points { color: var(--gold-text); font-variant-numeric: tabular-nums; }
-.talent-grid { display: grid; grid-template-columns: repeat(4, 46px); grid-auto-rows: 46px; grid-template-rows: repeat(7, 46px); gap: 10px; }
-.talent { position: relative; z-index: 1; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 4px; background: none; color: inherit; font: inherit; cursor: pointer; }
+.talent-calc { --t: 64px; }  /* talent icon size; the icons are exported at 56 px, so this upscales them a little */
+.talent-grid { display: grid; grid-template-columns: repeat(4, var(--t)); grid-auto-rows: var(--t); grid-template-rows: repeat(7, var(--t)); gap: 18px; }
+.talent { position: relative; z-index: 1; width: var(--t); height: var(--t); padding: 0; border: 0; border-radius: 4px; background: none; color: inherit; font: inherit; cursor: pointer; }
 .talent .tip { pointer-events: none; }  /* a click on it would learn a rank */
 .talent:hover, .talent:focus { z-index: 2; }  /* its tooltip above the other talents */
-.talent .icon { width: 46px; height: 46px; border: 2px solid #4d4d4d; border-radius: 4px; filter: grayscale(1) brightness(.55); }
+.talent .icon { width: var(--t); height: var(--t); border: 2px solid #4d4d4d; border-radius: 4px; filter: grayscale(1) brightness(.55); }
 .talent.open .icon, .talent.learned .icon { filter: none; }
 .talent.open .icon { border-color: #2fa82f; }
 .talent.maxed .icon { border-color: var(--bronze-light); }
@@ -410,11 +411,15 @@ table.realms thead th { color: var(--heading); }
 .talent.open .talent-rank { color: #4fd34f; }
 .talent.maxed .talent-rank { color: var(--gold-text); }
 .talent-arrow { z-index: 0; background: #4d4d4d; }
-.talent-arrow.down { justify-self: center; width: 4px; margin: 23px 0; }
-.talent-arrow.side { align-self: center; height: 4px; margin: 0 23px; }
+.talent-arrow.down { justify-self: center; width: 4px; margin: calc(var(--t) / 2) 0; }
+.talent-arrow.side { align-self: center; height: 4px; margin: 0 calc(var(--t) / 2); }
 .talent-arrow.met { background: var(--bronze-light); }
-.profession-list { padding-left: 20px; }
-.profession-list li { margin: 6px 0; }
+.profession-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: 10px; margin: 0 0 18px; padding: 0; list-style: none; }
+.profession-card { display: flex; gap: 12px; align-items: center; padding: 10px 12px; background: #15110d; border: 1px solid #33261a;
+  border-radius: 4px; text-decoration: none; transition: border-color .15s ease; }
+.profession-card:hover { border-color: var(--bronze); }
+.profession-card .icon { border: 1px solid var(--stone-edge); border-radius: 4px; }
+.profession-name { display: block; font-family: Cinzel, Georgia, serif; font-weight: 700; font-size: 1.05rem; color: var(--heading); }
 .crumb { margin: 16px 0 0; font-size: .85rem; }
 .skill-yellow { color: #ffd200; }
 .skill-grey { color: #9d9d9d; }
@@ -481,3 +486,11 @@ table.realms thead th { color: var(--heading); }
 .results > .entry { margin: 0; padding: 10px 14px 8px; }
 .results > .entry h2 { margin: 4px 0; font-size: 1.02rem; }
 .results > .entry .summary { margin: 0; font-size: .9rem; }
+
+/* Game data changes: each class, race, profession and Items as a card, side by side; long lists scroll inside. */
+.data-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 12px; align-items: start; }
+.data-grid .data-section { margin: 0; padding: 8px 12px; background: #15110d; border: 1px solid #33261a; border-radius: 4px; }
+.data-grid .data-changes { max-height: 420px; overflow-y: auto; margin: 6px 0 2px; padding-left: 16px; font-size: .9rem; }
+.data-grid .data-changes li { margin: 3px 0; }
+.data-grid .change-detail { font-size: .82rem; }
+@media (max-width: 480px) { .talent-calc { --t: 52px; } .talent-grid { gap: 12px; } }

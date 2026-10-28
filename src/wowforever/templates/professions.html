@@ -1,12 +1,18 @@
 {% extends "base.html" %}
+{% from "_icon.html" import icon %}
 {% block content %}
 <h1>WoW Forever professions</h1>
 <p class="guide-intro">Every recipe in World of Warcraft: Forever, where it comes from and the skill at which it
   turns yellow and grey.</p>
+{% for heading, secondary in [("Primary professions", false), ("Secondary professions", true)] %}
+<h2>{{ heading }}</h2>
 <ul class="profession-list">
-  {% for name, recipes in professions.items() %}
-  <li><a href="{{ url_for('profession', name=name | slugify) }}">{{ name }}</a> <span class="meta">{{ recipes | length }} recipe{{ "s" if recipes | length != 1 }}</span></li>
+  {% for name, recipes in professions.items() if (name in secondary_professions) == secondary %}
+  <li><a class="profession-card" href="{{ url_for('profession', name=name | slugify) }}">{{ icon(icons.get(name), 48) }}
+    <span><span class="profession-name">{{ name }}</span>
+      <span class="meta">{{ recipes | length }} recipe{{ "s" if recipes | length != 1 }} · skill {{ recipes | map(attribute="grey") | max }}</span></span></a></li>
   {% endfor %}
 </ul>
+{% endfor %}
 {% include "_gamedata_note.html" %}
 {% endblock %}
