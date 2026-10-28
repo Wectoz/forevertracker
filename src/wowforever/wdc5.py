@@ -44,6 +44,35 @@ def _fit(v: int, field: dict) -> int:
     return v - (1 << field["size"]) if not field["unsigned"] and v >> (field["size"] - 1) else v
 
 
+def decode_row(b: bytes, p: int, fields: list[dict], rid: int, hotfix: bool = False) -> tuple[dict, int]:
+    """One record whose fields are packed in order with strings inline (an offset-map record or a hotfix), and the
+    offset just after it. A hotfix also carries the row's relation (e.g. SpellEffect's SpellID) at the end."""
+    row = {}
+    for f in fields:
+        if "noninline" in f["ann"]:
+            continue
+        vals = []
+        for _ in range(f["count"]):
+            if f["type"] in ("string", "locstring"):
+                end = b.index(b"\0", p)
+                vals.append(b[p:end].decode("utf-8", "replace"))
+                p = end + 1
+            elif f["type"] == "float":
+                vals.append(struct.unpack_from("<f", b, p)[0])
+                p += 4
+            else:
+                n = f["size"] // 8
+                vals.append(int.from_bytes(b[p:p + n], "little", signed=not f["unsigned"]))
+                p += n
+        row[f["name"]] = vals if f["count"] > 1 else vals[0]
+    relation = next((f for f in fields if "relation" in f["ann"] and "noninline" in f["ann"]), None)
+    if hotfix and relation:
+        row[relation["name"]] = struct.unpack_from("<I", b, p)[0]
+        p += 4
+    row["ID"] = rid
+    return row, p
+
+
 def _read_sparse(b: bytes, sections, fields) -> dict[int, dict]:
     """Offset-map tables: variable-size records, fields packed in order, strings inline."""
     out = {}
@@ -57,26 +86,7 @@ def _read_sparse(b: bytes, sections, fields) -> dict[int, dict]:
         for rid, (o, size) in zip(ids, entries):
             if not size or (tact_key and not any(b[o:o + size])):
                 continue
-            row, p = {}, o
-            for f in fields:
-                if "noninline" in f["ann"]:
-                    continue
-                vals = []
-                for _ in range(f["count"]):
-                    if f["type"] in ("string", "locstring"):
-                        end = b.index(b"\0", p)
-                        vals.append(b[p:end].decode("utf-8", "replace"))
-                        p = end + 1
-                    elif f["type"] == "float":
-                        vals.append(struct.unpack_from("<f", b, p)[0])
-                        p += 4
-                    else:
-                        n = f["size"] // 8
-                        vals.append(int.from_bytes(b[p:p + n], "little", signed=not f["unsigned"]))
-                        p += n
-                row[f["name"]] = vals if f["count"] > 1 else vals[0]
-            row["ID"] = rid
-            out[rid] = row
+            out[rid] = decode_row(b, o, fields, rid)[0]
         for new_id, src in copies:
             if src in out:
                 out[new_id] = dict(out[src], ID=new_id)
@@ -212,4 +222,40 @@ def read(path: Path, table: str, defs: Path) -> dict[int, dict]:
         if src in out:
             out[new_id] = dict(out[src], ID=new_id)
     return out
+
+
+VALID, REMOVED = 1, 2  # hotfix status; 3 (replaced by a later push) and 4 (not public) are skipped
+
+
+def table_hashes(path: Path) -> tuple[int, int]:
+    """A .db2 file's table hash and layout hash, which hotfixes are matched by."""
+    return struct.unpack_from("<2I", Path(path).read_bytes(), 152)
+
+
+def read_hotfixes(path: Path, tables: dict[int, tuple[str, list[dict]]]) -> tuple[int, dict[str, dict[int, dict | None]]]:
+    """The client's hotfix cache (DBCache.bin): its build, and for each table in `tables` (table hash: name, fields)
+    the hotfixed rows by ID, None for a removed row. The latest push wins."""
+    b = Path(path).read_bytes()
+    magic, version, build = struct.unpack_from("<4sII", b, 0)
+    if magic != b"XFTH" or version != 9:
+        raise ValueError(f"{path}: not a version 9 hotfix cache")
+    found: dict[tuple[str, int], tuple[int, dict | None]] = {}
+    p = 12 + 32  # header and its 32-byte hash
+    while p < len(b):
+        _magic, _region, push, _unique, table_hash, rid, size, status = struct.unpack_from("<4siiIIIIB", b, p)
+        p += 32
+        if table_hash in tables and status in (VALID, REMOVED):
+            name, fields = tables[table_hash]
+            row = None
+            if status == VALID:
+                row, end = decode_row(b, p, fields, rid, hotfix=True)
+                if end != p + size:
+                    raise ValueError(f"{name} hotfix {rid}: {end - p} bytes read, {size} stored; definitions out of date?")
+            if found.get((name, rid), (-1, None))[0] <= push:
+                found[name, rid] = (push, row)
+        p += size
+    out: dict[str, dict[int, dict | None]] = {}
+    for (name, rid), (_push, row) in found.items():
+        out.setdefault(name, {})[rid] = row
+    return build, out
 

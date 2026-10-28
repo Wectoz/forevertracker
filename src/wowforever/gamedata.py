@@ -93,6 +93,23 @@ def read_tables(db2: Path, defs: Path) -> dict[str, dict[int, dict]]:
     return {table: wdc5.read(db2 / f"{name}.db2", table, defs) for name, table in TABLES.items()}
 
 
+def apply_hotfixes(t: dict[str, dict[int, dict]], db2: Path, defs: Path, cache: Path) -> int:
+    """Patch the tables with the client's hotfix cache, where Blizzard ships most changes between client patches
+    (and the text of most talent ranks); returns the build the cache is from."""
+    tables = {}
+    for name, table in TABLES.items():
+        table_hash, layout_hash = wdc5.table_hashes(db2 / f"{name}.db2")
+        tables[table_hash] = (table, wdc5.parse_dbd(defs, table, layout_hash))
+    build, fixes = wdc5.read_hotfixes(cache, tables)
+    for table, rows in fixes.items():
+        for rid, row in rows.items():
+            if row is None:
+                t[table].pop(rid, None)
+            else:
+                t[table][rid] = row
+    return build
+
+
 def _num(x: float) -> str:
     x = round(x, 1)
     return str(int(x)) if x == int(x) else str(x)
@@ -107,7 +124,7 @@ def _duration(ms: float) -> str:
 
 _TOKEN = re.compile(r"\$(\d*)([sSmMwWdDtToOaAxXnNhHuUiIvVqQbBeErR])(\d?)")
 # attack power, spell power, spirit and other character stats: the value without them
-_STAT = re.compile(r"\$(?:rap|ap|sp[a-z]*|bh|bc|pl|mws|mwb)\b", re.IGNORECASE)
+_STAT = re.compile(r"\$(?:rap|apm|ap|sp[a-z]*|bh|bc|pl|mws|mwb)\b", re.IGNORECASE)
 _CONDITION = re.compile(r"\$\?[^\[]*?((?:\[[^\[\]]*\])+)")
 
 
@@ -199,6 +216,7 @@ class Describer:
 
         text = re.sub(r"\$\{([^{}]*)\}(?:\.\d)?", formula, text)
         text = " ".join(_TOKEN.sub(lambda t: token(t, False), text).split())
+        text = re.sub(r"\b(\d+(?:\.\d+)?) to \1\b", r"\1", text)  # a damage range that only varies with attack power
         return text if text and "$" not in text else None
 
 

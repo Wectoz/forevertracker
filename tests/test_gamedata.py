@@ -1,3 +1,4 @@
+import struct
 from pathlib import Path
 
 import pytest
@@ -275,3 +276,29 @@ def test_announced_racial_changes_apply_to_the_client_racials():
     ruthless = next(r for r in races["Human"] if r["name"] == "Ruthless")
     assert "by 1%" in ruthless["description"] and ruthless["change"]
     assert "change" not in data["races"]["Human"][0]  # the client data itself is left as read
+
+
+def test_hotfix_cache_rows_latest_push_wins_and_removals(tmp_path):
+    from wowforever import wdc5
+
+    fields = [{"name": "Name_lang", "ann": set(), "type": "locstring", "unsigned": False, "size": 32, "count": 1},
+              {"name": "Level", "ann": set(), "type": "int", "unsigned": False, "size": 16, "count": 1},
+              {"name": "SpellID", "ann": {"noninline", "relation"}, "type": "int", "unsigned": True, "size": 32, "count": 1}]
+    row = lambda name, level, spell: name.encode() + b"\0" + struct.pack("<hI", level, spell)
+    entry = lambda push, table, rid, status, data=b"": struct.pack(
+        "<4siiIIIIB3x", b"XFTH", 1, push, 0, table, rid, len(data), status) + data
+    cache = tmp_path / "DBCache.bin"
+    cache.write_bytes(struct.pack("<4sII", b"XFTH", 9, 70634) + bytes(32)
+                      + entry(10, 0xAB, 1, 1, row("Fireball", 5, 133)) + entry(5, 0xAB, 1, 1, row("Old", 1, 1))
+                      + entry(10, 0xAB, 2, 2) + entry(10, 0xAB, 3, 3) + entry(10, 0xCD, 1, 1, b"other table"))
+    assert wdc5.read_hotfixes(cache, {0xAB: ("T", fields)}) == (
+        70634, {"T": {1: {"Name_lang": "Fireball", "Level": 5, "SpellID": 133, "ID": 1}, 2: None}})
+    cache.write_bytes(struct.pack("<4sII", b"XFTH", 9, 70634) + bytes(32) + entry(1, 0xAB, 1, 1, row("X", 1, 1) + b"??"))
+    with pytest.raises(ValueError, match="bytes read"):
+        wdc5.read_hotfixes(cache, {0xAB: ("T", fields)})
+
+
+def test_attack_power_only_ranges_collapse():
+    t = tables(spell(6572, "Revenge", "Counterattack for ${$m1+($<APRatio>*$apm)} to ${$M1+($<APRatio>*$apm)} damage.",
+                     base=21.0))
+    assert gamedata.Describer(t)(6572) == "Counterattack for 21 damage."

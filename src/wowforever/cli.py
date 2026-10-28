@@ -36,6 +36,7 @@ def main(argv: list[str] | None = None) -> int:
     gamedata = commands.add_parser("gamedata", help="rebuild gamedata.json from tables extracted from the game client")
     gamedata.add_argument("db2", type=Path, help="folder with the extracted .db2 files")
     gamedata.add_argument("defs", type=Path, help="WoWDBDefs definitions folder")
+    gamedata.add_argument("--hotfixes", type=Path, help="the client's hotfix cache to apply, _forever_/Cache/ADB/enUS/DBCache.bin")
     gamedata.add_argument("--record", action="store_true",
                           help="record the changes on the Game data changes page even if the client build is the same")
     icons = commands.add_parser("icons", help="convert the icons extracted from the game client for gamedata.json")
@@ -51,7 +52,11 @@ def main(argv: list[str] | None = None) -> int:
 
         from wowforever import gamediff
 
-        data = gd.build(gd.read_tables(args.db2, args.defs), gd.client_build(args.db2))
+        tables, build = gd.read_tables(args.db2, args.defs), gd.client_build(args.db2)
+        if args.hotfixes:
+            # the tables keep the build they last changed in; the cache names the client build it came with
+            build = build.rsplit(".", 1)[0] + f".{gd.apply_hotfixes(tables, args.db2, args.defs, args.hotfixes)}"
+        data = gd.build(tables, build)
         old = gd.load() if gd.DATA_FILE.exists() else None
         # a new build is a game update; the same build again is usually a change to this code, not to the game
         if old and (old["build"] != data["build"] or args.record):

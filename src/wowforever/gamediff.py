@@ -53,8 +53,8 @@ def _recipe(a: dict, b: dict) -> list:
     return [_field("Turns yellow at", a["yellow"], b["yellow"]), _field("Turns grey at", a["grey"], b["grey"]),
             _field("Learned from", a["source"], b["source"]), _field("Skill to learn", a["skill"], b["skill"]),
             _field("Reagents", reagents(a), reagents(b)), _field("Makes", a["makes"], b["makes"]),
-            _field("Item", item(a).get("lines"), item(b).get("lines")),
-            _field("Item effects", item(a).get("effects"), item(b).get("effects")),
+            _field("Item", item(a).get("lines") or [], item(b).get("lines") or []),
+            _field("Item effects", item(a).get("effects") or [], item(b).get("effects") or []),
             _field("Description", a["description"], b["description"])]
 
 
