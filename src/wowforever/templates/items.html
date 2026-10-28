@@ -22,6 +22,11 @@
 <p class="rt-status it-status" role="status" aria-live="polite">Loading items…</p>
 <p class="game-note">Point at or tap an item for its tooltip. Where an item drops is kept on Blizzard's servers, not in the
   game client, so it isn't listed.</p>
+<nav class="pager it-pager" aria-label="Item pages" hidden>
+  <button type="button" class="tc-reset it-prev">← Previous</button>
+  <span class="it-page"></span>
+  <button type="button" class="tc-reset it-next">Next →</button>
+</nav>
 <div class="table-wrap">
 <table class="game-table recipes items">
   <thead><tr><th scope="col">Item</th><th scope="col">Slot</th><th scope="col">Type</th>
@@ -29,7 +34,11 @@
   <tbody></tbody>
 </table>
 </div>
-<p><button type="button" class="tc-reset it-more" hidden>Show more</button></p>
+<nav class="pager it-pager" aria-label="Item pages" hidden>
+  <button type="button" class="tc-reset it-prev">← Previous</button>
+  <span class="it-page"></span>
+  <button type="button" class="tc-reset it-next">Next →</button>
+</nav>
 {% include "_gamedata_note.html" %}
 <noscript><p class="note">The item list needs JavaScript.</p></noscript>
 {% endblock %}

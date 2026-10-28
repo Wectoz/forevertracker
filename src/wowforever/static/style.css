@@ -21,7 +21,7 @@ body {
   font: 16px/1.55 Inter, system-ui, sans-serif;
 }
 
-.wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
 
 a { color: var(--bronze-light); }
 a:focus-visible { outline: 2px solid var(--gold-text); outline-offset: 2px; border-radius: 2px; }
@@ -83,6 +83,10 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 }
 .digits b { display: block; font-family: Cinzel, Georgia, serif; font-weight: 800; font-size: 1.9rem; line-height: 1.1; color: var(--gold-text); font-variant-numeric: tabular-nums; }
 .digits small { display: block; font-size: .65rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* News and blue posts: cards side by side on wide screens. */
+.feed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr)); gap: 14px 18px; margin: 14px 0; }
+.feed-grid > .entry { margin: 0; }
 
 .entry {
   position: relative;
@@ -203,7 +207,6 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 
 /* "New since your last visit" and "your class" highlights. */
 .new-tag { margin-left: 8px; padding: 1px 6px; border-radius: 2px; background: #2f7a3e; color: #f2fff4; font-weight: 700; }  /* 5:1 contrast */
-.entry.is-new { border-color: #3f8f4f; }
 .my-class-tag { display: inline-block; margin-left: 14px; font-weight: 700; font-size: .9rem; text-decoration: none; }
 .my-class-tag:hover { text-decoration: underline; }
 .entry.has-my-class { box-shadow: inset 3px 0 0 var(--my-class); }
@@ -379,9 +382,10 @@ table.realms thead th { color: var(--heading); }
 .tip .next { color: var(--muted); }
 
 /* Names in patch notes and blue posts with an in-game tooltip (gamelinks.js). */
-.gl { border-bottom: 1px dotted var(--bronze-mid); cursor: help; }
+.gl { border-bottom: 1px dotted var(--bronze-mid); cursor: help; white-space: nowrap; }  /* one line, so its tooltip sits under it */
 .gl.has-tip:hover, .gl.has-tip:focus-visible { color: var(--gold-text); }
-.gl .tip { font-style: normal; font-size: .9rem; line-height: 1.4; color: var(--text); }
+.gl .tip { font-style: normal; font-size: .9rem; line-height: 1.4; color: var(--text); white-space: normal;
+  pointer-events: none; }  /* gone as soon as the pointer leaves the name, so it never covers the next lines */
 
 /* Talent calculator: the class's three trees side by side. */
 .talent-summary { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 12px 0; }
@@ -442,3 +446,23 @@ table.realms thead th { color: var(--heading); }
 @media (max-width: 600px) {
   .items th:nth-child(3), .items td:nth-child(3), .items th:nth-child(6), .items td:nth-child(6) { display: none; }
 }
+
+.it-pager { display: flex; gap: 14px; align-items: center; justify-content: center; margin: 12px 0; color: var(--muted); }
+.it-pager button:disabled { opacity: .4; cursor: default; }
+
+/* Wide screens: a page's main column with a sidebar beside it, as on Wowhead. */
+.with-sidebar { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 24px; align-items: start; }
+.sidebar { position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; margin-top: 14px; padding: 12px 14px;
+  background: #15110d; border: 1px solid #33261a; border-radius: 4px; font-size: .88rem; }
+.sidebar h2 { margin: 0 0 8px; font-size: 1rem; }
+.sidebar ul { margin: 0; padding: 0; list-style: none; }
+.sidebar li { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px solid #221a13; }
+.sidebar li.class-dim a { color: var(--muted); }
+.sidebar time { color: var(--muted); white-space: nowrap; }
+.notes { max-width: 920px; }
+@media (max-width: 960px) {
+  .with-sidebar { grid-template-columns: minmax(0, 1fr); }
+  .sidebar { display: none; }  /* the "changes since" picker does the same job on small screens */
+}
+.items td { padding: 3px 8px; vertical-align: middle; }  /* compact rows, as in an item database */
+.items .icon { width: 22px; height: 22px; }

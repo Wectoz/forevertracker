@@ -1,12 +1,13 @@
-// Items page: search and filter every item, each with its tooltip. The filters are kept in the address, to share.
+// Items page: search and filter every item, each with its tooltip, a page at a time. The filters are kept in the
+// address, to share.
 (() => {
   const form = document.querySelector(".item-tools");
   if (!form) return;
   const body = document.querySelector(".items tbody");
   const status = document.querySelector(".it-status");
-  const more = document.querySelector(".it-more");
+  const pagers = [...document.querySelectorAll(".it-pager")];  // above and below the table
   const fields = [...form.elements].filter((field) => field.name);
-  const PAGE = 100;
+  const PAGE = 50;
   const SORTS = {
     level: (a, b) => b.level - a.level,
     required: (a, b) => b.required - a.required || b.level - a.level,
@@ -14,7 +15,7 @@
   };
   let items = [];
   let matches = [];
-  let shown = 0;
+  let page = 0;
 
   const cell = (text, className) => {
     const td = document.createElement("td");
@@ -45,10 +46,24 @@
     return tr;
   };
 
-  const showMore = () => {
-    body.append(...matches.slice(shown, shown + PAGE).map(row));
-    shown = Math.min(shown + PAGE, matches.length);
-    more.hidden = shown >= matches.length;
+  const show = (number) => {
+    const pages = Math.max(1, Math.ceil(matches.length / PAGE));
+    page = Math.min(Math.max(number, 0), pages - 1);
+    body.replaceChildren(...matches.slice(page * PAGE, (page + 1) * PAGE).map(row));
+    for (const pager of pagers) {
+      pager.hidden = pages === 1;
+      pager.querySelector(".it-page").textContent = `Page ${page + 1} of ${pages}`;
+      pager.querySelector(".it-prev").disabled = page === 0;
+      pager.querySelector(".it-next").disabled = page === pages - 1;
+    }
+    const first = page * PAGE + 1;
+    status.textContent = matches.length
+      ? `${matches.length} item${matches.length === 1 ? "" : "s"}${pages > 1 ? `, showing ${first}–${first + body.children.length - 1}` : ""}.`
+      : "No items match.";
+  };
+  const turn = (step) => {
+    show(page + step);
+    document.querySelector(".items").scrollIntoView({ block: "start" });
   };
 
   const update = () => {
@@ -61,10 +76,7 @@
       && (!value.quality || item.quality >= Number(value.quality))
       && (!level || item.required <= level)
       && (!value.crafted || item.crafted === value.crafted)).sort(SORTS[value.sort] || SORTS.level);
-    body.replaceChildren();
-    shown = 0;
-    showMore();
-    status.textContent = matches.length ? `${matches.length} item${matches.length === 1 ? "" : "s"}.` : "No items match.";
+    show(0);
     const params = new URLSearchParams(Object.entries(value).filter(([key, v]) => v && !(key === "sort" && v === "level")));
     history.replaceState(null, "", params.size ? `?${params}` : location.pathname);
   };
@@ -75,6 +87,9 @@
     items = data;
     update();
     for (const field of fields) field.addEventListener("input", update);
-    more.addEventListener("click", showMore);
+    for (const pager of pagers) {
+      pager.querySelector(".it-prev").addEventListener("click", () => turn(-1));
+      pager.querySelector(".it-next").addEventListener("click", () => turn(1));
+    }
   }).catch(() => { status.textContent = "The item list could not be loaded. Try reloading the page."; });
 })();

@@ -20,6 +20,5 @@
     badge.className = "new-tag";
     badge.textContent = "New";
     time.closest(".meta").append(badge);
-    time.closest(".entry").classList.add("is-new");
   }
 })();
