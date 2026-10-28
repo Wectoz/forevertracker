@@ -69,6 +69,13 @@ def tooltips(game: dict) -> dict[str, dict]:
                     "name": item["name"], "icon": recipe["icon"], "owner": None, "quality": item["quality"],
                     "kind": item["slot"] or "Item", "lines": item["lines"], "effects": item["effects"],
                     "desc": item["description"]}
+    for item in game["items"]:
+        # one-word names ("Bracers", "Gloves") are too likely to be plain words
+        if item["quality"] >= 2 and " " in item["name"] and _key("item", item["name"]) not in out:
+            out[_key("item", item["name"])] = {
+                "name": item["name"], "icon": item["icon"], "owner": None, "quality": item["quality"],
+                "kind": f"Item level {item['level']}", "lines": item["lines"], "effects": item["effects"],
+                "desc": item["description"]}
     return out
 
 

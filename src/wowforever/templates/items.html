@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block head %}<link rel="preload" href="{{ url_for('items_json') }}" as="fetch" crossorigin>{% endblock %}
+{% block content %}
+<h1>Items</h1>
+<p>All {{ count }} weapons, armor pieces and bags in the WoW Forever game client, common quality and up.</p>
+<form class="recipe-tools item-tools" onsubmit="return false" data-items="{{ url_for('items_json') }}"
+      data-icons="{{ url_for('static', filename='icons/') }}" data-professions="{{ url_for('professions') }}/">
+  <label>Search <input type="search" name="q" class="rt-search" placeholder="Item name" autocomplete="off"></label>
+  <label>Slot <select name="slot"><option value="">Any</option>
+    {% for slot in slots %}<option>{{ slot }}</option>{% endfor %}</select></label>
+  <label>Type <select name="type"><option value="">Any</option>
+    {% for type in types %}<option>{{ type }}</option>{% endfor %}</select></label>
+  <label>Quality <select name="quality"><option value="">Any</option>
+    {% for value, label in [(1, "Common"), (2, "Uncommon"), (3, "Rare"), (4, "Epic"), (5, "Legendary")] %}
+    <option value="{{ value }}" class="q{{ value }}">{{ label }}+</option>{% endfor %}</select></label>
+  <label>Usable at level <input type="number" name="level" min="1" max="60" inputmode="numeric" placeholder="e.g. 40"></label>
+  <label>Crafted by <select name="crafted"><option value="">Anyone</option>
+    {% for profession in professions %}<option>{{ profession }}</option>{% endfor %}</select></label>
+  <label>Sort by <select name="sort"><option value="level">Item level</option><option value="required">Required level</option>
+    <option value="name">Name</option></select></label>
+</form>
+<p class="rt-status it-status" role="status" aria-live="polite">Loading items…</p>
+<p class="game-note">Point at or tap an item for its tooltip. Where an item drops is kept on Blizzard's servers, not in the
+  game client, so it isn't listed.</p>
+<div class="table-wrap">
+<table class="game-table recipes items">
+  <thead><tr><th scope="col">Item</th><th scope="col">Slot</th><th scope="col">Type</th>
+    <th scope="col" class="num"><abbr title="Required level">Req.</abbr></th><th scope="col" class="num"><abbr title="Item level">iLvl</abbr></th><th scope="col">Crafted by</th></tr></thead>
+  <tbody></tbody>
+</table>
+</div>
+<p><button type="button" class="tc-reset it-more" hidden>Show more</button></p>
+{% include "_gamedata_note.html" %}
+<noscript><p class="note">The item list needs JavaScript.</p></noscript>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='items.js') }}" defer></script>{% endblock %}
