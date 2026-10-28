@@ -33,6 +33,9 @@
     for (const entry of entries) {
       const time = entry.querySelector("time[datetime]");
       entry.hidden = Date.parse(time.dateTime) < cutoff;
+      // The sidebar lists only the updates on show, so none of its links lead to a hidden update.
+      const link = entry.id && document.querySelector(`.sidebar a[href="#${CSS.escape(entry.id)}"]`);
+      if (link) link.closest("li").hidden = entry.hidden;
       if (!entry.hidden && !entry.classList.contains("class-dim")) shown++;
     }
     status.textContent = select.value

@@ -1,68 +1,52 @@
 # WoW Forever Tracker
 
-**Every World of Warcraft: Forever news post and patch note in one place.**
+News, patch notes and game data for World of Warcraft: Forever, in one place.
 
-👉 **[wectoz.github.io/wow-forever-news](https://wectoz.github.io/wow-forever-news/)**
+**[forevertracker.net](https://forevertracker.net)**
 
-WoW Forever launches **November 4 at 3:00 p.m. PST**. Blizzard posts its WoW Forever news alongside everything else on the WoW news page. This site picks out the WoW Forever posts and shows them on their own, newest first, with a countdown to launch.
+Blizzard posts WoW Forever news in among everything else on the WoW site. This site collects the Forever posts, the forum patch notes and what Blizzard staff say on the forums, and adds what's in the game client itself: abilities, talents, items and recipes. It updates itself every hour.
 
-## What's on the site
+## On the site
 
-- **Home**: the latest WoW Forever news and patch notes together.
-- **News**: every WoW Forever announcement Blizzard has published so far.
-- **Patches**: patch notes grouped by version number, plus hotfixes.
-- **Classes**: pick your class from the menu. Each class page has tabs: its changes from every beta build, patch and hotfix; every ability by the level you learn it; the talent trees; and its macros.
-- **Races**: every race's racial abilities, Skyborne included.
-- **Professions**: every recipe of every profession, where it comes from and the skill at which it turns yellow and grey.
-- **Full patch notes**: every Blizzard forum notes post on its own page, not just the class parts. When Blizzard edits one, the page lists what was added and removed.
-- **Game data changes**: what changed in the game files from one client update to the next, word by word, including what the patch notes leave out. Linked from the Patches page.
-- **Tooltips in the notes**: ability, talent, racial and item names in patch notes, class changes and blue posts show their in-game tooltip on hover or tap.
-- **Blue posts**: what Blizzard staff say about WoW Forever on the official forums, newest first, with its own RSS feed.
-- **Known Issues**: a link next to the launch countdown on every page, straight to Blizzard's Known Issues thread.
-- **Realms**: whether each WoW Forever realm is up, and its population, with a chart of each realm's last 7 days in two-hour blocks (busier is brighter, red is down). This page appears once realm data is available.
-- **Guides** menu: Races, Professions, Items, Addons and Macros.
-- **Items**: every weapon, armor piece and bag in the game client, with its in-game tooltip. Filter by slot, type, quality, the level you can use it at and the profession that crafts it.
-- **Addons**: the essential addons and the new Forever ones people are trying, each linked to its CurseForge page.
-- **Macros**: ready-to-copy macros for all nine classes, with a Copy button on each.
-- **Search**: the box in the top menu searches the whole site: news, patch notes, class changes, abilities, talents, racials, recipes, items, macros and addons. Names that match come first.
-- **Your class**: mark your class on its page and the site points out posts with changes for it. Class pages can also show only the changes since a given build, patch or hotfix.
-- **New since your last visit**: posts you haven't seen yet get a "New" badge.
-- **RSS feeds**: one for every post, and one per class (linked on each class page). They work in any feed reader or a Discord RSS bot.
-- **Links to one update**: each update on a class page has a "Copy link" button, handy for sharing a hotfix.
+- News and patch notes, newest first, with a countdown to launch on November 4.
+- Full forum patch notes on their own pages. When Blizzard edits one, the page shows what was added and removed.
+- Blue posts from Blizzard staff.
+- A page per class: every change to it, its abilities by level, a talent calculator with shareable builds, and macros. Changes can be filtered to those since a given build or hotfix.
+- Races, professions with every recipe and its skill levels, and every item, each with its in-game tooltip.
+- Game data changes: what changed in the client between builds, including what the patch notes leave out.
+- Tooltips on ability, talent and item names inside patch notes.
+- Realm status, with each realm's population over the last week.
+- Addons worth installing and ready-to-copy macros.
+- Search across all of it, with suggestions as you type.
+- RSS feeds for every post and for each class.
 
-Each post shows its date, a short summary when Blizzard gives one, and a link to the full article on Blizzard.com. The launch countdown sits at the top of every page, with the launch time in your own time zone; after launch it shows the day count and links the latest patch notes.
+Mark your class and posts that change it are highlighted. Posts since your last visit get a "New" badge. Both are kept in your browser only: the site has no cookies or tracking and loads nothing from other sites.
 
-## Always up to date
+*Unofficial fan site, not affiliated with Blizzard Entertainment. World of Warcraft is a trademark of Blizzard Entertainment, Inc.*
 
-The site checks Blizzard's news page and forums every hour and adds new WoW Forever posts on its own. Realm status is checked about every 10 minutes. If Blizzard's site is down, the tracker keeps showing what it already has and tries again on the next check.
+## Development
 
----
+Python with [uv](https://docs.astral.sh/uv/), Flask and SQLite.
 
-*Unofficial fan site. Not affiliated with or endorsed by Blizzard Entertainment. World of Warcraft and Blizzard Entertainment are trademarks of Blizzard Entertainment, Inc.*
-
----
-
-## For developers
-
-The tracker is a small Python app ([uv](https://docs.astral.sh/uv/) + Flask + SQLite).
-
-```bash
-uv sync                       # install
-uv run wowforever backfill    # one-time: gather every WoW Forever post so far
-uv run wowforever serve       # run the site at http://127.0.0.1:5000 (checks for new posts hourly)
+```sh
+uv sync
+uv run wowforever backfill   # gather every Forever post so far
+uv run wowforever serve      # http://127.0.0.1:5000, gathers new posts hourly
+uv run pytest
 ```
 
-`uv run wowforever fetch` gathers the newest posts right away. Run the tests with `uv run pytest`.
+`.github/workflows/publish.yml` builds the static site and deploys it to GitHub Pages every 10 minutes and on every push to `master`; posts are gathered hourly. To build it locally: `uv run wowforever build --out _site`.
 
-The live site is published to GitHub Pages by `.github/workflows/publish.yml`, about every 10 minutes and on every push to `master`. Realm status is refreshed on every run; news and forum posts are gathered about once an hour. To build the static site locally: `uv run wowforever build --out _site --site-url https://wectoz.github.io/wow-forever-news` (this also writes `sitemap.xml`). The build fails if any page links to a page that doesn't exist.
+Optional repository secrets:
 
-To announce new posts in a Discord channel, create a webhook in the channel's settings (Integrations → Webhooks) and save its URL as the repository secret `DISCORD_WEBHOOK_URL`. The hourly run then posts each new WoW Forever post once (`uv run wowforever announce`). The first run only records the posts that already exist, so the channel isn't flooded with old ones.
+- `DISCORD_WEBHOOK_URL`: post each new post once to a Discord channel (a webhook from the channel's Integrations settings).
+- `BLIZZARD_CLIENT_ID` and `BLIZZARD_CLIENT_SECRET`, from an app at [develop.battle.net](https://develop.battle.net): realm status. Without them the Realms page is hidden.
 
-Realm status comes from Blizzard's game data API. Create an app at [develop.battle.net](https://develop.battle.net) and save its client ID and secret as the repository secrets `BLIZZARD_CLIENT_ID` and `BLIZZARD_CLIENT_SECRET`. Then `uv run wowforever realms` reads the status of the WoW Forever realms. Without the secrets it prints a skip message and the Realms page stays hidden.
+### Game data
 
-Abilities, talents, racials and recipes are read from the WoW Forever game client itself, not from a wiki. They live in `src/wowforever/gamedata.json`, which is refreshed by hand after a patch, on a PC with the game installed:
+Abilities, talents, racials, recipes and items come from the game client, in `src/wowforever/gamedata.json`. Refresh it by hand after a patch, on a PC with the game installed:
 
-1. Get the tools once: [.NET 10](https://dotnet.microsoft.com), `git clone https://github.com/wowdev/TACTSharp` (build `TACTTool` with `dotnet build -c Release`), `git clone https://github.com/wowdev/WoWDBDefs`, and the [community listfile](https://github.com/wowdev/wow-listfile) saved as `listfile.csv`, which maps table names to file IDs.
+1. Once: install [.NET 10](https://dotnet.microsoft.com), clone and build [TACTSharp](https://github.com/wowdev/TACTSharp) (`dotnet build -c Release`), clone [WoWDBDefs](https://github.com/wowdev/WoWDBDefs), and save the [community listfile](https://github.com/wowdev/wow-listfile) as `listfile.csv`.
 2. Extract the tables (from WSL; adjust the game folder):
    ```sh
    for t in chrclasses chrraces skillline skilllineability skillraceclassinfo spellname spell spelllevels spelleffect spellmisc spellduration spellradius talent talenttab itemsparse itemeffect itemxitemeffect item spellauraoptions spelltargetrestrictions spellrange spellreagents randproppoints itemarmorquality itemarmortotal armorlocation itemarmorshield itemdamageonehand itemdamagetwohand itemdamageranged itemdamagewand uitextureatlasmember uitextureatlas itemmodifiedappearance itemappearance; do
@@ -70,13 +54,16 @@ Abilities, talents, racials and recipes are read from the WoW Forever game clien
      dotnet TACTTool.dll -p wowf -r eu -d "/mnt/c/Program Files (x86)/World of Warcraft" -m fdid -i $id -o db2/$t.db2
    done
    ```
-3. `uv run wowforever gamedata --hotfixes "/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Cache/ADB/enUS/DBCache.bin" db2 WoWDBDefs/definitions`. Blizzard ships most changes between client patches as hotfixes, which the game keeps in that cache file (log in once first so it is current); `--hotfixes` applies them, and the data then carries the cache's build number. This writes `gamedata.json` and `db2/icons.txt`, the icons the pages need.
-4. Extract and convert the icons:
+3. Build the data, applying the client's hotfix cache (log in once first so it's current):
+   ```sh
+   uv run wowforever gamedata --hotfixes "/mnt/c/Program Files (x86)/World of Warcraft/_forever_/Cache/ADB/enUS/DBCache.bin" db2 WoWDBDefs/definitions
+   ```
+   A new client build also records what changed in `gamechanges.json`, for the Game data changes page. Add `--record` to record a hotfix on the same build.
+4. Extract and convert the icons it lists:
    ```sh
    dotnet TACTTool.dll -p wowf -r eu -d "/mnt/c/Program Files (x86)/World of Warcraft" -m list -i db2/icons.txt -o blp
    uv run --group gamedata wowforever icons blp
    ```
-   When the client build differs from the one in `gamedata.json`, step 3 also records what changed (abilities, talents, racials, recipes, items) in `gamechanges.json`, shown on the Game data changes page. Add `--record` to record a refresh of the same build too (a hotfix); leave it off when only this code changed.
-5. Check the pages with `uv run wowforever serve`, and commit `gamedata.json` and `src/wowforever/static/icons/`.
+5. Check the pages with `uv run wowforever serve`, then commit `gamedata.json` and `src/wowforever/static/icons/`.
 
-Season of Discovery spells are still in the client files; they are left out by spell ID range (see `gamedata.py`).
+Season of Discovery spells are still in the client files and are left out by spell ID range (see `gamedata.py`).

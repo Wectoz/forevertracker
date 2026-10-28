@@ -89,6 +89,7 @@ window.findInSearch = (items, query) => {
     all.textContent = `See all results for “${query}”`;
     list.hidden = false;
     input.setAttribute("aria-expanded", "true");
+    input.removeAttribute("aria-activedescendant");  // the list was rebuilt: nothing is highlighted
     active = -1;
   };
 
