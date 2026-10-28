@@ -48,9 +48,10 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
   left: 0;
   right: 0;
   z-index: -1;
-  opacity: .6;
-  height: clamp(140px, 22.5vw, 400px);  /* 22.5vw is the art's own aspect, so wide screens show the whole scene */
-  background: url("mulgore.svg") 62% 100% / cover no-repeat;
+  opacity: .75;
+  height: clamp(220px, 34vw, 540px);
+  background: url("mulgore.webp") 50% 0 / cover no-repeat;  /* Mulgore: sky on top, so the mesas show below the countdown */
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);  /* fades into the page */
 }
 
 /* Countdown: a polished bronze plate with sunken, engraved digits. */
@@ -202,7 +203,7 @@ h1 { font-size: 1.6rem; margin: 1.5rem 0 1rem; }
 .plate-latest { margin: 6px 0 0; font-size: .9rem; color: #1a0f05; }
 .plate-latest a { color: #1a0f05; font-weight: 700; }
 /* Known Issues link under the plate. */
-.known-issues { margin: 8px 0 0; font-size: .9rem; }
+.known-issues { margin: 8px 0 0; font-size: .9rem; text-shadow: 0 1px 2px #000, 0 0 10px #000; }  /* over the banner sky */
 .known-issues a { font-weight: 700; }
 
 /* "New since your last visit" and "your class" highlights. */
