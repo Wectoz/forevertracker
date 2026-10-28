@@ -36,6 +36,8 @@ def main(argv: list[str] | None = None) -> int:
     gamedata = commands.add_parser("gamedata", help="rebuild gamedata.json from tables extracted from the game client")
     gamedata.add_argument("db2", type=Path, help="folder with the extracted .db2 files")
     gamedata.add_argument("defs", type=Path, help="WoWDBDefs definitions folder")
+    gamedata.add_argument("--record", action="store_true",
+                          help="record the changes on the Game data changes page even if the client build is the same")
     icons = commands.add_parser("icons", help="convert the icons extracted from the game client for gamedata.json")
     icons.add_argument("blp", type=Path, help="folder with the extracted <file ID>.blp icons")
     args = parser.parse_args(argv)
@@ -45,7 +47,15 @@ def main(argv: list[str] | None = None) -> int:
 
         from wowforever import gamedata as gd
 
+        from datetime import date
+
+        from wowforever import gamediff
+
         data = gd.build(gd.read_tables(args.db2, args.defs), gd.client_build(args.db2))
+        old = gd.load() if gd.DATA_FILE.exists() else None
+        # a new build is a game update; the same build again is usually a change to this code, not to the game
+        if old and (old["build"] != data["build"] or args.record):
+            print(f"Recorded {gamediff.record(old, data, date.today())} game data changes since build {old['build']}.")
         gd.DATA_FILE.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
         wanted = args.db2 / "icons.txt"  # a TACTTool list: file ID;output name
         wanted.write_text("".join(f"{i};{i}.blp\n" for i in sorted(gd.icon_files(data))), encoding="utf-8")
